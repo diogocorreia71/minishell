@@ -6,6 +6,7 @@
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/wait.h>
 # include <unistd.h>
 # include <limits.h>
 # include <stdlib.h>

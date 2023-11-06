@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/06 16:47:06 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/06 23:51:37 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,22 @@ void	env(char **env)
 void	non_builtin(t_minishell *cmds)
 {
 	char	*bin_path;
-
-	bin_path = ft_strjoin("/usr/bin/", cmds->cmd_split[0]);
-	execve(bin_path, cmds->cmd_split, cmds->env);
-	printf("%s: command not found\n", cmds->cmd_str);
+	int status;
+	pid_t	pid;
+	
+	//Split all PATH dir
+	bin_path = ft_strjoin("/bin/", cmds->cmd_split[0]);
+	pid = fork();
+	if (pid == 0)
+	{
+		if (execve(bin_path, cmds->cmd_split, cmds->env) == -1)
+		{
+			printf("%s: command not found\n", cmds->cmd_str);
+			exit(EXIT_FAILURE);
+		}
+	}
+	else
+		wait(&status);
 }
 
 void	builtin_cmd(t_minishell *cmds)
