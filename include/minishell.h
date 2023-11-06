@@ -7,8 +7,19 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <unistd.h>
-# include <stdbool.h>
 # include <limits.h>
 # include <stdlib.h>
+
+typedef struct s_minishell
+{
+    char    *cmd_str;
+    char    **cmd_split;
+    char    **env;
+}               t_minishell;
+
+void	builtin_cmd(t_minishell *cmds);
+
+//free
+void	clean_program(t_minishell *cmds);
 
 #endif

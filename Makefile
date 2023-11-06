@@ -1,8 +1,8 @@
 
 NAME = minishell
-SRC = main.c
+SRC = main.c builtin.c
 OBJS = ${SRC:.c=.o}
-CFLAGS = -I include #-fsanitize=address #-Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
 
 %.o:	%.c
 		cc ${CFLAGS} -c $< -o $@
@@ -11,8 +11,9 @@ ${NAME}:	${OBJS}
 			make -C libft
 			ar rcs minishell.a ${OBJS}
 			cc ${CFLAGS} minishell.a libft/libft.a -o ${NAME} -lreadline
+			./${NAME}
 
-all: ${NAME} ./${NAME}
+all: ${NAME}
 
 clean:
 		make clean -C libft

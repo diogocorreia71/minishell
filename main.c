@@ -1,93 +1,46 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
+/*   Updated: 2023/11/06 16:09:43 by rumachad         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void	built_in_cmd(char *cmd, char *parsed)
+void	clean_program(t_minishell *cmds)
 {
-	char	*dir;
+	int	i;
 
-	if (ft_strncmp(cmd, "pwd", 4) == true)
-	{
-		dir = getcwd(NULL, 0);
-		printf("%s\n", dir);
-		free(dir);
-	}
-	else if (ft_strncmp(cmd, "echo", 5) == true)
-		printf("%s\n", parsed);
-	/* else if (ft_strcmp(cmd, "cd") == true)
-	{
-
-	} */
-	else if (ft_strncmp(cmd, "exit", 5) == true)
-		exit(EXIT_SUCCESS);
-}
-
-char	*divide_cmd(char *str, char *delim)
-{
-	char	*tmp;
-	int		i;
-	int		k;
-
-	k = 0;
 	i = 0;
-	while (str[i] != *delim)
+	while (cmds->cmd_split[i])
+	{
+		free(cmds->cmd_split[i]);
 		i++;
-	tmp = (char *)malloc(sizeof(char) * (i + 1));
-	while (k < i)
-	{
-		tmp[k] = str[k];
-		k++;
 	}
-	tmp[k] = '\0';
-	return (tmp);
+	free(cmds->cmd_split);
+	free(cmds->cmd_str);
 }
 
-char	*cmd_path(char *str)
+int main(int ac, char **av, char **envp)
 {
-	char	*tmp;
-	int		k;
-	int		i;
+	t_minishell	cmds;
 
-	i = 0;
-	while (str[i] != ' ' && str[i])
-		i++;
-	i++;
-	k = ft_strlen(str);
-	tmp = (char *)malloc(sizeof(char) * (k - i + 1));
-	k = 0;
-	while (str[i + k])
-	{
-		tmp[k] = str[i + k];
-		k++;
-	}
-	tmp[k] = '\0';
-	return (tmp);
-}
-
-void	parse_cmd(char *str, char ***cmd)
-{
-
-	*cmd = (char **)malloc(sizeof(char *) * 3);
-	*cmd[0] = divide_cmd(str, " ");
-	*cmd[1] = cmd_path(str);
-	printf("%s\n", *cmd[1]);
-}
-
-int main()
-{
-	char	*cmd_string;
-	char	**cmd;
-	char	*parsed;
-	int i;
-
-	i = 0;
-
+	if (ac != 1 && !av)
+		return (0);
+	cmds.env = envp;
 	while (1)
 	{
-		cmd_string = readline("minishell$ ");
-		/* printf("%s\n", cmd); */
-		add_history(cmd_string);
-		parse_cmd(cmd_string, &cmd);
-		/* printf("%s\n", cmd[0]);
-		printf("%s\n", cmd[1]); */
-		/* built_in_cmd(cmd, parsed); */
+		cmds.cmd_str = readline("minishell$ ");
+		if (ft_strlen(cmds.cmd_str) == 0)
+			continue;
+		add_history(cmds.cmd_str);
+		cmds.cmd_split = ft_split(cmds.cmd_str, ' ');
+		builtin_cmd(&cmds);
+		clean_program(&cmds);
 	}
 }
