@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/06 23:51:37 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/07 14:44:58 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,25 +59,62 @@ void	env(char **env)
 	}
 }
 
+char	**exec_path(char *cmd_split)
+{
+	char	**bin;
+	char	**path;
+	int		i;
+
+	i = 0;
+	bin = ft_split(getenv("PATH"), ':');
+	while (bin[i])
+		i++;
+	path = (char **)malloc(sizeof(char *) * (i + 1));
+	i = 0;
+	while (bin[i])
+	{
+		path[i] = ft_strjoin(ft_strjoin(bin[i], "/"),
+				cmd_split);
+		i++;
+	}
+	return (path);
+}
+
 void	non_builtin(t_minishell *cmds)
 {
-	char	*bin_path;
-	int status;
+	char	**bin_path;
+	int		status;
 	pid_t	pid;
+	int		i;
 	
-	//Split all PATH dir
-	bin_path = ft_strjoin("/bin/", cmds->cmd_split[0]);
-	pid = fork();
-	if (pid == 0)
+	bin_path = exec_path(cmds->cmd_split[0]);
+	i = 0;
+	while (bin_path[i])
 	{
-		if (execve(bin_path, cmds->cmd_split, cmds->env) == -1)
+		pid = fork();
+		if (pid < 0)
 		{
-			printf("%s: command not found\n", cmds->cmd_str);
-			exit(EXIT_FAILURE);
+			perror("Error in non_builtin");
+			return  ;
 		}
-	}
-	else
+		else if (pid == 0)
+		{
+			if (access(bin_path[i], F_OK | X_OK) == 0)
+				execve(bin_path[i], cmds->cmd_split, cmds->env);
+			else
+				exit(1);
+			/* printf("%s: command not found\n", cmds->cmd_str); */
+			/* exit(EXIT_FAILURE); */
+		}
 		wait(&status);
+		if (status == 0)
+		{
+			free(bin_path);		
+			return ;
+		}
+		i++;
+	}
+	free(bin_path);
 }
 
 void	builtin_cmd(t_minishell *cmds)

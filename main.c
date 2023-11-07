@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/06 16:09:43 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:34:30 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int main(int ac, char **av, char **envp)
 {
 	t_minishell	cmds;
 
-	if (ac != 1 && !av)
+	if (ac != 1 && av)
 		return (0);
 	cmds.env = envp;
 	while (1)
