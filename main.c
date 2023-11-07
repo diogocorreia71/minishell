@@ -6,7 +6,7 @@
 /*   By: diodos-s <diodos-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/07 15:11:01 by diodos-s         ###   ########.fr       */
+/*   Updated: 2023/11/07 15:19:23 by diodos-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	clean_program(t_minishell *cmds)
 {
 	int	i;
 
-	i = 1;
+	i = 0;
 	while (cmds->cmd_split[i])
 	{
 		free(cmds->cmd_split[i]);
