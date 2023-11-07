@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/07 14:44:58 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/07 17:08:59 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,10 @@ void	non_builtin(t_minishell *cmds)
 		}
 		else if (pid == 0)
 		{
-			if (access(bin_path[i], F_OK | X_OK) == 0)
+			if (access(bin_path[i], F_OK) == 0)
 				execve(bin_path[i], cmds->cmd_split, cmds->env);
 			else
 				exit(1);
-			/* printf("%s: command not found\n", cmds->cmd_str); */
-			/* exit(EXIT_FAILURE); */
 		}
 		wait(&status);
 		if (status == 0)
@@ -114,6 +112,7 @@ void	non_builtin(t_minishell *cmds)
 		}
 		i++;
 	}
+	printf("%s: command not found\n", cmds->cmd_str);
 	free(bin_path);
 }
 

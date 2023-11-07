@@ -11,7 +11,6 @@ ${NAME}:	${OBJS}
 			make -C libft
 			ar rcs minishell.a ${OBJS}
 			cc ${CFLAGS} minishell.a libft/libft.a -o ${NAME} -lreadline
-			./${NAME}
 
 all: ${NAME}
 
