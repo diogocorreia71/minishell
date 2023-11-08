@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/07 17:08:59 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/08 00:45:59 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,61 +59,56 @@ void	env(char **env)
 	}
 }
 
-char	**exec_path(char *cmd_split)
+char	*exec_path(char *cmd)
 {
-	char	**bin;
-	char	**path;
+	char	**bin_dir;
+	char	*path1;
+	char	*path2;
 	int		i;
 
-	i = 0;
-	bin = ft_split(getenv("PATH"), ':');
-	while (bin[i])
-		i++;
-	path = (char **)malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (bin[i])
+	if (ft_strchr("/.", cmd[0]))
 	{
-		path[i] = ft_strjoin(ft_strjoin(bin[i], "/"),
-				cmd_split);
+		if (access(cmd, F_OK) == 0)
+			return (cmd);
+		else
+			return (NULL);
+	}
+	i = 0;
+	bin_dir = ft_split(getenv("PATH"), ':');
+	while (bin_dir[i])
+	{
+		path1 = ft_strjoin(bin_dir[i], "/");
+		path2 = ft_strjoin(path1, cmd);
+		free(path1);
+		if (access(path2, F_OK) == 0)
+			return (path2);
 		i++;
 	}
-	return (path);
+	return (NULL);
 }
 
 void	non_builtin(t_minishell *cmds)
 {
-	char	**bin_path;
+	char	*path;
 	int		status;
 	pid_t	pid;
-	int		i;
 	
-	bin_path = exec_path(cmds->cmd_split[0]);
-	i = 0;
-	while (bin_path[i])
+	path = exec_path(cmds->cmd_split[0]);
+	if (path == NULL)
 	{
-		pid = fork();
-		if (pid < 0)
-		{
-			perror("Error in non_builtin");
-			return  ;
-		}
-		else if (pid == 0)
-		{
-			if (access(bin_path[i], F_OK) == 0)
-				execve(bin_path[i], cmds->cmd_split, cmds->env);
-			else
-				exit(1);
-		}
-		wait(&status);
-		if (status == 0)
-		{
-			free(bin_path);		
-			return ;
-		}
-		i++;
+		printf("%s: command not found\n", cmds->cmd_str);
+		free(path);
+		return ;
 	}
-	printf("%s: command not found\n", cmds->cmd_str);
-	free(bin_path);
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("Error creating fork (function: non_builtin)");
+		return  ;
+	}
+	else if (pid == 0)
+		execve(path, cmds->cmd_split, cmds->env);
+	wait(&status);
 }
 
 void	builtin_cmd(t_minishell *cmds)
