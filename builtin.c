@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/09 17:31:12 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/09 23:42:02 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,16 +85,24 @@ void	export(t_env *env, char *cmd)
 	int		i;
 
 	i = 0;
-	while (cmd[i] != '=')
+	while (cmd[i] != '=' && cmd[i])
 		i++;
 	var = (char *)malloc(sizeof(char) * (i + 1));
 	k = -1;
 	while (++k < i)
 		var[k] = cmd[k];
+	var[k] = '\0';
+	//SEG_FAULT Quando o argmento: a =0
+	/* if (ft_strchr(var, ' '))
+	{
+		printf("1111\n");
+		return ;
+	} */
 	if (get_env(env, var))
 		unset(env, var);
 	env = env_last(env);
 	env->next = create_node(var, cmd);
+	free(var);
 }
 
 void	builtin_cmd(t_minishell *cmds)

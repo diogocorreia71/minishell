@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/08 17:01:00 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/09 22:52:33 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,6 @@ void	free_env(t_env *env)
 
 void	clean_program(t_minishell *cmds)
 {
-	int	i;
-
-	i = 0;
 	ft_free_dp((void **)cmds->cmd_split);
 	free(cmds->cmd_str);
 }
