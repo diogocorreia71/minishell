@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/08 00:45:59 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/09 17:31:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,68 +47,54 @@ void	cd(char **cmd_split)
 		printf("cd: no such file or directory: %s\n", cmd_split[1]);
 }
 
-void	env(char **env)
+void	env(t_env *env)
 {
-	int	i;
-
-	i = 0;
-	while (env[i])
+	while (env)
 	{
-		printf("%s\n", env[i]);
-		i++;
+		printf("%s=", env->var);
+		printf("%s\n", env->var_value);
+		env = env->next;
 	}
 }
 
-char	*exec_path(char *cmd)
+void	unset(t_env *env, char *cmd)
 {
-	char	**bin_dir;
-	char	*path1;
-	char	*path2;
+	t_env	*tmp;
+
+	if (!get_env(env, cmd))
+		return ;
+	tmp = env;
+	while (tmp != NULL)
+	{
+		if (ft_strcmp(cmd, tmp->var) == 0)
+			break ;
+		tmp = tmp->next;
+	}
+	while (env->next->var != tmp->var)
+		env = env->next;
+	env->next =env->next->next;
+	free(tmp->var);
+	free(tmp->var_value);
+	free(tmp);
+}
+
+void	export(t_env *env, char *cmd)
+{
+	char	*var;
+	int		k;
 	int		i;
 
-	if (ft_strchr("/.", cmd[0]))
-	{
-		if (access(cmd, F_OK) == 0)
-			return (cmd);
-		else
-			return (NULL);
-	}
 	i = 0;
-	bin_dir = ft_split(getenv("PATH"), ':');
-	while (bin_dir[i])
-	{
-		path1 = ft_strjoin(bin_dir[i], "/");
-		path2 = ft_strjoin(path1, cmd);
-		free(path1);
-		if (access(path2, F_OK) == 0)
-			return (path2);
+	while (cmd[i] != '=')
 		i++;
-	}
-	return (NULL);
-}
-
-void	non_builtin(t_minishell *cmds)
-{
-	char	*path;
-	int		status;
-	pid_t	pid;
-	
-	path = exec_path(cmds->cmd_split[0]);
-	if (path == NULL)
-	{
-		printf("%s: command not found\n", cmds->cmd_str);
-		free(path);
-		return ;
-	}
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("Error creating fork (function: non_builtin)");
-		return  ;
-	}
-	else if (pid == 0)
-		execve(path, cmds->cmd_split, cmds->env);
-	wait(&status);
+	var = (char *)malloc(sizeof(char) * (i + 1));
+	k = -1;
+	while (++k < i)
+		var[k] = cmd[k];
+	if (get_env(env, var))
+		unset(env, var);
+	env = env_last(env);
+	env->next = create_node(var, cmd);
 }
 
 void	builtin_cmd(t_minishell *cmds)
@@ -121,9 +107,14 @@ void	builtin_cmd(t_minishell *cmds)
 		cd(cmds->cmd_split);
 	else if (!ft_strncmp(cmds->cmd_split[0], "env", 4))
 		env(cmds->env);
+	else if (!ft_strncmp(cmds->cmd_split[0], "unset", 6))
+		unset(cmds->env, cmds->cmd_split[1]);
+	else if (!ft_strncmp(cmds->cmd_split[0], "export", 7))
+		export(cmds->env, cmds->cmd_split[1]);
 	else if (!ft_strncmp(cmds->cmd_split[0], "exit", 5))
 	{
 		clean_program(cmds);
+		free_env(cmds->env);
 		exit(EXIT_SUCCESS);
 	}
 	else

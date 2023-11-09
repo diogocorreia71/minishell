@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:41:15 by rumachad          #+#    #+#             */
-/*   Updated: 2023/08/30 11:39:58 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/09 11:52:38 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,7 @@ int		ft_printpointer_start(unsigned long nbr);
 char	*get_next_line(int fd);
 char	*ft_strjoin_get(char *s1, char *s2);
 char	*ft_strchr_get(const char *str, int c);
+void	ft_free_dp(void **arg);
+int		ft_strcmp(char *str1, char *str2);
 
 #endif

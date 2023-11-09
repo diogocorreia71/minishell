@@ -11,16 +11,35 @@
 # include <limits.h>
 # include <stdlib.h>
 
+typedef struct s_env
+{
+	char		*var;
+	char		*var_value;
+	struct	s_env *next;
+}				t_env;
+
+
 typedef struct s_minishell
 {
-    char    *cmd_str;
-    char    **cmd_split;
-    char    **env;
-}               t_minishell;
+	char	*cmd_str;
+	char	**cmd_split;
+	char	**env_array;
+	t_env	*env;
+}				t_minishell;
 
 void	builtin_cmd(t_minishell *cmds);
+void	non_builtin(t_minishell *cmds);
+
+
+//env
+t_env	*dup_env(char **envp);
+//env_utils
+char	*get_env(t_env *env, char *var_str);
+t_env	*create_node(char *tmp, char *tmp2);
+t_env	*env_last(t_env *env);
 
 //free
 void	clean_program(t_minishell *cmds);
+void	free_env(t_env *env);
 
 #endif

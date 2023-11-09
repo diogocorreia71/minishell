@@ -1,6 +1,6 @@
 
 NAME = minishell
-SRC = main.c builtin.c
+SRC = main.c builtin.c exec_cmd.c env.c
 OBJS = ${SRC:.c=.o}
 CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
 
@@ -22,5 +22,9 @@ fclean: clean
 		rm -f minishell.a minishell libft/libft.a
 
 re: fclean all
+
+val:
+		make
+		valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
 
 .SILENT:

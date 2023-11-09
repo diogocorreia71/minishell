@@ -3,26 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diodos-s <diodos-s@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/07 15:19:23 by diodos-s         ###   ########.fr       */
+/*   Updated: 2023/11/08 17:01:00 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	free_env(t_env *env)
+{
+	t_env	*tmp;
+
+	while (env != NULL)
+	{
+		tmp = env;
+		env = env->next;
+		free(tmp->var);
+		free(tmp->var_value);
+		free(tmp);
+	}	
+}
 
 void	clean_program(t_minishell *cmds)
 {
 	int	i;
 
 	i = 0;
-	while (cmds->cmd_split[i])
-	{
-		free(cmds->cmd_split[i]);
-		i++;
-	}
-	free(cmds->cmd_split);
+	ft_free_dp((void **)cmds->cmd_split);
 	free(cmds->cmd_str);
 }
 
@@ -32,7 +41,8 @@ int main(int ac, char **av, char **envp)
 
 	if (ac != 1 && av)
 		return (0);
-	cmds.env = envp;
+	cmds.env_array = envp;
+	cmds.env = dup_env(envp);
 	while (1)
 	{
 		cmds.cmd_str = readline("minishell$ ");
