@@ -3,25 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/09 23:28:09 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/10 14:48:31 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_env	*env_last(t_env *env)
-{
-	while(env != NULL)
-	{
-		if (env->next == NULL)
-			break;
-		env = env->next;
-	}
-	return (env);
-}
+t_env	*env_last(t_env *env);
 
 char	*get_env(t_env *env, char *var_str)
 {
@@ -70,4 +61,14 @@ t_env	*dup_env(char **envp)
 		i++;
 	}
 	return (head);
+}
+
+void	env(t_env *env)
+{
+	while (env)
+	{
+		printf("%s=", env->var);
+		printf("%s\n", env->var_value);
+		env = env->next;
+	}
 }

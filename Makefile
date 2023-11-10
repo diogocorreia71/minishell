@@ -1,8 +1,9 @@
 
 NAME = minishell
-SRC = main.c builtin.c exec_cmd.c env.c
+SRC = main.c builtin.c exec_cmd.c env.c cd.c pwd.c echo.c export.c unset.c \
+		env_utils.c
 OBJS = ${SRC:.c=.o}
-CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
 
 %.o:	%.c
 		cc ${CFLAGS} -c $< -o $@
@@ -10,13 +11,14 @@ CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
 ${NAME}:	${OBJS}
 			make -C libft
 			ar rcs minishell.a ${OBJS}
+			mv ${OBJS} objs
 			cc ${CFLAGS} minishell.a libft/libft.a -o ${NAME} -lreadline
 
 all: ${NAME}
 
 clean:
 		make clean -C libft
-		rm -f ${OBJS}
+		rm -f objs/*.o
 
 fclean: clean
 		rm -f minishell.a minishell libft/libft.a

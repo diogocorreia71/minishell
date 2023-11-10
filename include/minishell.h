@@ -27,19 +27,20 @@ typedef struct s_minishell
 	t_env	*env;
 }				t_minishell;
 
-void	builtin_cmd(t_minishell *cmds);
-void	non_builtin(t_minishell *cmds);
+void	builtin_cmd(t_minishell *shell);
+void	non_builtin(t_minishell *shell);
 
 
 //env
 t_env	*dup_env(char **envp);
 //env_utils
 char	*get_env(t_env *env, char *var_str);
+t_env	*get_env_node(t_env *env, char *key);
 t_env	*create_node(char *tmp, char *tmp2);
 t_env	*env_last(t_env *env);
 
 //free
-void	clean_program(t_minishell *cmds);
+void	clean_program(t_minishell *shell);
 void	free_env(t_env *env);
 
 #endif
