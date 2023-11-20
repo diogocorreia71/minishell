@@ -6,30 +6,93 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/10 15:33:05 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/20 15:01:09 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_env(t_env *env)
+int	number_quotes(char *cmd_str, int q)
 {
-	t_env	*tmp;
+	int	i;
+	int	qc;
 
-	while (env != NULL)
+	i = 0;
+	qc = 0;
+	while (cmd_str[i])
 	{
-		tmp = env;
-		env = env->next;
-		free(tmp->var);
-		free(tmp->var_value);
-		free(tmp);
-	}	
+		if (cmd_str[i] == q)
+			qc++;
+		i++;
+	}
+	return (qc);
 }
 
-void	clean_program(t_minishell *shell)
+char	*remove_quotes(char *cmd_str, int qc)
 {
-	ft_free_dp((void **)shell->cmd_split);
-	free(shell->cmd_str);
+	char	*rem_q;
+	int		i;
+	int		k;
+
+	rem_q = (char *)malloc(sizeof(char) * (ft_strlen(cmd_str) - qc + 1));
+	if (rem_q == NULL)
+		return (NULL);
+	i = 0;
+	k = 0;
+	while (cmd_str[i])
+	{
+		if (cmd_str[i] != 34 && cmd_str[i] != 39)
+		{
+			rem_q[k] = cmd_str[i];
+			k++;
+		}
+		i++;
+	}
+	rem_q[k] = '\0';
+	free(cmd_str);
+	return (rem_q);
+}
+
+int	process_quotes(char **cmd_str)
+{
+	int		i;
+	int		qc;
+	
+	i = 0;
+	qc = 0;
+	while ((*cmd_str)[i])
+	{
+		if ((*cmd_str)[i] == 34 || (*cmd_str)[i] == 39)
+		{
+			if ((*cmd_str)[i] == 34)
+				qc = number_quotes(*cmd_str, 34);
+			else
+				qc = number_quotes(*cmd_str, 39);
+			break ;
+		}
+		i++;
+	}
+	if ((qc % 2) == 0)
+	{
+		if (qc != 0)
+			*cmd_str = remove_quotes(*cmd_str, qc);
+		return (0);
+	}
+	else
+		return (1);
+}
+
+int	parser(t_minishell *shell)
+{
+	//Process quotes ("", '')
+	if (process_quotes(&shell->cmd_str) == 1)
+	{
+		printf("Unclosed Quotes\n");
+		return (1);
+	}
+	//Split the command name and arguments
+	shell->cmd_split = ft_split(shell->cmd_str, ' ');
+	return (0);
 }
 
 int main(int ac, char **av, char **envp)
@@ -38,6 +101,7 @@ int main(int ac, char **av, char **envp)
 
 	if (ac != 1 && av)
 		return (0);
+	ft_memset((void *)&shell, 0, sizeof(t_minishell));
 	shell.env_array = envp;
 	shell.env = dup_env(envp);
 	while (1)
@@ -46,7 +110,8 @@ int main(int ac, char **av, char **envp)
 		if (ft_strlen(shell.cmd_str) == 0)
 			continue;
 		add_history(shell.cmd_str);
-		shell.cmd_split = ft_split(shell.cmd_str, ' ');
+		if (parser(&shell) == 1)
+			continue;
 		builtin_cmd(&shell);
 		clean_program(&shell);
 	}

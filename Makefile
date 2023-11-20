@@ -1,9 +1,9 @@
 
 NAME = minishell
 SRC = main.c builtin.c exec_cmd.c env.c cd.c pwd.c echo.c export.c unset.c \
-		env_utils.c
+		env_utils.c free_mem.c
 OBJS = ${SRC:.c=.o}
-CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
 
 %.o:	%.c
 		cc ${CFLAGS} -c $< -o $@
