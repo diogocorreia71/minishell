@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/10 15:29:50 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/22 14:11:08 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@ void	check_exec(t_minishell *shell, char *path)
 	if (!path)
 		printf("minishell: %s: No such file or directory\n", shell->cmd_split[0]);
 	else if (!access(path, F_OK) && access(path, X_OK) == -1)
-		printf("minishell: %s: Permission denied\n", shell->cmd_str);
-	else if (!access(path, F_OK && X_OK) && shell->cmd_str[0] == '.')
-		printf("minishell: %s: filename argument required\n", shell->cmd_str);
-	else if (!access(path, F_OK && X_OK) && shell->cmd_str[0] == '/')
-		printf("minishell: %s: Is a directory\n", shell->cmd_str);
+		printf("minishell: %s: Permission denied\n", shell->rl_str);
+	else if (!access(path, F_OK && X_OK) && shell->rl_str[0] == '.')
+		printf("minishell: %s: filename argument required\n", shell->rl_str);
+	else if (!access(path, F_OK && X_OK) && shell->rl_str[0] == '/')
+		printf("minishell: %s: Is a directory\n", shell->rl_str);
 	else if (access(path, F_OK) == -1)
-		printf("minishell: %s: command not found\n", shell->cmd_str);
+		printf("minishell: %s: command not found\n", shell->rl_str);
 	exit(1);
 }
 

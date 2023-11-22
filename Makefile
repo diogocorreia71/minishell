@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: diodos-s <diodos-s@student.42.fr>          +#+  +:+       +#+         #
+#    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2023/11/21 12:39:54 by diodos-s         ###   ########.fr        #
+#    Updated: 2023/11/22 17:03:47 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 SRC = main.c builtin.c exec_cmd.c env.c cd.c pwd.c echo.c export.c unset.c \
-		env_utils.c
+		env_utils.c free_mem.c quotes.c
 OBJS = ${SRC:.c=.o}
 CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
 
@@ -22,14 +22,13 @@ CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
 ${NAME}:	${OBJS}
 			make -C libft
 			ar rcs minishell.a ${OBJS}
-			mv ${OBJS} objs
 			cc ${CFLAGS} minishell.a libft/libft.a -o ${NAME} -lreadline
 
 all: ${NAME}
 
 clean:
 		make clean -C libft
-		rm -f objs/*.o
+		rm -f *.o
 
 fclean: clean
 		rm -f minishell.a minishell libft/libft.a
