@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diodos-s <diodos-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/22 17:18:30 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/23 12:01:57 by diodos-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ int main(int ac, char **av, char **envp)
 			continue;
 		}
 		cases_quotes(&shell);
+		if (shell.cmd_split[1])
+			free(shell.split_args);
 		builtin_cmd(&shell);
 		clean_program(&shell);
 	}

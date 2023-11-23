@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: diodos-s <diodos-s@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/22 17:29:48 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/23 12:15:22 by diodos-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,14 @@ void	cases_quotes(t_minishell *shell)
 {
 	int	i;
 	int	cmd_quotes;
+	int	dquotes;
+	int squotes;
 	
 	i = 0;
+	dquotes = 0;
+	squotes = 0;
 	cmd_quotes = handle_quotes(shell->cmd_split[0]);
-	if (cmd_quotes && ft_strchr(shell->split_args, '"'))
+	if (cmd_quotes && (ft_strchr(shell->split_args, '"') || ft_strchr(shell->split_args, '\'')))
 	{
 		shell->rl_str = remove_quotes(shell->rl_str);
 		return ;
@@ -114,11 +118,17 @@ void	cases_quotes(t_minishell *shell)
 	{
 		while (shell->cmd_split[i])
 		{
-			if (ft_strchr(shell->cmd_split[i], '"'))
+			if (ft_strchr(shell->cmd_split[i], '"') && !squotes)
+			{
 				shell->cmd_split[i] = remove_quotes(shell->cmd_split[i]);
+				dquotes = !dquotes;
+			}
+			if (ft_strchr(shell->cmd_split[i], '\'') && !dquotes)
+			{
+				shell->cmd_split[i] = remove_quotes(shell->cmd_split[i]);
+				squotes = !squotes;
+			}
 			i++;
 		}
 	}
-	//Double-free problem: e.g: echo "arg" then "echo"
-	free(shell->split_args);
 }
