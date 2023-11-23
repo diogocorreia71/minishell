@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diodos-s <diodos-s@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/23 12:15:22 by diodos-s         ###   ########.fr       */
+/*   Updated: 2023/11/23 14:59:53 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,37 +98,34 @@ char	*remove_quotes(char *rl_str)
 	return (tmp);
 }
 
-void	cases_quotes(t_minishell *shell)
+int cases_quotes(t_minishell *shell)
 {
 	int	i;
 	int	cmd_quotes;
-	int	dquotes;
-	int squotes;
 	
 	i = 0;
-	dquotes = 0;
-	squotes = 0;
-	cmd_quotes = handle_quotes(shell->cmd_split[0]);
+	cmd_quotes = handle_quotes(shell->cmd);
 	if (cmd_quotes && (ft_strchr(shell->split_args, '"') || ft_strchr(shell->split_args, '\'')))
 	{
 		shell->rl_str = remove_quotes(shell->rl_str);
-		return ;
+		return (1);
 	}
 	else
 	{
-		while (shell->cmd_split[i])
+		while (shell->rl_str[i])
 		{
-			if (ft_strchr(shell->cmd_split[i], '"') && !squotes)
+			if (shell->rl_str[i] == '"')
 			{
-				shell->cmd_split[i] = remove_quotes(shell->cmd_split[i]);
-				dquotes = !dquotes;
+				shell->rl_str = remove_quotes(shell->rl_str);
+				break ;
 			}
-			if (ft_strchr(shell->cmd_split[i], '\'') && !dquotes)
+			else if (shell->rl_str[i] == '\'')
 			{
-				shell->cmd_split[i] = remove_quotes(shell->cmd_split[i]);
-				squotes = !squotes;
+				shell->rl_str = remove_quotes(shell->rl_str);
+				break ;
 			}
 			i++;
 		}
 	}
+	return (0);
 }
