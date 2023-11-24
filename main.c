@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/23 15:37:41 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/24 17:12:49 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,75 @@ char	*args_str(t_minishell *shell)
 	return (tmp);
 }
 
+int	split_quotes(char *rl_str)
+{
+	int		nbr_words;
+	int		i;
+	int	dquotes;
+	int	squotes;
+
+	i = -1;
+	nbr_words = 1;
+	dquotes = 0;
+	squotes = 0;
+	while (rl_str[++i])
+	{
+		if (rl_str[i] == '"' && !squotes)
+		{
+			dquotes = !dquotes;
+			if (!dquotes && rl_str[i + 1] == ' ')
+				nbr_words++;
+		}
+		if (rl_str[i] == '\'' && !dquotes)
+		{
+			squotes = !squotes;
+			if (!squotes && rl_str[i + 1] == ' ')
+				nbr_words++;
+		}
+	}
+	return (nbr_words);
+}
+
+int	split_cmd(char *rl_str)
+{
+	static int	dlm;
+	int			dquotes;
+	int			squotes;
+
+	dquotes = 0;
+	squotes = 0;
+	while (rl_str[dlm])
+	{
+		if (rl_str[dlm] == '"' && !squotes)
+		{
+			dquotes = !dquotes;
+			if (!dquotes && rl_str[dlm + 1] == ' ')
+				break ;
+		}
+		if (rl_str[dlm] == '\'' && !dquotes)
+		{
+			squotes = !squotes;
+			if (!squotes && rl_str[dlm + 1] == ' ')
+				break ;
+		}
+		dlm++;
+	}
+	return (dlm);
+}
+
+void	splitamos(t_minishell *shell)
+{
+	int	i;
+	
+	shell->cmd_split = (char **)malloc(sizeof(char *) * (split_quotes(shell->rl_str) + 1));
+	if (shell->cmd_split == NULL)
+		return (NULL);
+	//dlm finish
+	i = split_cmd(shell->rl_str);
+	/* shell->cmd_split[index] = (char *)malloc(sizeof(char) * (i + 1)); */
+	printf("%s\n", shell->cmd_split[0]);
+}
+
 int main(int ac, char **av, char **envp)
 {
 	t_minishell	shell;
@@ -77,13 +146,14 @@ int main(int ac, char **av, char **envp)
 			printf("Invalid Quotes\n");
 			continue;
 		}
+		splitamos(&shell);
 		if (cases_quotes(&shell) == 1)
 		{
 			printf("%s: command not found\n", shell.rl_str);
 			continue;
 		}
-		shell.cmd_split = ft_split(shell.rl_str, ' ');
-		builtin_cmd(&shell);
+		/* shell.cmd_split = ft_split(shell.rl_str, ' '); */
+		/* builtin_cmd(&shell); */
 		//Leaks split_args
 		if (shell.cmd_split[1])
 			free(shell.split_args);

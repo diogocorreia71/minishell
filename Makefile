@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2023/11/22 17:03:47 by rumachad         ###   ########.fr        #
+#    Updated: 2023/11/24 14:07:08 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,13 +22,14 @@ CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
 ${NAME}:	${OBJS}
 			make -C libft
 			ar rcs minishell.a ${OBJS}
+			mv ${OBJS} objs
 			cc ${CFLAGS} minishell.a libft/libft.a -o ${NAME} -lreadline
 
 all: ${NAME}
 
 clean:
 		make clean -C libft
-		rm -f *.o
+		rm -f objs/*.o
 
 fclean: clean
 		rm -f minishell.a minishell libft/libft.a

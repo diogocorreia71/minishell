@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/11/23 15:01:04 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/24 17:07:57 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ typedef struct s_env
 	char		*var_value;
 	struct	s_env *next;
 }				t_env;
-
 
 typedef struct s_minishell
 {
