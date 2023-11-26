@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/23 14:59:53 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/26 19:45:47 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,69 +63,43 @@ int	count_quotes(char *rl_str)
 	return (nbr_quotes);
 }
 
-char	*remove_quotes(char *rl_str)
+char	*remove_quotes(t_cmd *tokens)
 {
 	char	*tmp;
+	char	*word;
 	int		squotes;
 	int		dquotes;
 	int		i;
 	int		k;
 	
-	tmp = (char *)malloc(sizeof(char) * (ft_strlen(rl_str) - count_quotes(rl_str) + 1));
+	while (tokens->type != words)
+		tokens = tokens->next;
+	word = ft_strdup(tokens->token);
+	tmp = (char *)malloc(sizeof(char) * (ft_strlen(tokens->token)
+		- count_quotes(tokens->token) + 1));
 	if (tmp == NULL)
 		return (NULL);
+	free(tokens->token);
 	i = -1;
 	k = 0;
 	squotes = 0;
 	dquotes = 0;
-	while (rl_str[++i] != '\0')
+	while (word[++i] != '\0')
 	{
-		if (rl_str[i] == '"' && !squotes)
+		if (word[i] == '"' && !squotes)
 		{
 			dquotes = !dquotes;
 			continue;
 		}
-		if (rl_str[i] == '\'' && !dquotes)
+		if (word[i] == '\'' && !dquotes)
 		{
 			squotes = !squotes;
 			continue;
 		}
-		tmp[k] = rl_str[i];
+		tmp[k] = word[i];
 		k++;
 	}
 	tmp[k] = '\0';
-	free(rl_str);
+	free(word);
 	return (tmp);
-}
-
-int cases_quotes(t_minishell *shell)
-{
-	int	i;
-	int	cmd_quotes;
-	
-	i = 0;
-	cmd_quotes = handle_quotes(shell->cmd);
-	if (cmd_quotes && (ft_strchr(shell->split_args, '"') || ft_strchr(shell->split_args, '\'')))
-	{
-		shell->rl_str = remove_quotes(shell->rl_str);
-		return (1);
-	}
-	else
-	{
-		while (shell->rl_str[i])
-		{
-			if (shell->rl_str[i] == '"')
-			{
-				shell->rl_str = remove_quotes(shell->rl_str);
-				break ;
-			}
-			else if (shell->rl_str[i] == '\'')
-			{
-				shell->rl_str = remove_quotes(shell->rl_str);
-				break ;
-			}
-			i++;
-		}
-	}
-	return (0);
 }

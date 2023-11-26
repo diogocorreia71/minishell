@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/23 16:42:09 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/26 03:11:08 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,6 @@ void	builtin_cmd(t_minishell *shell)
 		export(shell->env, shell->cmd_split[1]);
 	else if (!ft_strncmp(shell->cmd_split[0], "exit", 5))
 	{
-		if (shell->cmd_split[1])
-			free(shell->split_args);
 		clean_program(shell);
 		free_env(shell->env);
 		exit(EXIT_SUCCESS);

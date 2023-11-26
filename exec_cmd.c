@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: diodos-s <diodos-s@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/23 12:05:55 by diodos-s         ###   ########.fr       */
+/*   Updated: 2023/11/26 20:01:11 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	check_exec(t_minishell *shell, char *path)
 	else if (!access(path, F_OK && X_OK) && shell->rl_str[0] == '/')
 		printf("%s: Is a directory\n", shell->rl_str);
 	else if (access(path, F_OK) == -1)
-		printf("%s: command not found\n", shell->rl_str);
+		printf("%s: command not found\n", shell->cmd_split[0]);
 	exit(1);
 }
 

@@ -1,33 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_mem.c                                         :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/26 19:29:02 by rui              ###   ########.fr       */
+/*   Created: 2023/11/26 19:31:44 by rui               #+#    #+#             */
+/*   Updated: 2023/11/26 19:32:26 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_env(t_env *env)
+int	is_space(char c)
 {
-	t_env	*tmp;
-
-	while (env != NULL)
-	{
-		tmp = env;
-		env = env->next;
-		free(tmp->var);
-		free(tmp->var_value);
-		free(tmp);
-	}	
+	if (c == ' ')
+		return (1);
+	else
+		return (0);
 }
 
-void	clean_program(t_minishell *shell)
+void	free_first(t_cmd **tokens)
 {
-	/* ft_free_dp((void **)shell->cmd_split); */
-	free(shell->rl_str);
+	t_cmd	*tmp;
+
+	tmp = *tokens;
+	*tokens = (*tokens)->next;
+	free(tmp);
 }

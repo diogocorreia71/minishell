@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/11/24 17:07:57 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/26 19:41:40 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,19 @@
 # include <limits.h>
 # include <stdlib.h>
 
+typedef enum s_type
+{
+	words,
+	pipes
+}			t_type;
+
+typedef struct s_cmd
+{
+	char	*token;
+	t_type	type;
+	struct s_cmd *next;
+}			t_cmd;
+
 typedef struct s_env
 {
 	char		*var;
@@ -32,8 +45,6 @@ typedef struct s_env
 typedef struct s_minishell
 {
 	char	*rl_str;
-	char	*cmd;
-	char	*split_args;
 	char	**cmd_split;
 	char	**env_array;
 	t_env	*env;
@@ -57,8 +68,15 @@ void	free_env(t_env *env);
 
 //Handle quotes
 int	cases_quotes(t_minishell *shell);
-char	*remove_quotes(char *rl_str);
+char	*remove_quotes(t_cmd *tokens);
 int		count_quotes(char *rl_str);
 int		handle_quotes(char *str);
+
+//Parser
+t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens);
+
+//Utils
+int	is_space(char c);
+void	free_first(t_cmd **tokens);
 
 #endif

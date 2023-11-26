@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:28:35 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/23 16:27:47 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/26 03:11:23 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	echo(t_minishell *shell)
 	int	flag;
 
 	flag = 0;
-	echo_options(shell->split_args, &flag);
+	/* echo_options(shell->split_args, &flag); */
 	i = 1;
 	if (flag == 1)
 		i = 2;
