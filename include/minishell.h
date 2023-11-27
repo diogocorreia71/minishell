@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/11/26 19:41:40 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/27 15:15:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int		handle_quotes(char *str);
 
 //Parser
 t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens);
+void	free_tokens(t_cmd *tokens);
 
 //Utils
 int	is_space(char c);

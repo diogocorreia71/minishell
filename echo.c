@@ -3,24 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:28:35 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/26 03:11:23 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/27 14:52:36 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	echo_options(char *split_args, int *flag)
+/* void	echo_options(char **cmd_split, int *flag)
 {
 	char	*tmp;
 	int		i;
 	int		k;
 
 	i = 0;
-	while (split_args[i] != ' ' && split_args[i])
-		i++;
+	
 	tmp = (char *)malloc(sizeof(tmp) * (i + 1));
 	if (tmp == NULL)
 		return ;
@@ -37,7 +36,7 @@ void	echo_options(char *split_args, int *flag)
 	else
 		*flag = 0;
 	free(tmp);
-}
+} */
 
 void	echo(t_minishell *shell)
 {
@@ -45,7 +44,13 @@ void	echo(t_minishell *shell)
 	int	flag;
 
 	flag = 0;
-	/* echo_options(shell->split_args, &flag); */
+	if (!shell->cmd_split[1])
+	{
+		printf("\n");
+		return ;
+	}
+	if (!ft_strncmp(shell->cmd_split[1], "-n", 3))
+		flag = 1;
 	i = 1;
 	if (flag == 1)
 		i = 2;

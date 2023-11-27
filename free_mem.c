@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/26 19:29:02 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/27 12:04:02 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,17 @@ void	clean_program(t_minishell *shell)
 {
 	/* ft_free_dp((void **)shell->cmd_split); */
 	free(shell->rl_str);
+}
+
+void	free_tokens(t_cmd *tokens)
+{
+	t_cmd *tmp;
+	
+	while (tokens != NULL)
+	{
+		tmp = tokens;
+		tokens = tokens->next;
+		free(tmp->token);
+		free(tmp);
+	}
 }

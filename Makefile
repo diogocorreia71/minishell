@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rui <rui@student.42.fr>                    +#+  +:+       +#+         #
+#    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2023/11/26 19:41:17 by rui              ###   ########.fr        #
+#    Updated: 2023/11/27 12:30:59 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = minishell
 SRC = main.c builtin.c exec_cmd.c env.c cd.c pwd.c echo.c export.c unset.c \
 		env_utils.c free_mem.c parser.c quotes.c utils.c
 OBJS = ${SRC:.c=.o}
-CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
 
 %.o:	%.c
 		cc ${CFLAGS} -c $< -o $@

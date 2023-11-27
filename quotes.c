@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/26 19:45:47 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/27 14:29:32 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,6 @@ char	*remove_quotes(t_cmd *tokens)
 	int		i;
 	int		k;
 	
-	while (tokens->type != words)
-		tokens = tokens->next;
 	word = ft_strdup(tokens->token);
 	tmp = (char *)malloc(sizeof(char) * (ft_strlen(tokens->token)
 		- count_quotes(tokens->token) + 1));
