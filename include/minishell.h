@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/11/27 15:15:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/29 14:38:13 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,10 @@ int		handle_quotes(char *str);
 //Parser
 t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens);
 void	free_tokens(t_cmd *tokens);
+void	lst_to_array(t_minishell *shell, t_cmd *tokens);
 
 //Utils
-int	is_space(char c);
+int		is_space(char c);
 void	free_first(t_cmd **tokens);
 
 #endif

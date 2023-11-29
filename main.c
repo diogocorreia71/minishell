@@ -6,126 +6,175 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/27 18:50:16 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/29 17:26:37 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	nbr_of_words(t_cmd *tokens)
+char	what_quote(char *str)
 {
 	int	i;
+	int	squotes;
+	int	dquotes;
 
 	i = 0;
-	while (tokens != NULL)
+	dquotes = 0;
+	squotes = 0;
+	while (str[i] == '\'' || str[i] == '"')
 	{
-		tokens = tokens->next;
+		if (str[i] == '\'' && !dquotes)
+			squotes = !squotes;
+		else if (str[i] == '"' && !squotes)
+			dquotes = !dquotes;
 		i++;
 	}
-	return (i);
+	if (!dquotes && squotes)
+		return ('\'');
+	else if (dquotes && !squotes)
+		return ('"');
+	return ('\0');
 }
 
-void	lst_to_array(t_minishell *shell, t_cmd *tokens)
+int	count_ds(char *token)
 {
 	int	i;
+	int	ds_counter;
 
-	shell->cmd_split = (char **)malloc(sizeof(char *) * (nbr_of_words(tokens) + 1));
-	if (shell->cmd_split == NULL)
-		return ;
 	i = 0;
-	while (tokens != NULL)
+	ds_counter = 0;
+	while (token[i])
 	{
-		shell->cmd_split[i] = ft_strdup(tokens->token);
+		if (token[i] == '$')
+			if (token[i + 1] && token[i + 1] != ' ' && token[i + 1] != '"'
+				&& token[i + 1] != '\'')
+				ds_counter++;
 		i++;
-		tokens = tokens->next;
 	}
-	shell->cmd_split[i] = 0;
+	return (ds_counter);
 }
 
-char	*isolate(char *ds_token)
+char	**isolate(char *ds_token)
 {
-	char	*ds;
-	char	*dsign_var;
+	char	**ds_tokens;
 	int		i;
 	int		k;
+	int		tmp;
 
-	ds = ft_strchr(ds_token, '$') + 1;
-	if (ft_isdigit(*ds))
-		return (NULL); //Caso seja $1USER tem de fazer $1
-	i = 0;
-	while (ds[i] != ' ' && ds[i] != '"' && ds[i])
-		i++;
-	/* if (i == 0)
-		return (NULL); */
-	dsign_var = (char *)malloc(sizeof(char) * (i + 1));
-	if (dsign_var == NULL)
-		return (NULL);
-	k = -1;
-	while (++k < i)
-		dsign_var[k] = ds[k];
-	dsign_var[k] = '\0';
-	return (dsign_var);
-}
-
-char	*replace(char *env_val, char *ds_token, char *dsign_var)
-{
-	char	*new_token;
-	int		i;
-	int		j;
-	int		k;
-
-	new_token = (char *)malloc(sizeof(char) * (ft_strlen(ds_token)
-			- ft_strlen(dsign_var) + ft_strlen(env_val)));
-	if (new_token == NULL)
-		return (NULL);
 	i = -1;
 	k = 0;
-	j = 0;
+	ds_tokens = (char **)malloc(sizeof(char *) * (count_ds(ds_token) + 1));
 	while (ds_token[++i])
 	{
-		if (ds_token[i] == '$')
+		if (ds_token[i] == '$' && ds_token[i + 1] && ds_token[i + 1] != ' '
+			&& ds_token[i + 1] != '"' && ds_token[i + 1] != '\'')
 		{
-			while (*env_val != '\0')
-				new_token[k++] = *env_val++;
-			i = i + ft_strlen(dsign_var);
+			tmp = i + 1;
+			while (ds_token[i] != ' ' && ds_token[i] != '"'
+					&& ds_token[i] != '\'' && ds_token[i])
+				i++;
+			ds_tokens[k++] = ft_substr(ds_token, tmp, i - tmp);
 		}
-		else
-			new_token[k++] = ds_token[i];
 	}
-	new_token[k] = '\0';
+	ds_tokens[k] = 0;
+	return (ds_tokens);
+}
+
+void	get_env_val(t_env *env, char **ds_tokens)
+{
+	int		i;
+	char	*env_value;
+
+	i = 0;
+	while (ds_tokens[i])
+	{
+		env_value = get_env(env, ds_tokens[i]);
+		free(ds_tokens[i]);
+		ds_tokens[i] = ft_strdup(env_value);
+		i++;
+	}
+}
+
+int	ds_tokens_len(char **ds_tokens)
+{
+	int	i;
+	int	len;
+
+	len = 0;
+	i = 0;
+	while (ds_tokens[i])
+	{
+		len = ft_strlen(ds_tokens[i]) + len;
+		i++;
+	}
+	return (len + i);
+}
+
+char	*replace(t_cmd *tokens, char **ds_tokens, int len)
+{
+	char	*new_token;
+	int		len2;
+	int		i;
+	int		j;
+	int		l;
+	int		k;
+	
+	len2 = ds_tokens_len(ds_tokens);
+	new_token = (char *)malloc(sizeof(char) * (ft_strlen(tokens->token) - len + len2));
+	i = 0;
+	j = 0;
+	l = 0;
+	while (tokens->token[l])
+	{
+		if (tokens->token[l] == '$')
+		{
+			k = 0;
+			while (ds_tokens[i][k])
+				new_token[j++] = ds_tokens[i][k++];
+			i++;
+			while (tokens->token[l] != ' ' && tokens->token[l] != '"'
+					&& tokens->token[l] != '\'' && tokens->token[l])
+				l++;
+		}
+		new_token[j++] = tokens->token[l++];
+	}
+	new_token[j] = '\0';
+	free(tokens->token);
 	return (new_token);
 }
 
-char	*ds_token(t_env *env, char *ds_token)
+void	ds_token(t_env *env, t_cmd *tokens)
 {
-	char	*env_val;
-	char	*tmp;
-	char	*dsign_var;
-
-	dsign_var = isolate(ds_token);
-	env_val = get_env(env, dsign_var);
-	if (env_val == NULL)
-		return (NULL);
-	tmp = ft_strdup(replace(env_val, ds_token, dsign_var));
-	free(dsign_var);
-	free(ds_token);
-	return (tmp);
+	char	*dsign;
+	char	quote;
+	char	**ds_tokens;
+	int		len;
+	
+	ds_tokens = NULL;
+	dsign = ft_strchr(tokens->token, '$');
+	if (dsign == NULL)
+		return ;
+	if (dsign && !ft_isprint(*(dsign + 1)))
+		return ;
+	quote = what_quote(tokens->token);
+	if (quote == '\'')
+		return ;
+	else if (quote == '"')
+	{
+		ds_tokens = isolate(tokens->token);
+		len = ds_tokens_len(ds_tokens);
+		get_env_val(env, ds_tokens);
+		tokens->token = replace(tokens, ds_tokens, len);
+	}
+	env->var = env->var;
 }
 
 void	expansion(t_minishell *shell , t_cmd *tokens)
-{
-	char	*dsign;
-	
+{	
 	while (tokens)
 	{
 		if (tokens->type == words)
-		{
-			dsign = ft_strchr(tokens->token, '$');
-			if (dsign && ft_isprint(*(dsign + 1)))
-				tokens->token = ds_token(shell->env, tokens->token);
-			if (tokens->token == NULL)
-				return ;
-		}
+			ds_token(shell->env, tokens);
 		tokens = tokens->next;
 	}
 }

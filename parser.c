@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2023/11/26 19:34:39 by rui              ###   ########.fr       */
+/*   Updated: 2023/11/29 14:31:02 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens)
 
 	i = -1;
 	cmd = shell->rl_str;
-	//em relaçao a dar free ou outra maneira
 	tokens = malloc(sizeof(t_cmd));
 	tmp = tokens;
 	while (cmd[++i])
@@ -80,4 +79,34 @@ t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens)
 		i = i + k;
 	}
 	return (tmp);
+}
+
+int	nbr_of_words(t_cmd *tokens)
+{
+	int	i;
+
+	i = 0;
+	while (tokens != NULL)
+	{
+		tokens = tokens->next;
+		i++;
+	}
+	return (i);
+}
+
+void	lst_to_array(t_minishell *shell, t_cmd *tokens)
+{
+	int	i;
+
+	shell->cmd_split = (char **)malloc(sizeof(char *) * (nbr_of_words(tokens) + 1));
+	if (shell->cmd_split == NULL)
+		return ;
+	i = 0;
+	while (tokens != NULL)
+	{
+		shell->cmd_split[i] = ft_strdup(tokens->token);
+		i++;
+		tokens = tokens->next;
+	}
+	shell->cmd_split[i] = 0;
 }
