@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/29 17:26:37 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/30 15:54:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,13 @@ int	count_ds(char *token)
 	while (token[i])
 	{
 		if (token[i] == '$')
-			if (token[i + 1] && token[i + 1] != ' ' && token[i + 1] != '"'
-				&& token[i + 1] != '\'')
 				ds_counter++;
 		i++;
 	}
 	return (ds_counter);
 }
 
-char	**isolate(char *ds_token)
+char	**isolate(char *token)
 {
 	char	**ds_tokens;
 	int		i;
@@ -63,18 +61,18 @@ char	**isolate(char *ds_token)
 
 	i = -1;
 	k = 0;
-	ds_tokens = (char **)malloc(sizeof(char *) * (count_ds(ds_token) + 1));
-	while (ds_token[++i])
+	ds_tokens = (char **)malloc(sizeof(char *) * (count_ds(token) + 1));
+	while (token[++i])
 	{
-		if (ds_token[i] == '$' && ds_token[i + 1] && ds_token[i + 1] != ' '
-			&& ds_token[i + 1] != '"' && ds_token[i + 1] != '\'')
+		if (token[i] == '$')
 		{
-			tmp = i + 1;
-			while (ds_token[i] != ' ' && ds_token[i] != '"'
-					&& ds_token[i] != '\'' && ds_token[i])
+			tmp = i;
+			while (token[i] && token[i] != ' ')
 				i++;
-			ds_tokens[k++] = ft_substr(ds_token, tmp, i - tmp);
+			ds_tokens[k++] = ft_substr(token, tmp, i - tmp);
 		}
+		if (token[i] == '\0')
+			return (ds_tokens[k] = 0, ds_tokens);
 	}
 	ds_tokens[k] = 0;
 	return (ds_tokens);
@@ -85,13 +83,17 @@ void	get_env_val(t_env *env, char **ds_tokens)
 	int		i;
 	char	*env_value;
 
-	i = 0;
-	while (ds_tokens[i])
+	i = -1;
+	while (ds_tokens[++i])
 	{
 		env_value = get_env(env, ds_tokens[i]);
 		free(ds_tokens[i]);
+		if (env_value == NULL)
+		{
+			ds_tokens[i] = ft_strdup("(null)");
+			continue;
+		}
 		ds_tokens[i] = ft_strdup(env_value);
-		i++;
 	}
 }
 
@@ -129,12 +131,20 @@ char	*replace(t_cmd *tokens, char **ds_tokens, int len)
 		if (tokens->token[l] == '$')
 		{
 			k = 0;
-			while (ds_tokens[i][k])
-				new_token[j++] = ds_tokens[i][k++];
+			if (tokens->token[l + 1] && (tokens->token[l + 1] == ' '
+				|| tokens->token[l + 1] == '"' || tokens->token[l + 1] == '\''))
+				new_token[j++] = '$';
+			else if (ds_tokens[i] && ft_strcmp(ds_tokens[i], "(null)"))
+			{
+				while (ds_tokens[i][k])
+					new_token[j++] = ds_tokens[i][k++];
+			}
 			i++;
 			while (tokens->token[l] != ' ' && tokens->token[l] != '"'
 					&& tokens->token[l] != '\'' && tokens->token[l])
 				l++;
+			if (tokens->token[l] == '\0')
+				return (new_token[j] = '\0', new_token);
 		}
 		new_token[j++] = tokens->token[l++];
 	}
@@ -143,12 +153,12 @@ char	*replace(t_cmd *tokens, char **ds_tokens, int len)
 	return (new_token);
 }
 
-void	ds_token(t_env *env, t_cmd *tokens)
+void	expand_ds(t_env *env, t_cmd *tokens)
 {
 	char	*dsign;
 	char	quote;
 	char	**ds_tokens;
-	int		len;
+	/* int		len; */
 	
 	ds_tokens = NULL;
 	dsign = ft_strchr(tokens->token, '$');
@@ -159,12 +169,16 @@ void	ds_token(t_env *env, t_cmd *tokens)
 	quote = what_quote(tokens->token);
 	if (quote == '\'')
 		return ;
-	else if (quote == '"')
+	else
 	{
+		//ft_memmove overhaul
 		ds_tokens = isolate(tokens->token);
-		len = ds_tokens_len(ds_tokens);
+		int i = 0;
+		while (ds_tokens[i])
+			printf("%s\n", ds_tokens[i++]);
+		/* len = ds_tokens_len(ds_tokens);
 		get_env_val(env, ds_tokens);
-		tokens->token = replace(tokens, ds_tokens, len);
+		tokens->token = replace(tokens, ds_tokens, len); */
 	}
 	env->var = env->var;
 }
@@ -174,7 +188,7 @@ void	expansion(t_minishell *shell , t_cmd *tokens)
 	while (tokens)
 	{
 		if (tokens->type == words)
-			ds_token(shell->env, tokens);
+			expand_ds(shell->env, tokens);
 		tokens = tokens->next;
 	}
 }
@@ -194,6 +208,7 @@ int	parser(t_minishell *shell)
 	
 	// 4.Command Expandsion ($)
 	expansion(shell, tokens);
+	return (1);
 	
 	// 5.Quote removal
 	tmp = tokens;

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 12:22:56 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/09 14:59:29 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:49:10 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 
 /* int main()
 {
-	char src[] = "12345";
-	char dest[] = "45678";
+	char src[] = "rumachad";
+	char dest[] = "$USER";
 
-	printf("%s\n", ft_memmove(&dest[0], &src[0], 3));
+	printf("%s\n", (char *)ft_memmove(&dest[0], &src[0], 10));
 } */
