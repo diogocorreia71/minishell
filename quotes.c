@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/27 14:29:32 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/05 15:53:56 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,28 @@ char	*remove_quotes(t_cmd *tokens)
 	tmp[k] = '\0';
 	free(word);
 	return (tmp);
+}
+
+char	what_quote(char *str)
+{
+	int	i;
+	int	squotes;
+	int	dquotes;
+
+	i = 0;
+	dquotes = 0;
+	squotes = 0;
+	while (str[i] == '\'' || str[i] == '"')
+	{
+		if (str[i] == '\'' && !dquotes)
+			squotes = !squotes;
+		else if (str[i] == '"' && !squotes)
+			dquotes = !dquotes;
+		i++;
+	}
+	if (!dquotes && squotes)
+		return ('\'');
+	else if (dquotes && !squotes)
+		return ('"');
+	return ('\0');
 }

@@ -6,35 +6,11 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/30 15:54:12 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/05 17:16:57 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	what_quote(char *str)
-{
-	int	i;
-	int	squotes;
-	int	dquotes;
-
-	i = 0;
-	dquotes = 0;
-	squotes = 0;
-	while (str[i] == '\'' || str[i] == '"')
-	{
-		if (str[i] == '\'' && !dquotes)
-			squotes = !squotes;
-		else if (str[i] == '"' && !squotes)
-			dquotes = !dquotes;
-		i++;
-	}
-	if (!dquotes && squotes)
-		return ('\'');
-	else if (dquotes && !squotes)
-		return ('"');
-	return ('\0');
-}
 
 int	count_ds(char *token)
 {
@@ -52,166 +28,143 @@ int	count_ds(char *token)
 	return (ds_counter);
 }
 
-char	**isolate(char *token)
+char	*get_env_val(t_env *env, char *str)
 {
-	char	**ds_tokens;
-	int		i;
-	int		k;
-	int		tmp;
-
-	i = -1;
-	k = 0;
-	ds_tokens = (char **)malloc(sizeof(char *) * (count_ds(token) + 1));
-	while (token[++i])
-	{
-		if (token[i] == '$')
-		{
-			tmp = i;
-			while (token[i] && token[i] != ' ')
-				i++;
-			ds_tokens[k++] = ft_substr(token, tmp, i - tmp);
-		}
-		if (token[i] == '\0')
-			return (ds_tokens[k] = 0, ds_tokens);
-	}
-	ds_tokens[k] = 0;
-	return (ds_tokens);
-}
-
-void	get_env_val(t_env *env, char **ds_tokens)
-{
-	int		i;
 	char	*env_value;
 
-	i = -1;
-	while (ds_tokens[++i])
-	{
-		env_value = get_env(env, ds_tokens[i]);
-		free(ds_tokens[i]);
-		if (env_value == NULL)
-		{
-			ds_tokens[i] = ft_strdup("(null)");
-			continue;
-		}
-		ds_tokens[i] = ft_strdup(env_value);
-	}
+	env_value = get_env(env, str);
+	if (env_value == NULL)
+		return (NULL);
+	return (ft_strdup(env_value));
 }
 
-int	ds_tokens_len(char **ds_tokens)
+char	*get_var(char *token)
 {
 	int	i;
-	int	len;
 
-	len = 0;
 	i = 0;
-	while (ds_tokens[i])
-	{
-		len = ft_strlen(ds_tokens[i]) + len;
+	while (token[i] && token[i] != ' ' && token[i] != '"')
 		i++;
-	}
-	return (len + i);
+	return (ft_substr(token, 0, i));
 }
 
-char	*replace(t_cmd *tokens, char **ds_tokens, int len)
+char	*mk_str(char *token)
 {
-	char	*new_token;
-	int		len2;
+	char	*tmp;
 	int		i;
-	int		j;
-	int		l;
 	int		k;
-	
-	len2 = ds_tokens_len(ds_tokens);
-	new_token = (char *)malloc(sizeof(char) * (ft_strlen(tokens->token) - len + len2));
+
 	i = 0;
-	j = 0;
-	l = 0;
-	while (tokens->token[l])
+	while (token[i] != *ft_strchr(token, '$'))
+		i++;
+	tmp = (char *)malloc(sizeof(char) * (i + 1));
+	k = 0;
+	while (k < i)
 	{
-		if (tokens->token[l] == '$')
-		{
-			k = 0;
-			if (tokens->token[l + 1] && (tokens->token[l + 1] == ' '
-				|| tokens->token[l + 1] == '"' || tokens->token[l + 1] == '\''))
-				new_token[j++] = '$';
-			else if (ds_tokens[i] && ft_strcmp(ds_tokens[i], "(null)"))
-			{
-				while (ds_tokens[i][k])
-					new_token[j++] = ds_tokens[i][k++];
-			}
-			i++;
-			while (tokens->token[l] != ' ' && tokens->token[l] != '"'
-					&& tokens->token[l] != '\'' && tokens->token[l])
-				l++;
-			if (tokens->token[l] == '\0')
-				return (new_token[j] = '\0', new_token);
-		}
-		new_token[j++] = tokens->token[l++];
+		tmp[k] = token[k];
+		k++;
 	}
-	new_token[j] = '\0';
-	free(tokens->token);
-	return (new_token);
+	return (tmp);
 }
 
-void	expand_ds(t_env *env, t_cmd *tokens)
+char	*replace(t_ds *ds, char *token)
+{
+	char	*tmp;
+	int		i;
+
+	i = 0;
+	// 1. Alocar memoria 1 de memoria aqui, 
+	// 2. depois criar funcao que copie ate ao $ e usar strjoin
+	// 3. Copiar ate ao $, depois usar o strjoin para copiar o val, depois repetir
+	tmp = mk_str(token);
+	while (tmp)
+	{
+		ft_strjoin(tmp, ds->val[i++]);
+	}
+}
+
+char	*isolate(t_env *env, char *token)
+{
+	t_ds	ds;
+	char	*tmp;
+	char	*var;
+	int		i;
+
+	i = 0;
+	ft_memset((void *)&ds, 0, sizeof(t_ds));
+	ds.val = (char **)malloc(sizeof(char *) * (count_ds(token) + 1));
+	tmp = ft_strchr(token, '$');
+	while (tmp)
+	{
+		tmp++;
+		var = get_var(tmp);
+		ds.len_var = ft_strlen(var) + ds.len_var;
+		ds.val[i++] = get_env_val(env, var);
+		tmp = ft_strchr(tmp, '$');
+		free(var);
+	}
+	ds.val[i] = 0;
+	ds.len_var = ds.len_var + i;
+	return (replace(&ds, token));
+}
+
+void	expand_ds(t_env *env, t_cmd arg)
 {
 	char	*dsign;
 	char	quote;
-	char	**ds_tokens;
-	/* int		len; */
+	int		i;
 	
-	ds_tokens = NULL;
-	dsign = ft_strchr(tokens->token, '$');
-	if (dsign == NULL)
-		return ;
+	i = 0;
+	dsign = ft_strchr(arg.token, '$');
 	if (dsign && !ft_isprint(*(dsign + 1)))
 		return ;
-	quote = what_quote(tokens->token);
+	quote = what_quote(arg.token);
 	if (quote == '\'')
 		return ;
 	else
-	{
-		//ft_memmove overhaul
-		ds_tokens = isolate(tokens->token);
-		int i = 0;
-		while (ds_tokens[i])
-			printf("%s\n", ds_tokens[i++]);
-		/* len = ds_tokens_len(ds_tokens);
-		get_env_val(env, ds_tokens);
-		tokens->token = replace(tokens, ds_tokens, len); */
-	}
-	env->var = env->var;
+		dsign = isolate(env, arg.token);
+	printf("%s\n", dsign);
 }
 
-void	expansion(t_minishell *shell , t_cmd *tokens)
+void	expansion(t_minishell *shell, t_cmd *args)
 {	
-	while (tokens)
+	t_cmd	*tmp;
+
+	tmp = args;
+	while (tmp)
 	{
-		if (tokens->type == words)
-			expand_ds(shell->env, tokens);
-		tokens = tokens->next;
+		if (tmp->type == words && ft_strchr(tmp->token, '$'))
+			tmp->type = words_ds;
+		tmp = tmp->next;
+	}
+	tmp = args;
+	while (tmp)
+	{
+		if (tmp->type == words_ds)
+			expand_ds(shell->env, *tmp);
+		tmp = tmp->next;
 	}
 }
 
 int	parser(t_minishell *shell)
 {
-	t_cmd	*tokens;
+	t_cmd	*args;
 	t_cmd	*tmp;
 	
-	tokens = NULL;
+	args = NULL;
 	if (handle_quotes(shell->rl_str) == 1)
 		return (printf("Invalid Quotes\n"), 1);
 
 	// 2.Tokenization 3.Command Identification
-	tokens = make_tokens(shell, tokens);
-	free_first(&tokens);
+	args = make_tokens(shell, args);
+	free_first(&args);
 	
 	// 4.Command Expandsion ($)
-	expansion(shell, tokens);
+	expansion(shell, args);
 	return (1);
 	
 	// 5.Quote removal
-	tmp = tokens;
+	tmp = args;
 	while (tmp)
 	{
 		tmp->token = remove_quotes(tmp);
@@ -220,8 +173,8 @@ int	parser(t_minishell *shell)
 	// 6.Redirections (>, <)
 
 	// 7.Preparing command execution
-	lst_to_array(shell, tokens);
-	free_tokens(tokens);
+	lst_to_array(shell, args);
+	free_tokens(args);
 	return (0);
 }
 
