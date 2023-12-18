@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/06 14:47:50 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/18 09:51:53 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,16 @@ typedef enum s_type
 
 typedef struct s_cmd
 {
-	char	*token;
-	t_type	type;
-	struct s_cmd *next;
+	char			*token;
+	t_type			type;
+	struct s_cmd	*next;
 }			t_cmd;
 
 typedef struct s_env
 {
-	char		*var;
-	char		*var_value;
-	struct	s_env *next;
+	char			*var;
+	char			*var_value;
+	struct s_env	*next;
 }				t_env;
 
 typedef struct s_minishell
@@ -54,9 +54,9 @@ typedef struct s_minishell
 void	builtin_cmd(t_minishell *shell);
 void	non_builtin(t_minishell *shell);
 
-
 //env
 t_env	*dup_env(char **envp);
+
 //env_utils
 char	*get_env(t_env *env, char *var_str);
 t_env	*get_env_node(t_env *env, char *key);

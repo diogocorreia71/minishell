@@ -6,13 +6,11 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/06 14:47:08 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/18 15:29:54 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
 
 int	parser(t_minishell *shell)
 {
@@ -20,6 +18,7 @@ int	parser(t_minishell *shell)
 	t_cmd	*tmp;
 	
 	args = NULL;
+	add_history(shell->rl_str);
 	if (handle_quotes(shell->rl_str) == 1)
 		return (printf("Invalid Quotes\n"), 1);
 
@@ -27,7 +26,7 @@ int	parser(t_minishell *shell)
 	args = make_tokens(shell, args);
 	free_first(&args);
 	
-	// 4.Command Expandsion ($)
+	// 4.Command Expandsion ($, ~)
 	expansion(shell, args);
 	
 	// 5.Quote removal
@@ -59,12 +58,10 @@ int main(int ac, char **av, char **envp)
 		shell.rl_str = readline("minishell$ ");
 		if (ft_strlen(shell.rl_str) == 0)
 			continue;
-		add_history(shell.rl_str);
 		if (parser(&shell) == 1)
 			continue;
 		builtin_cmd(&shell);
 		ft_free_dp((void **)(shell.cmd_split));
-		//Leaks
+		free(shell.rl_str);
 	}
-	clean_program(&shell);
 }

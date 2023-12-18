@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:28:35 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/06 14:39:08 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/18 11:25:11 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	echo(t_minishell *shell)
 	while (shell->cmd_split[i])
 	{
 		printf("%s", shell->cmd_split[i]);
-		if (ft_strlen(shell->cmd_split[i]) && shell->cmd_split[i + 1] != NULL)
+		if (/* ft_strlen(shell->cmd_split[i])  */ shell->cmd_split[i + 1] != NULL)
 			printf(" ");
 		i++;
 	}

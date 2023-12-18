@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/06 14:47:13 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/18 15:26:17 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,21 +76,67 @@ void	isolate(t_env *env, char **token)
 	}
 }
 
+char	*nwtk_tilde(char *val)
+{
+	char	*new_tk;
+	int		i;
+
+	i = -1;
+	new_tk = (char *)malloc(sizeof(char) * (ft_strlen(val) + 1));
+	if (new_tk == NULL)
+		return (NULL);
+	while (val[++i])
+		new_tk[i] = val[i];
+	new_tk[i] = '\0';
+	free(val);
+	return (new_tk);
+}
+
+void	expand_tilde(t_env *env, char **token)
+{
+	char	*val;
+	char	*tmp;
+	int		i;
+	
+	i = -1;
+	if (!ft_strncmp(*token, "~+", 3))
+		val = get_env_val(env, "PWD");
+	else if (!ft_strncmp(*token, "~-", 3))
+		val = get_env_val(env, "OLDPWD");
+	else if (!ft_strncmp(*token, "~", 2))
+		val = get_env_val(env, "HOME");
+	else if (!ft_strncmp(*token, "~/", 2))
+	{
+		val = get_env_val(env, "HOME");
+		tmp = ft_strjoin(val, ft_strchr(*token, '/'));
+		free(val);
+		free(*token);
+		*token = tmp;
+		return ;
+	}
+	else
+		return ;
+	free(*token);
+	*token = nwtk_tilde(val);
+}
+
 void	expand_ds(t_env *env, t_cmd *arg)
 {
 	char	*dsign;
-	char	quote;
 	int		i;
 	
 	i = 0;
+	if (what_quote(arg->token) == '\'')
+		return ;
+	if (ft_strchr(arg->token, '~') && what_quote(arg->token) == '\0')
+	{
+		expand_tilde(env, &arg->token);
+		return ;
+	}
 	dsign = ft_strchr(arg->token, '$');
-	if (dsign && !ft_isprint(*(dsign + 1)))
+	if (!dsign || (dsign && !ft_isprint(*(dsign + 1))))
 		return ;
-	quote = what_quote(arg->token);
-	if (quote == '\'')
-		return ;
-	else
-		isolate(env, &arg->token);
+	isolate(env, &arg->token);
 }
 
 void	expansion(t_minishell *shell, t_cmd *args)
@@ -100,7 +146,8 @@ void	expansion(t_minishell *shell, t_cmd *args)
 	tmp = args;
 	while (tmp)
 	{
-		if (tmp->type == words && ft_strchr(tmp->token, '$'))
+		if (tmp->type == words && (ft_strchr(tmp->token, '$') 
+			|| ft_strchr(tmp->token, '~')))
 			tmp->type = words_ds;
 		tmp = tmp->next;
 	}
