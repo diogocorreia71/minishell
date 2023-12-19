@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/19 12:59:29 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/19 23:14:08 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,10 @@ char	what_quote(char *str);
 t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens);
 void	free_tokens(t_cmd *tokens);
 void	lst_to_array(t_minishell *shell, t_cmd *tokens);
+
+//Pipes
+int		start_pipes(t_minishell *shell, int nbr_pipes);
+int		count_pipes(t_minishell *shell);
 
 //Expansion
 void	expansion(t_minishell *shell, t_cmd *args);

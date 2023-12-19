@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/19 16:18:12 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/19 23:11:16 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,78 +51,6 @@ int	parser(t_minishell *shell)
 		printf("%s\n", shell->cmd_split[i++]);
 	return (1);
 	free_tokens(args); */
-	return (0);
-}
-
-int	count_pipes(t_minishell *shell)
-{
-	t_cmd	*args;
-	int		nbr_pipes;
-	
-	args = shell->args;
-	nbr_pipes = 0;
-	while (args != NULL)
-	{
-		if (args->type == pipes)
-			nbr_pipes++;
-		args = args->next;
-	}
-	return (nbr_pipes);
-}
-
-int	start_pipes(t_minishell *shell, int nbr_pipes)
-{
-	int		fd[2];
-	pid_t	*pipe_pid;
-	int		i;
-	t_cmd	*args;
-
-	i = 0;
-	while (i < nbr_pipes)
-	{
-		if (pipe(fd) == -1)
-			return (1);
-		i++;
-	}
-	pipe_pid = (pid_t *)malloc(sizeof(pid_t) * (nbr_pipes + 2));
-	i = 0;
-	args = shell->args;
-	while (i < nbr_pipes + 1)
-	{
-		pipe_pid[i] = fork();
-		if (pipe_pid[i] == -1)
-			return (2);
-		if (pipe_pid[i] == 0)
-		{
-			lst_to_array(shell, args);
-			if (i == nbr_pipes)
-			{
-				dup2(fd[0], STDIN_FILENO);
-				close(fd[0]);
-				close(fd[1]);
-			}
-			else
-			{
-				dup2(fd[1], STDOUT_FILENO);
-				close(fd[1]);
-				close(fd[0]);
-			}
-			builtin_cmd(shell);
-			ft_free_dp((void **)(shell->cmd_split));
-			exit(0);
-		}
-		while (args != NULL && args->type != pipes)
-			args = args->next;
-		if (args != NULL && args->type == pipes)
-			args = args->next;
-		i++;
-	}
-	close(fd[0]);
-	close(fd[1]);
-	i = 0;
-	while (i < nbr_pipes + 1)
-		waitpid(pipe_pid[i++], NULL, 0);
-	free(pipe_pid);
 	return (0);
 }
 

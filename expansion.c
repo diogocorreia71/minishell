@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/18 15:26:17 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/19 23:13:35 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,7 @@ void	isolate(t_env *env, char **token)
 {
 	char	*var;
 	char	*val;
-	int		i;
 
-	i = 0;
 	while (ft_strchr(*token, '$'))
 	{
 		var = get_var(*token);
@@ -96,9 +94,7 @@ void	expand_tilde(t_env *env, char **token)
 {
 	char	*val;
 	char	*tmp;
-	int		i;
-	
-	i = -1;
+
 	if (!ft_strncmp(*token, "~+", 3))
 		val = get_env_val(env, "PWD");
 	else if (!ft_strncmp(*token, "~-", 3))
@@ -123,9 +119,7 @@ void	expand_tilde(t_env *env, char **token)
 void	expand_ds(t_env *env, t_cmd *arg)
 {
 	char	*dsign;
-	int		i;
-	
-	i = 0;
+
 	if (what_quote(arg->token) == '\'')
 		return ;
 	if (ft_strchr(arg->token, '~') && what_quote(arg->token) == '\0')
