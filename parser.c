@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2023/12/18 11:25:45 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/19 13:19:44 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	nbr_of_words(t_cmd *tokens)
 	int	i;
 
 	i = 0;
-	while (tokens != NULL)
+	while (tokens != NULL && tokens->type != pipes)
 	{
 		tokens = tokens->next;
 		i++;
@@ -102,7 +102,7 @@ void	lst_to_array(t_minishell *shell, t_cmd *tokens)
 	if (shell->cmd_split == NULL)
 		return ;
 	i = 0;
-	while (tokens != NULL)
+	while (tokens != NULL && tokens->type != pipes)
 	{
 		shell->cmd_split[i] = ft_strdup(tokens->token);
 		i++;

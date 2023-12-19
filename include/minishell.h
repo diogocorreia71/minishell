@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/18 09:51:53 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/19 12:59:29 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_minishell
 	char	*rl_str;
 	char	**cmd_split;
 	char	**env_array;
+	t_cmd	*args;
 	t_env	*env;
 }				t_minishell;
 
