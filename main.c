@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/19 15:16:16 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/19 16:18:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	parser(t_minishell *shell)
 	free_first(&args);
 	/* while (args != NULL)
 	{
-		printf("%s\n", args->token);
+		printf("%d\n", args->token);
 		args = args->next;
 	}
 	return (1); */
@@ -77,16 +77,13 @@ int	start_pipes(t_minishell *shell, int nbr_pipes)
 	int		i;
 	t_cmd	*args;
 
-	/* int	i;
-
 	i = 0;
 	while (i < nbr_pipes)
 	{
-		pipe(fd);
+		if (pipe(fd) == -1)
+			return (1);
 		i++;
-	} */
-	if (pipe(fd) == -1)
-		return (1);
+	}
 	pipe_pid = (pid_t *)malloc(sizeof(pid_t) * (nbr_pipes + 2));
 	i = 0;
 	args = shell->args;
@@ -98,18 +95,34 @@ int	start_pipes(t_minishell *shell, int nbr_pipes)
 		if (pipe_pid[i] == 0)
 		{
 			lst_to_array(shell, args);
-			int i = 0;
-			while (shell->cmd_split[i])
-				printf("%s\n", shell->cmd_split[i++]);
+			if (i == nbr_pipes)
+			{
+				dup2(fd[0], STDIN_FILENO);
+				close(fd[0]);
+				close(fd[1]);
+			}
+			else
+			{
+				dup2(fd[1], STDOUT_FILENO);
+				close(fd[1]);
+				close(fd[0]);
+			}
+			builtin_cmd(shell);
+			ft_free_dp((void **)(shell->cmd_split));
 			exit(0);
 		}
 		while (args != NULL && args->type != pipes)
 			args = args->next;
-		/* if (args->type == pipes)
-			args = args->next; */
+		if (args != NULL && args->type == pipes)
+			args = args->next;
 		i++;
-		/* printf("%s\n", args->token); */
 	}
+	close(fd[0]);
+	close(fd[1]);
+	i = 0;
+	while (i < nbr_pipes + 1)
+		waitpid(pipe_pid[i++], NULL, 0);
+	free(pipe_pid);
 	return (0);
 }
 
@@ -121,11 +134,14 @@ void	check_pipe(t_minishell *shell)
 	if (nbr_pipes == 0)
 	{
 		lst_to_array(shell, shell->args);
+		builtin_cmd(shell);
+		ft_free_dp((void **)(shell->cmd_split));
 		free_tokens(shell->args);
 	}
 	else
 	{
 		start_pipes(shell, nbr_pipes);
+		free_tokens(shell->args);
 	}
 }
 
@@ -146,9 +162,6 @@ int main(int ac, char **av, char **envp)
 		if (parser(&shell) == 1)
 			continue;
 		check_pipe(&shell);
-		return (0);
-		builtin_cmd(&shell);
-		ft_free_dp((void **)(shell.cmd_split));
 		free(shell.rl_str);
 	}
 }
