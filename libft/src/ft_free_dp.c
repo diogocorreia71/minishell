@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:44:14 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/09 14:53:33 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/20 15:52:42 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@ void	ft_free_dp(void **arg)
 {
 	int	i;
 
-	i = -1;
-	while (arg[++i])
+	i = 0;
+	while (arg[i] != NULL && arg[i] != 0)
+	{
 		free(arg[i]);
+		i++;
+	}
 	free(arg);
 }

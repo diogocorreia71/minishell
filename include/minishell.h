@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/19 23:14:08 by rui              ###   ########.fr       */
+/*   Updated: 2023/12/20 15:37:26 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ typedef enum s_type
 	pipes,
 	words_ds
 }			t_type;
+
+typedef struct s_pipe
+{
+	pid_t	*pipe_pid;
+	int		nbr_pipes;
+	int		**fd;
+}				t_pipe;
 
 typedef struct s_cmd
 {
@@ -81,7 +88,8 @@ void	free_tokens(t_cmd *tokens);
 void	lst_to_array(t_minishell *shell, t_cmd *tokens);
 
 //Pipes
-int		start_pipes(t_minishell *shell, int nbr_pipes);
+int		start_pipes(t_minishell *shell, t_pipe *info);
+void	init_fd_pipes(t_pipe *info);
 int		count_pipes(t_minishell *shell);
 
 //Expansion

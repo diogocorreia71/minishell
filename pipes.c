@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 23:00:23 by rui               #+#    #+#             */
-/*   Updated: 2023/12/19 23:10:47 by rui              ###   ########.fr       */
+/*   Updated: 2023/12/20 15:59:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,62 +28,71 @@ int	count_pipes(t_minishell *shell)
 	return (nbr_pipes);
 }
 
-void	init_fd(int *fd, int flag)
+void	init_fd_pipes(t_pipe *info)
 {
-	if (flag == 0)
+	int		i;
+	
+	info->fd = (int **)malloc(sizeof(int *) * (info->nbr_pipes + 1));
+	if (info->fd == NULL)
+		return (perror("Malloc fd error\n"));
+	info->pipe_pid = (pid_t *)malloc(sizeof(pid_t) * (info->nbr_pipes + 1));
+	if (info->pipe_pid == NULL)
+		return (perror("Malloc pipe_pid error\n"));
+	i = -1;
+	while (++i < info->nbr_pipes)
 	{
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[0]);
-		close(fd[1]);
+		info->fd[i] = (int *)malloc(sizeof(int) * 2);
+		if (info->fd[i] == NULL)
+			return (perror("Malloc fd 2 error\n"));
 	}
-	else
+	info->fd[i] = 0;
+	i = 0;
+	while (i < info->nbr_pipes)
 	{
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
-		close(fd[0]);
+		if (pipe(info->fd[i]) == -1)
+			return (perror("Pipe creation error\n"));
+		i++;
 	}
 }
 
-pid_t	*init_pipes(int *fd, int nbr_pipes)
+void	open_fd(int **fd, int position, int nbr_pipes)
 {
-	pid_t	*pipe_pid;
-	int		i;
-	
+	int	i;
+
+	if (position == 0)
+		dup2(fd[position][1], STDOUT_FILENO);
+	else if (position < nbr_pipes)
+	{
+		dup2(fd[position - 1][0], STDIN_FILENO);
+		dup2(fd[position][1], STDOUT_FILENO);
+	}
+	else
+		dup2(fd[position - 1][0], STDIN_FILENO);
 	i = 0;
 	while (i < nbr_pipes)
 	{
-		if (pipe(fd) == -1)
-			return (NULL);
+		close(fd[i][0]);
+		close(fd[i][1]);
 		i++;
 	}
-	pipe_pid = (pid_t *)malloc(sizeof(pid_t) * (nbr_pipes + 2));
-	return (pipe_pid);
 }
 
-int	start_pipes(t_minishell *shell, int nbr_pipes)
+int	start_pipes(t_minishell *shell, t_pipe *info)
 {
-	pid_t	*pipe_pid;
 	t_cmd	*args;
-	int		fd[2];
 	int		i;
 
-	pipe_pid = init_pipes(fd, nbr_pipes);
-	if (pipe_pid == NULL)
-		return (1);
 	i = 0;
 	args = shell->args;
-	while (i < nbr_pipes + 1)
+	while (i < (info->nbr_pipes + 1))
 	{
-		pipe_pid[i] = fork();
-		if (pipe_pid[i] == -1)
-			return (2);
-		if (pipe_pid[i] == 0)
+		info->pipe_pid[i] = fork();
+		if (info->pipe_pid[i] == -1)
+			perror("Start pipe fork error");
+		if (info->pipe_pid[i] == 0)
 		{
 			lst_to_array(shell, args);
-			if (i == nbr_pipes)
-				init_fd(fd, 0);
-			else
-				init_fd(fd, 1);
+			open_fd(info->fd, i, info->nbr_pipes);
 			builtin_cmd(shell);
 			ft_free_dp((void **)(shell->cmd_split));
 			exit(0);
@@ -94,11 +103,5 @@ int	start_pipes(t_minishell *shell, int nbr_pipes)
 			args = args->next;
 		i++;
 	}
-	close(fd[0]);
-	close(fd[1]);
-	i = 0;
-	while (i < nbr_pipes + 1)
-		waitpid(pipe_pid[i++], NULL, 0);
-	free(pipe_pid);
 	return (0);
 }

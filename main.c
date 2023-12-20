@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/19 23:11:16 by rui              ###   ########.fr       */
+/*   Updated: 2023/12/20 15:41:31 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,28 @@ int	parser(t_minishell *shell)
 	return (0);
 }
 
+void	close_wait(t_pipe *info)
+{
+	int	i;
+	
+	i = 0;
+	while (i < info->nbr_pipes)
+	{
+		close(info->fd[i][0]);
+		close(info->fd[i][1]);
+		i++;
+	}
+	i = 0;
+	while (i < info->nbr_pipes + 1)
+		waitpid(info->pipe_pid[i++], NULL, 0);
+}
+
 void	check_pipe(t_minishell *shell)
 {
-	int	nbr_pipes;
+	t_pipe	info;
 	
-	nbr_pipes = count_pipes(shell);
-	if (nbr_pipes == 0)
+	info.nbr_pipes = count_pipes(shell);
+	if (info.nbr_pipes == 0)
 	{
 		lst_to_array(shell, shell->args);
 		builtin_cmd(shell);
@@ -68,7 +84,11 @@ void	check_pipe(t_minishell *shell)
 	}
 	else
 	{
-		start_pipes(shell, nbr_pipes);
+		init_fd_pipes(&info);
+		start_pipes(shell, &info);
+		close_wait(&info);
+		ft_free_dp((void **)info.fd);
+		free(info.pipe_pid);
 		free_tokens(shell->args);
 	}
 }
