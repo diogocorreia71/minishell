@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/05 15:53:56 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/20 16:39:36 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	count_quotes(char *rl_str)
 	return (nbr_quotes);
 }
 
-char	*remove_quotes(t_cmd *tokens)
+char	*remove_quotes(char *str)
 {
 	char	*tmp;
 	char	*word;
@@ -72,12 +72,12 @@ char	*remove_quotes(t_cmd *tokens)
 	int		i;
 	int		k;
 	
-	word = ft_strdup(tokens->token);
-	tmp = (char *)malloc(sizeof(char) * (ft_strlen(tokens->token)
-		- count_quotes(tokens->token) + 1));
+	word = ft_strdup(str);
+	tmp = (char *)malloc(sizeof(char) * (ft_strlen(str)
+		- count_quotes(str) + 1));
 	if (tmp == NULL)
 		return (NULL);
-	free(tokens->token);
+	free(str);
 	i = -1;
 	k = 0;
 	squotes = 0;

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/20 15:37:26 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/20 16:37:00 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	free_env(t_env *env);
 
 //Handle quotes
 int		cases_quotes(t_minishell *shell);
-char	*remove_quotes(t_cmd *tokens);
+char	*remove_quotes(char *str);
 int		count_quotes(char *rl_str);
 int		handle_quotes(char *str);
 char	what_quote(char *str);

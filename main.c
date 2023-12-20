@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/20 15:41:31 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/20 16:35:52 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	parser(t_minishell *shell)
 	tmp = args;
 	while (tmp)
 	{
-		tmp->token = remove_quotes(tmp);
+		tmp->token = remove_quotes(tmp->token);
 		tmp = tmp->next;
 	}
 	// 6.Redirections (>, <)
