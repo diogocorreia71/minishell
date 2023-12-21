@@ -6,24 +6,24 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 23:00:23 by rui               #+#    #+#             */
-/*   Updated: 2023/12/20 15:59:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/21 11:58:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	count_pipes(t_minishell *shell)
+int	count_pipes(t_cmd *args)
 {
-	t_cmd	*args;
+	t_cmd	*tmp;
 	int		nbr_pipes;
 	
-	args = shell->args;
+	tmp = args;
 	nbr_pipes = 0;
-	while (args != NULL)
+	while (tmp != NULL)
 	{
-		if (args->type == pipes)
+		if (tmp->type == pipes)
 			nbr_pipes++;
-		args = args->next;
+		tmp = tmp->next;
 	}
 	return (nbr_pipes);
 }
@@ -77,13 +77,13 @@ void	open_fd(int **fd, int position, int nbr_pipes)
 	}
 }
 
-int	start_pipes(t_minishell *shell, t_pipe *info)
+int	start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args)
 {
-	t_cmd	*args;
+	t_cmd	*tmp;
 	int		i;
 
 	i = 0;
-	args = shell->args;
+	tmp = args;
 	while (i < (info->nbr_pipes + 1))
 	{
 		info->pipe_pid[i] = fork();
@@ -91,16 +91,16 @@ int	start_pipes(t_minishell *shell, t_pipe *info)
 			perror("Start pipe fork error");
 		if (info->pipe_pid[i] == 0)
 		{
-			lst_to_array(shell, args);
+			lst_to_array(shell, tmp);
 			open_fd(info->fd, i, info->nbr_pipes);
 			builtin_cmd(shell);
 			ft_free_dp((void **)(shell->cmd_split));
 			exit(0);
 		}
-		while (args != NULL && args->type != pipes)
-			args = args->next;
-		if (args != NULL && args->type == pipes)
-			args = args->next;
+		while (tmp != NULL && tmp->type != pipes)
+			tmp = tmp->next;
+		if (tmp != NULL && tmp->type == pipes)
+			tmp = tmp->next;
 		i++;
 	}
 	return (0);

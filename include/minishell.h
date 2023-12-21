@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/20 16:37:00 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/21 16:00:35 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ typedef struct s_minishell
 	char	*rl_str;
 	char	**cmd_split;
 	char	**env_array;
-	t_cmd	*args;
 	t_env	*env;
 }				t_minishell;
 
@@ -67,6 +66,7 @@ t_env	*dup_env(char **envp);
 
 //env_utils
 char	*get_env(t_env *env, char *var_str);
+char	*get_env_val(t_env *env, char *str);
 t_env	*get_env_node(t_env *env, char *key);
 t_env	*create_node(char *tmp, char *tmp2);
 t_env	*env_last(t_env *env);
@@ -88,9 +88,9 @@ void	free_tokens(t_cmd *tokens);
 void	lst_to_array(t_minishell *shell, t_cmd *tokens);
 
 //Pipes
-int		start_pipes(t_minishell *shell, t_pipe *info);
+int		start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args);
 void	init_fd_pipes(t_pipe *info);
-int		count_pipes(t_minishell *shell);
+int		count_pipes(t_cmd *args);
 
 //Expansion
 void	expansion(t_minishell *shell, t_cmd *args);

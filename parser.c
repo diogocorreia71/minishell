@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2023/12/19 13:19:44 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/21 11:54:49 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	lst_to_array(t_minishell *shell, t_cmd *tokens)
 
 	shell->cmd_split = (char **)malloc(sizeof(char *) * (nbr_of_words(tokens) + 1));
 	if (shell->cmd_split == NULL)
-		return ;
+		return (perror("Malloc cmd_split error\n"));
 	i = 0;
 	while (tokens != NULL && tokens->type != pipes)
 	{

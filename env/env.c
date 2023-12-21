@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/10 14:48:31 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/21 12:54:41 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,16 @@ t_env	*dup_env(char **envp)
 	return (head);
 }
 
-void	env(t_env *env)
+void	env(t_env *env, char **cmd_split)
 {
+	if (cmd_split[1])
+	{
+		ft_putstr_fd(cmd_split[0], STDERR_FILENO);
+		ft_putstr_fd(": '", STDERR_FILENO);
+		ft_putstr_fd(cmd_split[1], STDERR_FILENO);
+		ft_putstr_fd("': No such file or directory\n", STDERR_FILENO);
+		return ;
+	}
 	while (env)
 	{
 		printf("%s=", env->var);

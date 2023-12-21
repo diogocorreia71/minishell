@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:31:18 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/10 14:56:25 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/21 12:57:54 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	pwd(void)
 {
 	char	*dir;
-	
+
 	dir = getcwd(NULL, 0);
 	printf("%s\n", dir);
 	free(dir);

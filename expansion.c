@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/19 23:13:35 by rui              ###   ########.fr       */
+/*   Updated: 2023/12/21 17:28:03 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,11 @@ void	isolate(t_env *env, char **token)
 
 	while (ft_strchr(*token, '$'))
 	{
+		//ex: $HOME, var = HOME
 		var = get_var(*token);
 		val = get_env_val(env, var);
 		if (val == NULL)
-		{
-			free(val);
 			val = ft_strdup("");
-		}
 		*token = replace(var, val, *token);
 		free(var);
 		free(val);
@@ -95,6 +93,7 @@ void	expand_tilde(t_env *env, char **token)
 	char	*val;
 	char	*tmp;
 
+	val = NULL;
 	if (!ft_strncmp(*token, "~+", 3))
 		val = get_env_val(env, "PWD");
 	else if (!ft_strncmp(*token, "~-", 3))
@@ -104,13 +103,15 @@ void	expand_tilde(t_env *env, char **token)
 	else if (!ft_strncmp(*token, "~/", 2))
 	{
 		val = get_env_val(env, "HOME");
+		if (val == NULL)
+			return ;
 		tmp = ft_strjoin(val, ft_strchr(*token, '/'));
 		free(val);
 		free(*token);
 		*token = tmp;
 		return ;
 	}
-	else
+	if (val == NULL)
 		return ;
 	free(*token);
 	*token = nwtk_tilde(val);

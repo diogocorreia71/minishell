@@ -6,36 +6,35 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/20 16:35:52 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/21 14:21:54 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	parser(t_minishell *shell)
+int	parser(t_minishell *shell, t_cmd **args)
 {
-	t_cmd	*args;
 	t_cmd	*tmp;
 	
-	args = NULL;
+	*args = NULL;
 	add_history(shell->rl_str);
 	if (handle_quotes(shell->rl_str) == 1)
-		return (printf("Invalid Quotes\n"), 1);
+		return (perror("Invalid Quotes\n"), 1);
 
 	// 2.Tokenization 3.Command Identification
-	args = make_tokens(shell, args);
-	free_first(&args);
-	/* while (args != NULL)
+	*args = make_tokens(shell, *args);
+	free_first(args);
+	/* while (*args != NULL)
 	{
-		printf("%d\n", args->token);
-		args = args->next;
+		printf("%d\n", *args->type);
+		*args = *args->next;
 	}
 	return (1); */
 	// 4.Command Expandsion ($, ~)
-	expansion(shell, args);
+	expansion(shell, *args);
 	
 	// 5.Quote removal
-	tmp = args;
+	tmp = *args;
 	while (tmp)
 	{
 		tmp->token = remove_quotes(tmp->token);
@@ -43,14 +42,6 @@ int	parser(t_minishell *shell)
 	}
 	// 6.Redirections (>, <)
 
-	// 7.Preparing command execution
-	shell->args = args;
-	/* lst_to_array(shell, args);
-	int i = 0;
-	while (shell->cmd_split[i])
-		printf("%s\n", shell->cmd_split[i++]);
-	return (1);
-	free_tokens(args); */
 	return (0);
 }
 
@@ -70,32 +61,49 @@ void	close_wait(t_pipe *info)
 		waitpid(info->pipe_pid[i++], NULL, 0);
 }
 
-void	check_pipe(t_minishell *shell)
+int	check_syntax(t_cmd *args)
+{
+	while (args->next != NULL)
+		args = args->next;
+	if (args->type == pipes)
+		return (1);
+	return (0);
+}
+
+void	executer(t_minishell *shell, t_cmd *args)
 {
 	t_pipe	info;
 	
-	info.nbr_pipes = count_pipes(shell);
+	info.nbr_pipes = count_pipes(args);
 	if (info.nbr_pipes == 0)
 	{
-		lst_to_array(shell, shell->args);
+		lst_to_array(shell, args);
+		free_tokens(args);
 		builtin_cmd(shell);
 		ft_free_dp((void **)(shell->cmd_split));
-		free_tokens(shell->args);
 	}
 	else
 	{
+		if (check_syntax(args) == 1)
+		{
+			ft_putstr_fd("syntax error near unexpected token `|'\n"
+				, STDERR_FILENO);
+			free_tokens(args);
+			return ;
+		}
 		init_fd_pipes(&info);
-		start_pipes(shell, &info);
+		start_pipes(shell, &info, args);
 		close_wait(&info);
-		ft_free_dp((void **)info.fd);
+		free_tokens(args);
 		free(info.pipe_pid);
-		free_tokens(shell->args);
+		ft_free_dp((void **)info.fd);
 	}
 }
 
 int main(int ac, char **av, char **envp)
 {
 	t_minishell	shell;
+	t_cmd		*args;
 
 	if (ac != 1 && av)
 		return (0);
@@ -107,9 +115,9 @@ int main(int ac, char **av, char **envp)
 		shell.rl_str = readline("minishell$ ");
 		if (ft_strlen(shell.rl_str) == 0)
 			continue;
-		if (parser(&shell) == 1)
+		if (parser(&shell, &args) == 1)
 			continue;
-		check_pipe(&shell);
+		executer(&shell, args);
 		free(shell.rl_str);
 	}
 }

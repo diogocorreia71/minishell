@@ -6,37 +6,11 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:28:35 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/18 11:25:11 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/21 16:25:51 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/* void	echo_options(char **cmd_split, int *flag)
-{
-	char	*tmp;
-	int		i;
-	int		k;
-
-	i = 0;
-	
-	tmp = (char *)malloc(sizeof(tmp) * (i + 1));
-	if (tmp == NULL)
-		return ;
-	k = 0;
-	while (k < i)
-	{
-		tmp[k] = split_args[k];
-		k++;
-	}
-	tmp[k] = '\0';
-	if (!ft_strncmp(tmp, "-n", 3) || !ft_strncmp(tmp, "\"-n\"", 5)
-		|| !ft_strncmp(tmp, "\'-n\'", 5))
-		*flag = 1;
-	else
-		*flag = 0;
-	free(tmp);
-} */
 
 void	echo(t_minishell *shell)
 {
@@ -57,7 +31,7 @@ void	echo(t_minishell *shell)
 	while (shell->cmd_split[i])
 	{
 		printf("%s", shell->cmd_split[i]);
-		if (/* ft_strlen(shell->cmd_split[i])  */ shell->cmd_split[i + 1] != NULL)
+		if (shell->cmd_split[i + 1] != NULL)
 			printf(" ");
 		i++;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/26 20:01:11 by rui              ###   ########.fr       */
+/*   Updated: 2023/12/21 11:53:15 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,17 @@
 
 void	check_exec(t_minishell *shell, char *path)
 {
+	ft_putstr_fd(shell->cmd_split[0], STDERR_FILENO);
 	if (!path)
-		printf("%s: No such file or directory\n", shell->cmd_split[0]);
+		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
 	else if (!access(path, F_OK) && access(path, X_OK) == -1)
-		printf("%s: Permission denied\n", shell->rl_str);
+		ft_putstr_fd(": Permission denied\n", STDERR_FILENO);
 	else if (!access(path, F_OK && X_OK) && shell->rl_str[0] == '.')
-		printf("%s: filename argument required\n", shell->rl_str);
+		ft_putstr_fd(": filename argument required\n", STDERR_FILENO);
 	else if (!access(path, F_OK && X_OK) && shell->rl_str[0] == '/')
-		printf("%s: Is a directory\n", shell->rl_str);
+		ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
 	else if (access(path, F_OK) == -1)
-		printf("%s: command not found\n", shell->cmd_split[0]);
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 	exit(1);
 }
 
@@ -66,7 +67,7 @@ void	non_builtin(t_minishell *shell)
 	pid = fork();
 	if (pid < 0)
 	{
-		perror("Error creating fork (function: non_builtin)");
+		perror("Error creating fork (function: non_builtin)\n");
 		return  ;
 	}
 	else if (pid == 0)
