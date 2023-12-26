@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/21 14:21:54 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/26 17:07:13 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,14 @@ int	parser(t_minishell *shell, t_cmd **args)
 	*args = NULL;
 	add_history(shell->rl_str);
 	if (handle_quotes(shell->rl_str) == 1)
-		return (perror("Invalid Quotes\n"), 1);
+	{
+		ft_fprintf(2, "Invalid Quotes\n");
+		return (1);
+	}
 
 	// 2.Tokenization 3.Command Identification
 	*args = make_tokens(shell, *args);
 	free_first(args);
-	/* while (*args != NULL)
-	{
-		printf("%d\n", *args->type);
-		*args = *args->next;
-	}
-	return (1); */
 	// 4.Command Expandsion ($, ~)
 	expansion(shell, *args);
 	
@@ -40,6 +37,13 @@ int	parser(t_minishell *shell, t_cmd **args)
 		tmp->token = remove_quotes(tmp->token);
 		tmp = tmp->next;
 	}
+	/* tmp = *args;
+	while (tmp != NULL)
+	{
+		printf("%s\n", tmp->token);
+		tmp = tmp->next;
+	}
+	return (1); */
 	// 6.Redirections (>, <)
 
 	return (0);
@@ -86,8 +90,7 @@ void	executer(t_minishell *shell, t_cmd *args)
 	{
 		if (check_syntax(args) == 1)
 		{
-			ft_putstr_fd("syntax error near unexpected token `|'\n"
-				, STDERR_FILENO);
+			ft_fprintf(2, "syntax error near unexpected token `|'\n");
 			free_tokens(args);
 			return ;
 		}

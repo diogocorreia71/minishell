@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/21 16:00:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/26 16:47:41 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
+# include "../ft_fprintf/ft_fprintf.h"
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -94,6 +95,7 @@ int		count_pipes(t_cmd *args);
 
 //Expansion
 void	expansion(t_minishell *shell, t_cmd *args);
+void	expand_tilde(t_env *env, char **token);
 
 //Utils
 int		is_space(char c);

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/21 16:25:18 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/26 15:31:38 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 void	pwd(void);
 void	cd(t_minishell *shell);
 void	echo(t_minishell *shell);
-void	export(t_env *env, char *var);
+void	export(t_env *env, char **cmd_split);
 void	unset(t_env *env, char **cmd_split);
-void	env(t_env *env, char **cmd_split);
+void	env_print(t_env *env, char **cmd_split, int flag);
 void	ft_exit(t_minishell *shell);
 
 void	builtin_cmd(t_minishell *shell)
@@ -29,11 +29,11 @@ void	builtin_cmd(t_minishell *shell)
 	else if (!ft_strncmp(shell->cmd_split[0], "cd", 3))
 		cd(shell);
 	else if (!ft_strncmp(shell->cmd_split[0], "env", 4))
-		env(shell->env, shell->cmd_split);
+		env_print(shell->env, shell->cmd_split, 0);
 	else if (!ft_strncmp(shell->cmd_split[0], "unset", 6))
 		unset(shell->env, shell->cmd_split);
 	else if (!ft_strncmp(shell->cmd_split[0], "export", 7))
-		export(shell->env, shell->cmd_split[1]);
+		export(shell->env, shell->cmd_split);
 	else if (!ft_strncmp(shell->cmd_split[0], "exit", 5))
 		ft_exit(shell);
 	else

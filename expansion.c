@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/21 17:28:03 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/26 13:03:37 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ char	*get_var(char *token)
 	ds = ft_strchr(token, '$');
 	ds++;
 	i = 0;
+	if (ft_isalpha(ds[i]) == 0)
+		return (ft_substr(ds, 0, 1));
 	while (ds[i] != ' ' && ds[i] != '"' && ds[i] != '\'' && ds[i])
 		i++;
 	return (ft_substr(ds, 0, i));
@@ -72,50 +74,6 @@ void	isolate(t_env *env, char **token)
 	}
 }
 
-char	*nwtk_tilde(char *val)
-{
-	char	*new_tk;
-	int		i;
-
-	i = -1;
-	new_tk = (char *)malloc(sizeof(char) * (ft_strlen(val) + 1));
-	if (new_tk == NULL)
-		return (NULL);
-	while (val[++i])
-		new_tk[i] = val[i];
-	new_tk[i] = '\0';
-	free(val);
-	return (new_tk);
-}
-
-void	expand_tilde(t_env *env, char **token)
-{
-	char	*val;
-	char	*tmp;
-
-	val = NULL;
-	if (!ft_strncmp(*token, "~+", 3))
-		val = get_env_val(env, "PWD");
-	else if (!ft_strncmp(*token, "~-", 3))
-		val = get_env_val(env, "OLDPWD");
-	else if (!ft_strncmp(*token, "~", 2))
-		val = get_env_val(env, "HOME");
-	else if (!ft_strncmp(*token, "~/", 2))
-	{
-		val = get_env_val(env, "HOME");
-		if (val == NULL)
-			return ;
-		tmp = ft_strjoin(val, ft_strchr(*token, '/'));
-		free(val);
-		free(*token);
-		*token = tmp;
-		return ;
-	}
-	if (val == NULL)
-		return ;
-	free(*token);
-	*token = nwtk_tilde(val);
-}
 
 void	expand_ds(t_env *env, t_cmd *arg)
 {

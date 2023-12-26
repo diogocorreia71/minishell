@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:31:42 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/21 16:15:09 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/26 11:37:24 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ int	cd_syntax(t_minishell *shell, char **path)
 	else
 	{
 		*path = ft_strdup(shell->cmd_split[1]);
-		return(0);
+		return(1);
 	}
-	return (1);
+	return (0);
 }
 
 void	cd_env_update(t_env *env)

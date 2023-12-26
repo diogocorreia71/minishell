@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/21 11:53:15 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/26 17:06:01 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	non_builtin(t_minishell *shell)
 	pid = fork();
 	if (pid < 0)
 	{
-		perror("Error creating fork (function: non_builtin)\n");
+		ft_fprintf(2, "Error fork (function: non_builtin)\n");
 		return  ;
 	}
 	else if (pid == 0)
