@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/26 17:07:13 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 10:19:40 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	parser(t_minishell *shell, t_cmd **args)
 	if (handle_quotes(shell->rl_str) == 1)
 	{
 		ft_fprintf(2, "Invalid Quotes\n");
+		free(shell->rl_str);
 		return (1);
 	}
 

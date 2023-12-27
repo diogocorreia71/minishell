@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/26 16:47:41 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 10:13:55 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
-# include "../ft_fprintf/ft_fprintf.h"
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>

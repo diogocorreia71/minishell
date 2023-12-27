@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:41:15 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/09 11:52:38 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 10:10:53 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,16 @@ char	*ft_strjoin_get(char *s1, char *s2);
 char	*ft_strchr_get(const char *str, int c);
 void	ft_free_dp(void **arg);
 int		ft_strcmp(char *str1, char *str2);
+
+//ft_fprintf
+int		ft_fprintf(int fd, const char *format, ...);
+int		ft_fputstr(char *s, int fd);
+int		ft_fputchar(char c, int fd);
+int		ft_fprintpointer(unsigned long nbr, int fd);
+int		ft_fprintpointer_start(unsigned long nbr, int fd);
+int		ft_fprinthexa(unsigned int nbr, int fd);
+int		ft_fprinthexa_upp(unsigned int nbr, int fd);
+int		ft_fputnbr(int n, int fd);
+int		ft_fput_unsi_nbr(unsigned int n, int fd);
 
 #endif

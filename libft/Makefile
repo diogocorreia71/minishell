@@ -3,15 +3,15 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rui <rui@student.42.fr>                    +#+  +:+       +#+         #
+#    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 15:31:41 by rumachad          #+#    #+#              #
-#    Updated: 2023/11/09 22:54:16 by rui              ###   ########.fr        #
+#    Updated: 2023/12/27 10:16:31 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libft
-SRC = src/ft_isalnum.c src/ft_isalpha.c src/ft_isdigit.c \
+NAME_LIBFT = libft
+SRC_LIBFT = src/ft_isalnum.c src/ft_isalpha.c src/ft_isdigit.c \
 		src/ft_isprint.c src/ft_isascii.c src/ft_strlen.c \
 		src/ft_memset.c src/ft_bzero.c src/ft_strlcpy.c \
 		src/ft_strlcat.c src/ft_toupper.c src/ft_tolower.c \
@@ -28,9 +28,11 @@ SRC = src/ft_isalnum.c src/ft_isalpha.c src/ft_isdigit.c \
 		src/get_next_line_utils.c src/ft_lstnew.c src/ft_lstadd_front.c src/ft_lstsize.c \
 		src/ft_lstlast.c src/ft_lstadd_back.c src/ft_lstdelone.c \
 		src/ft_lstclear.c src/ft_lstiter.c src/ft_lstmap.c \
-		src/ft_free_dp.c src/ft_strcmp.c
-OBJS = ${SRC:.c=.o}
-HEADER = ../libft.h
+		src/ft_free_dp.c src/ft_strcmp.c \
+		src_fprintf/ft_fprintf.c src_fprintf/ft_fprinthexa.c src_fprintf/ft_fprinthexa_upp.c \
+		src_fprintf/ft_fprintpointer.c src_fprintf/ft_fput_unsi_nbr.c src_fprintf/ft_fputchar.c \
+		src_fprintf/ft_fputnbr.c src_fprintf/ft_fputstr.c
+OBJS_LIBFT = ${SRC_LIBFT:.c=.o}
 CC = cc
 RM = rm -f
 CFLAGS = -Wall -Werror -Wextra
@@ -38,9 +40,9 @@ CFLAGS = -Wall -Werror -Wextra
 %.o:	%.c
 		cc ${CFLAGS} -c $< -o $@
 
-${NAME}:	${OBJS}
-			ar rcs libft.a ${OBJS} libft.h
-			mv ${OBJS} objs
+${NAME_LIBFT}:	${OBJS_LIBFT}
+			ar rcs libft.a ${OBJS_LIBFT} libft.h
+			mv ${OBJS_LIBFT} objs
 
 all:	${NAME}
 
