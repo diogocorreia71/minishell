@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:59:09 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/26 13:23:22 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 11:36:29 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ t_env	*get_env_node(t_env *env, char *key)
 
 t_env	*env_last(t_env *env)
 {
-	while(env != NULL)
+	while (env != NULL)
 	{
 		if (env->next == NULL)
-			break;
+			break ;
 		env = env->next;
 	}
 	return (env);

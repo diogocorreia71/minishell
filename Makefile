@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2023/12/27 10:16:54 by rumachad         ###   ########.fr        #
+#    Updated: 2023/12/27 16:44:44 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,13 +15,17 @@ NAME = minishell
 SRC_BUILTIN = builtin
 SRC_ENV = env
 SRC_MINI = minishell
+SRC_EXPANSION = expansion
+SRC_PARSER = parser
 
 SRC = 	$(wildcard $(SRC_BUILTIN)/*.c) \
 		$(wildcard $(SRC_ENV)/*.c) \
+		$(wildcard $(SRC_EXPANSION)/*.c) \
+		$(wildcard $(SRC_PARSER)/*.c) \
 		$(wildcard *.c) \
 		
 OBJS = ${SRC:.c=.o}
-CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
 
 ${NAME}:	${OBJS}
 			make -C libft

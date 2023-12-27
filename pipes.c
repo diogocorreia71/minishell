@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 23:00:23 by rui               #+#    #+#             */
-/*   Updated: 2023/12/21 11:58:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 16:59:51 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,23 +34,23 @@ void	init_fd_pipes(t_pipe *info)
 	
 	info->fd = (int **)malloc(sizeof(int *) * (info->nbr_pipes + 1));
 	if (info->fd == NULL)
-		return (perror("Malloc fd error\n"));
+		return (ft_fprintf(STDERR_FILENO, "Malloc fd error\n"));
 	info->pipe_pid = (pid_t *)malloc(sizeof(pid_t) * (info->nbr_pipes + 1));
 	if (info->pipe_pid == NULL)
-		return (perror("Malloc pipe_pid error\n"));
+		return (ft_fprintf(STDERR_FILENO, "Malloc pipe_pid error\n"));
 	i = -1;
 	while (++i < info->nbr_pipes)
 	{
 		info->fd[i] = (int *)malloc(sizeof(int) * 2);
 		if (info->fd[i] == NULL)
-			return (perror("Malloc fd 2 error\n"));
+			return (ft_fprintf(STDERR_FILENO, "Malloc fd 2 error\n"));
 	}
 	info->fd[i] = 0;
 	i = 0;
 	while (i < info->nbr_pipes)
 	{
 		if (pipe(info->fd[i]) == -1)
-			return (perror("Pipe creation error\n"));
+			return (ft_fprintf(STDERR_FILENO, "Pipe creation error\n"));
 		i++;
 	}
 }
@@ -82,26 +82,25 @@ int	start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args)
 	t_cmd	*tmp;
 	int		i;
 
-	i = 0;
+	i = -1;
 	tmp = args;
-	while (i < (info->nbr_pipes + 1))
+	while (++i < (info->nbr_pipes + 1))
 	{
 		info->pipe_pid[i] = fork();
 		if (info->pipe_pid[i] == -1)
-			perror("Start pipe fork error");
+			ft_fprintf(STDERR_FILENO, "Start pipe fork error\n");
 		if (info->pipe_pid[i] == 0)
 		{
 			lst_to_array(shell, tmp);
 			open_fd(info->fd, i, info->nbr_pipes);
 			builtin_cmd(shell);
-			ft_free_dp((void **)(shell->cmd_split));
+			free_all(shell, info);
 			exit(0);
 		}
 		while (tmp != NULL && tmp->type != pipes)
 			tmp = tmp->next;
 		if (tmp != NULL && tmp->type == pipes)
 			tmp = tmp->next;
-		i++;
 	}
 	return (0);
 }

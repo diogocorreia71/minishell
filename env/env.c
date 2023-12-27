@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/26 15:31:26 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 16:56:55 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*get_env(t_env *env, char *var_str)
 t_env	*create_node(char *tmp, char *tmp2)
 {
 	t_env	*node;
-	
+
 	node = malloc(sizeof(t_env));
 	if (node == NULL)
 		return (NULL);
@@ -67,10 +67,8 @@ void	env_print(t_env *env, char **cmd_split)
 {
 	if (cmd_split[1])
 	{
-		ft_putstr_fd(cmd_split[0], STDERR_FILENO);
-		ft_putstr_fd(": '", STDERR_FILENO);
-		ft_putstr_fd(cmd_split[1], STDERR_FILENO);
-		ft_putstr_fd("': No such file or directory\n", STDERR_FILENO);
+		ft_fprintf(STDERR_FILENO, "%s: '%s':No such file or directory\n"
+			,cmd_split[0], cmd_split[1]);
 		return ;
 	}
 	while (env)

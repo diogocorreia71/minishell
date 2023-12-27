@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2023/12/21 11:54:49 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 16:10:10 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens)
 			continue;
 		else if (cmd[i] == '|')
 			tokens->next = create_token("|", pipes);
+		else if (cmd[i] == '>')
+			tokens->next = create_token(">", redir);
 		else
 			tokens->next = create_cmd_token(cmd + i);
 		tokens = tokens->next;
@@ -96,8 +98,10 @@ int	nbr_of_words(t_cmd *tokens)
 
 void	lst_to_array(t_minishell *shell, t_cmd *tokens)
 {
-	int	i;
+	t_cmd	*tmp;
+	int		i;
 
+	tmp = tokens;
 	shell->cmd_split = (char **)malloc(sizeof(char *) * (nbr_of_words(tokens) + 1));
 	if (shell->cmd_split == NULL)
 		return (perror("Malloc cmd_split error\n"));
@@ -109,4 +113,5 @@ void	lst_to_array(t_minishell *shell, t_cmd *tokens)
 		tokens = tokens->next;
 	}
 	shell->cmd_split[i] = 0;
+	free_tokens(tmp);
 }

@@ -6,42 +6,38 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:31:42 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/26 11:37:24 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/27 11:32:42 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	cd_syntax(t_minishell *shell, char **path)
+char	*cd_syntax(t_env *env, char **cmd_split, char **key)
 {
-	if (shell->cmd_split[1] == NULL)
-	{
-		*path = get_env_val(shell->env, "HOME");
-		if (*path == NULL)
-			ft_putstr_fd("cd: HOME is not set\n", STDERR_FILENO);
-	}
-	else if (shell->cmd_split[1][0] == '-' && ft_strlen(shell->cmd_split[1]) == 1)
-	{
-		*path = get_env_val(shell->env, "OLDPWD");
-		if (*path == NULL)
-			ft_putstr_fd("cd: OLDPWD is not set\n", STDERR_FILENO);
-		printf("%s\n", *path);
-	}
-	else if (shell->cmd_split[2])
-		printf("cd: too many arguments: %s\n", shell->cmd_split[1]);
+	char	*path;
+
+	*key = NULL;
+	if (cmd_split[1] == NULL)
+		*key = "HOME";
+	else if (ft_strncmp(cmd_split[1], "-", 2) == 0)
+		*key = "OLDPWD";
+	else if (ft_strncmp(cmd_split[1], "--", 3) == 0)
+		*key = "HOME";
+	if (*key != NULL)
+		path = get_env_val(env, *key);
 	else
 	{
-		*path = ft_strdup(shell->cmd_split[1]);
-		return(1);
+		path = ft_strdup(cmd_split[1]);
+		*key = "\0";
 	}
-	return (0);
+	return (path);
 }
 
 void	cd_env_update(t_env *env)
 {
 	t_env	*pwd;
 	t_env	*oldpwd;
-	
+
 	pwd = get_env_node(env, "PWD");
 	oldpwd = get_env_node(env, "OLDPWD");
 	free(oldpwd->var_value);
@@ -53,16 +49,27 @@ void	cd_env_update(t_env *env)
 void	cd(t_minishell *shell)
 {
 	char	*path;
-	
-	if (cd_syntax(shell, &path) == 1)
+	char	*key;
+
+	if (shell->cmd_split[2])
+	{
+		ft_fprintf(2, "cd: too many arguments\n");
 		return ;
+	}
+	path = cd_syntax(shell->env, shell->cmd_split, &key);
+	if (path == NULL)
+	{
+		ft_fprintf(2, "cd: %s not set", key);
+		return ;
+	}
 	if (chdir(path) == -1)
 	{
-		printf("cd: %s: no such file or directory\n", path);
+		ft_fprintf(2, "cd: %s: no such file or directory\n", path);
 		free(path);
 		return ;
 	}
+	if (ft_strncmp(key, "OLDPWD", 7) == 0)
+		printf("%s\n", path);
 	free(path);
-	//Para atualizar o env
 	cd_env_update(shell->env);
 }
