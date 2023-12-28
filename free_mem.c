@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/27 16:09:01 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 12:48:14 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,23 @@ void	clean_program(t_minishell *shell)
 	free(shell->rl_str);
 }
 
-void	free_tokens(t_cmd *tokens)
+void	free_prev_node(t_cmd **arg)
 {
-	t_cmd *tmp;
-	
-	while (tokens != NULL)
-	{
-		tmp = tokens;
-		tokens = tokens->next;
-		free(tmp->token);
-		free(tmp);
-	}
+	t_cmd	*tmp;
+
+	tmp = *arg;
+	*arg = (*arg)->next;
+	free(tmp->token);
+	free(tmp);
 }
 
-void	free_all(t_minishell *shell, t_pipe *info)
+void	free_tokens(t_cmd *tokens)
+{
+	while (tokens != NULL)
+		free_prev_node(&tokens);
+}
+
+void	free_all_child(t_minishell *shell, t_pipe *info)
 {
 	ft_free_dp((void **)shell->cmd_split);
 	ft_free_dp((void **)info->fd);

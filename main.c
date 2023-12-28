@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/27 17:01:28 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 15:58:46 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,15 @@ int	parser(t_minishell *shell, t_cmd **args)
 		tmp = tmp->next;
 	}
 	tmp = *args;
-	/* while (tmp != NULL)
-	{
-		printf("%s\n", tmp->token);
-		tmp = tmp->next;
-	}
-	return (1); */
 	// 6.Redirections (>, <)
 	shell->redir_flag = handle_redir(shell, *args);
 	return (0);
+}
+
+void	reset_fd(t_rdr *rr)
+{
+	dup2(rr->orig_fd, STDOUT_FILENO);
+	close(rr->orig_fd);
 }
 
 int main(int ac, char **av, char **envp)
@@ -58,6 +58,7 @@ int main(int ac, char **av, char **envp)
 		return (0);
 	shell.env_array = envp;
 	shell.env = dup_env(envp);
+	/* shell.env_extra = (t_env *)malloc(sizeof(t_env)); */
 	while (1)
 	{
 		// 1.Read Command
@@ -68,10 +69,6 @@ int main(int ac, char **av, char **envp)
 			continue;
 		executer(&shell, args);
 		if (shell.redir_flag == 1)
-		{
-			dup2(shell.rr.orig_fd, STDOUT_FILENO);
-			close(shell.rr.orig_fd);
-		}
-		free(shell.rl_str);
+			reset_fd(&shell.rr);
 	}
 }

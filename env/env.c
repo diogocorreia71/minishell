@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/27 16:56:55 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 14:48:08 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ t_env	*create_node(char *tmp, char *tmp2)
 	if (node == NULL)
 		return (NULL);
 	node->var = ft_strdup(tmp);
-	node->var_value = ft_strdup(ft_strchr(tmp2, '=') + 1);
+	if (tmp2 != NULL)
+		node->var_value = ft_strdup(ft_strchr(tmp2, '=') + 1);
 	node->next = NULL;
 	return (node);
 }

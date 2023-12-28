@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:38:34 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/27 16:38:56 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 13:25:15 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,32 +28,20 @@ int	count_redir(t_cmd *args)
 
 char	*redir_pathname(t_cmd *args)
 {
-	t_cmd	*tmp;
-
-	tmp = args;
-	while (tmp->type != redir)
-		tmp = tmp->next;
-	tmp = tmp->next;
-	return (tmp->token);
+	while (args->type != redir)
+		args = args->next;
+	args = args->next;
+	return (args->token);
 }
 
 void	free_redir(t_cmd *args)
 {
-	t_cmd	*tmp;
-	t_cmd	*tmp2;
-	
 	while (args->next->type != redir)
 		args = args->next;
-	tmp2 = args;
 	args->next = NULL;
 	args = args->next;
 	while (args != NULL)
-	{
-		tmp = args;
-		args = args->next;
-		free(tmp->token);
-		free(tmp);
-	}
+		free_prev_node(&args);
 }
 
 int	handle_redir(t_minishell *shell, t_cmd *args)
@@ -64,8 +52,11 @@ int	handle_redir(t_minishell *shell, t_cmd *args)
 	rr.nbr_redir = count_redir(args);
 	if (rr.nbr_redir == 0)
 		return (0);
+	//Talvez dar fork para as redirections
 	redir_path = redir_pathname(args);
 	rr.file_fd = open(redir_path, O_CREAT | O_TRUNC | O_WRONLY, 0777);
+	if (rr.file_fd == -1)
+		return (0);
 	rr.orig_fd = dup(STDOUT_FILENO);
 	dup2(rr.file_fd, STDOUT_FILENO);
 	close(rr.file_fd);

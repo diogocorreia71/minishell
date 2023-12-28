@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 23:00:23 by rui               #+#    #+#             */
-/*   Updated: 2023/12/27 16:59:51 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 12:45:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	count_pipes(t_cmd *args)
 	return (nbr_pipes);
 }
 
-void	init_fd_pipes(t_pipe *info)
+int	init_fd_pipes(t_pipe *info)
 {
 	int		i;
 	
@@ -53,6 +53,7 @@ void	init_fd_pipes(t_pipe *info)
 			return (ft_fprintf(STDERR_FILENO, "Pipe creation error\n"));
 		i++;
 	}
+	return (0);
 }
 
 void	open_fd(int **fd, int position, int nbr_pipes)
@@ -79,11 +80,9 @@ void	open_fd(int **fd, int position, int nbr_pipes)
 
 int	start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args)
 {
-	t_cmd	*tmp;
 	int		i;
 
 	i = -1;
-	tmp = args;
 	while (++i < (info->nbr_pipes + 1))
 	{
 		info->pipe_pid[i] = fork();
@@ -91,16 +90,17 @@ int	start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args)
 			ft_fprintf(STDERR_FILENO, "Start pipe fork error\n");
 		if (info->pipe_pid[i] == 0)
 		{
-			lst_to_array(shell, tmp);
+			if (lst_to_array(shell, args) != 0)
+				exit(1);
 			open_fd(info->fd, i, info->nbr_pipes);
 			builtin_cmd(shell);
-			free_all(shell, info);
+			free_all_child(shell, info);
 			exit(0);
 		}
-		while (tmp != NULL && tmp->type != pipes)
-			tmp = tmp->next;
-		if (tmp != NULL && tmp->type == pipes)
-			tmp = tmp->next;
+		while (args != NULL && args->type != pipes)
+			free_prev_node(&args);
+		if (args != NULL && args->type == pipes)
+			free_prev_node(&args);
 	}
 	return (0);
 }

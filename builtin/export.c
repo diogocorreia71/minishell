@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/26 17:02:23 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 15:58:26 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,48 @@ int	export_syntax(char *cmd)
 	return (0);
 }
 
+/* void	more_env(t_env **env_extra, char *cmd)
+{
+	(*env_extra)->next = create_node(cmd, NULL);
+	*env_extra = (*env_extra)->next;
+	(*env_extra)->next = NULL;
+}
 
-void	export(t_env *env, char **cmd_split)
+void	swap(t_env	*previous, t_env *current, t_env *next)
+{
+	
+}
+
+void	sort_env(t_env *env)
+{
+	t_env	*tmp;
+	t_env	*tmp2;
+
+	tmp2 = env;
+	while (env != NULL)
+	{
+		tmp = env;
+		while (tmp->next != NULL)
+		{
+			if (ft_strcmp(tmp->var, tmp->next->var))
+				swap(tmp2, tmp, tmp->next);
+			tmp2 = tmp;
+			tmp = tmp->next;
+		}
+		tmp2 = env;
+		env = env->next;
+	}
+} */
+
+void	export(t_env *env, t_env *env_extra, char **cmd_split)
 {
 	char	**var;
 	int		i;
 
 	if (cmd_split[1] == NULL)
 	{
-		//Tem de fazer print do env em ordem alfabetica
+		//Fazer previous do env
+		/* sort_env(env); */
 		return ;
 	}
 	i = 0;
@@ -73,7 +106,10 @@ void	export(t_env *env, char **cmd_split)
 		if (export_syntax(cmd_split[i]) == 1)
 			continue;
 		if (!ft_strchr(cmd_split[i], '='))
+		{
+			/* more_env(&env_extra, cmd_split[i]); */
 			continue;
+		}
 		var = get_var_name(cmd_split[i]);
 		if (get_env(env, *var))
 			unset(env, var);

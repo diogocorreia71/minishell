@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2023/12/27 16:44:44 by rumachad         ###   ########.fr        #
+#    Updated: 2023/12/28 14:46:47 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ SRC = 	$(wildcard $(SRC_BUILTIN)/*.c) \
 		$(wildcard *.c) \
 		
 OBJS = ${SRC:.c=.o}
-CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
 
 ${NAME}:	${OBJS}
 			make -C libft

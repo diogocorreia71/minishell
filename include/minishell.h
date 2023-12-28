@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/27 16:40:34 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 15:59:03 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_minishell
 	int		redir_flag;
 	t_rdr	rr;
 	t_env	*env;
+	/* t_env	*env_extra; */
 }				t_minishell;
 
 void	builtin_cmd(t_minishell *shell);
@@ -84,7 +85,9 @@ t_env	*env_last(t_env *env);
 //Free
 void	clean_program(t_minishell *shell);
 void	free_env(t_env *env);
-void	free_all(t_minishell *shell, t_pipe *info);
+void	free_all_child(t_minishell *shell, t_pipe *info);
+void	free_tokens(t_cmd *tokens);
+void	free_prev_node(t_cmd **arg);
 
 //Handle quotes
 int		cases_quotes(t_minishell *shell);
@@ -95,13 +98,12 @@ char	what_quote(char *str);
 
 //Parser
 t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens);
-void	free_tokens(t_cmd *tokens);
-void	lst_to_array(t_minishell *shell, t_cmd *tokens);
+int		lst_to_array(t_minishell *shell, t_cmd *tokens);
 int		count_quotes(char *rl_str);
 
 //Pipes
 int		start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args);
-void	init_fd_pipes(t_pipe *info);
+int		init_fd_pipes(t_pipe *info);
 int		count_pipes(t_cmd *args);
 
 //Redirections

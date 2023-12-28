@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2023/12/27 16:10:10 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/28 13:06:13 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens)
 			tokens->next = create_token("|", pipes);
 		else if (cmd[i] == '>')
 			tokens->next = create_token(">", redir);
+		else if (cmd[i] == '<')
+			tokens->next = create_token("<", redir);
 		else
 			tokens->next = create_cmd_token(cmd + i);
 		tokens = tokens->next;
@@ -96,7 +98,7 @@ int	nbr_of_words(t_cmd *tokens)
 	return (i);
 }
 
-void	lst_to_array(t_minishell *shell, t_cmd *tokens)
+int	lst_to_array(t_minishell *shell, t_cmd *tokens)
 {
 	t_cmd	*tmp;
 	int		i;
@@ -104,7 +106,7 @@ void	lst_to_array(t_minishell *shell, t_cmd *tokens)
 	tmp = tokens;
 	shell->cmd_split = (char **)malloc(sizeof(char *) * (nbr_of_words(tokens) + 1));
 	if (shell->cmd_split == NULL)
-		return (perror("Malloc cmd_split error\n"));
+		return (ft_fprintf(STDERR_FILENO, "Malloc cmd_split error\n"));
 	i = 0;
 	while (tokens != NULL && tokens->type != pipes)
 	{
@@ -114,4 +116,5 @@ void	lst_to_array(t_minishell *shell, t_cmd *tokens)
 	}
 	shell->cmd_split[i] = 0;
 	free_tokens(tmp);
+	return (0);
 }
