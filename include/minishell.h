@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/28 15:59:03 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/29 11:52:16 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ void	builtin_cmd(t_minishell *shell);
 void	non_builtin(t_minishell *shell);
 
 //env
-t_env	*dup_env(char **envp);
+t_env	*lst_env(char **envp);
+char	**array_env(t_env *env);
 
 //env_utils
 char	*get_env(t_env *env, char *var_str);
@@ -81,6 +82,7 @@ char	*get_env_val(t_env *env, char *str);
 t_env	*get_env_node(t_env *env, char *key);
 t_env	*create_node(char *tmp, char *tmp2);
 t_env	*env_last(t_env *env);
+int		env_size(t_env *env);
 
 //Free
 void	clean_program(t_minishell *shell);

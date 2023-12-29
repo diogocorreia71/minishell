@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_cmd.c                                         :+:      :+:    :+:   */
+/*   exeve_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/27 12:49:36 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/29 12:04:54 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,29 @@ char	*exec_path(t_minishell *shell)
 	return (ft_strdup(shell->cmd_split[0]));
 }
 
+void	change_shlvl(char **env_array, t_env *env)
+{
+	char	*shlvl_char;
+	int		shlvl;
+	int		i;
+	int		k;
+
+	i = 0;
+	while (ft_strncmp(env->var, "SHLVL", 6) != 0)
+	{
+		env = env->next;
+		i++;
+	}
+	k = 0;
+	while (env_array[i][k + 1])
+		k++;
+	shlvl = ft_atoi(&env_array[i][k]);
+	shlvl++;
+	shlvl_char = ft_itoa(shlvl);
+	free(env_array[i]);
+	env_array[i] = ft_strjoin("SHLVL=", shlvl_char);
+}
+
 void	non_builtin(t_minishell *shell)
 {
 	char	*path;
@@ -68,13 +91,16 @@ void	non_builtin(t_minishell *shell)
 	if (pid < 0)
 	{
 		ft_fprintf(2, "Error fork (function: non_builtin)\n");
-		return  ;
+		return ;
 	}
 	else if (pid == 0)
 	{
 		path = exec_path(shell);
+		if (ft_strncmp(shell->cmd_split[0], "./minishell", 12) == 0)
+			change_shlvl(shell->env_array, shell->env);
 		execve(path, shell->cmd_split, shell->env_array);
 		check_exec(shell, path);
+		ft_free_dp((void **)shell->env_array);
 	}
 	wait(&status);
 	free(path);

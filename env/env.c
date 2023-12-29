@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/28 14:48:08 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/29 11:52:02 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_env	*create_node(char *tmp, char *tmp2)
 	return (node);
 }
 
-t_env	*dup_env(char **envp)
+t_env	*lst_env(char **envp)
 {
 	t_env	*env;
 	t_env	*head;
@@ -62,6 +62,30 @@ t_env	*dup_env(char **envp)
 		i++;
 	}
 	return (head);
+}
+
+char	**array_env(t_env *env)
+{
+	char	**env_array;
+	char	*tmp;
+	int		i;
+	int		counter;
+	
+	env_array = (char **)malloc(sizeof(char *) * (env_size(env) + 1));
+	if (env_array == NULL)
+		return (NULL);
+	i = 0;
+	counter = 1;
+	while (env != NULL)
+	{
+		tmp = ft_strjoin(env->var, "=");
+		env_array[i] = ft_strjoin(tmp, env->var_value);
+		free(tmp);
+		env = env->next;
+		i++;
+	}
+	env_array[i] = 0;
+	return (env_array);
 }
 
 void	env_print(t_env *env, char **cmd_split)

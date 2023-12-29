@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/28 13:03:48 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/29 11:55:23 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,6 @@ void	executer(t_minishell *shell, t_cmd *args)
 		ft_free_dp((void **)info.fd);
 		free(info.pipe_pid);
 	}
+	/* ft_free_dp((void **)shell->env_array); */
 	free(shell->rl_str);
 }

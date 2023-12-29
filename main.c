@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/28 15:58:46 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/29 12:15:52 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int main(int ac, char **av, char **envp)
 
 	if (ac != 1 && av)
 		return (0);
-	shell.env_array = envp;
-	shell.env = dup_env(envp);
+	shell.env = lst_env(envp);
+	shell.env_array = array_env(shell.env);
 	/* shell.env_extra = (t_env *)malloc(sizeof(t_env)); */
 	while (1)
 	{
@@ -70,5 +70,6 @@ int main(int ac, char **av, char **envp)
 		executer(&shell, args);
 		if (shell.redir_flag == 1)
 			reset_fd(&shell.rr);
+		env_update((&shell).env, (&shell).env_array);
 	}
 }

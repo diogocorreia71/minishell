@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/28 15:58:26 by rumachad         ###   ########.fr       */
+/*   Updated: 2023/12/29 09:40:48 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	sort_env(t_env *env)
 	}
 } */
 
-void	export(t_env *env, t_env *env_extra, char **cmd_split)
+void	export(t_env *env, char **cmd_split)
 {
 	char	**var;
 	int		i;
