@@ -6,13 +6,11 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/29 09:40:48 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/02 16:12:59 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	unset(t_env *env, char **cmd_split);
 
 char	**get_var_name(char *arg)
 {
@@ -56,48 +54,44 @@ int	export_syntax(char *cmd)
 	return (0);
 }
 
-/* void	more_env(t_env **env_extra, char *cmd)
+void	create_inv_var(t_env *env, char *var_name)
 {
-	(*env_extra)->next = create_node(cmd, NULL);
-	*env_extra = (*env_extra)->next;
-	(*env_extra)->next = NULL;
+	char	*str;
+
+	str = NULL;
+	if (get_env(env, var_name))
+		return ;
+	else
+	{
+		env = env_last(env);
+		env->next = create_node_env(var_name, "=\0", 0);
+	}
 }
 
-void	swap(t_env	*previous, t_env *current, t_env *next)
-{
-	
-}
-
-void	sort_env(t_env *env)
+void	create_vis_var(t_env *env, char **var_name, char *val)
 {
 	t_env	*tmp;
-	t_env	*tmp2;
 
-	tmp2 = env;
-	while (env != NULL)
+	tmp = get_env_node(env, *var_name);
+	if (tmp)
 	{
-		tmp = env;
-		while (tmp->next != NULL)
-		{
-			if (ft_strcmp(tmp->var, tmp->next->var))
-				swap(tmp2, tmp, tmp->next);
-			tmp2 = tmp;
-			tmp = tmp->next;
-		}
-		tmp2 = env;
-		env = env->next;
+		free(tmp->var_value);
+		tmp->var_value = ft_strdup(ft_strchr(val, '=') + 1);
+		return;
 	}
-} */
+	env = env_last(env);
+	env->next = create_node_env(*var_name, val, 1);
+}
 
 void	export(t_env *env, char **cmd_split)
 {
-	char	**var;
+	char	**var_name;
 	int		i;
 
 	if (cmd_split[1] == NULL)
 	{
-		//Fazer previous do env
-		/* sort_env(env); */
+		//Fazer o Sort
+		sort_env(env);
 		return ;
 	}
 	i = 0;
@@ -105,16 +99,11 @@ void	export(t_env *env, char **cmd_split)
 	{
 		if (export_syntax(cmd_split[i]) == 1)
 			continue;
+		var_name = get_var_name(cmd_split[i]);
 		if (!ft_strchr(cmd_split[i], '='))
-		{
-			/* more_env(&env_extra, cmd_split[i]); */
-			continue;
-		}
-		var = get_var_name(cmd_split[i]);
-		if (get_env(env, *var))
-			unset(env, var);
-		env = env_last(env);
-		env->next = create_node(*var, cmd_split[i]);
-		ft_free_dp((void **)var);
+			create_inv_var(env, *var_name);
+		else
+			create_vis_var(env, var_name, cmd_split[i]);
+		ft_free_dp((void **)var_name);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/29 11:40:53 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/02 11:28:30 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,12 @@ void	free_env(t_env *env)
 	}	
 }
 
-void	clean_program(t_minishell *shell)
+void	execve_clean(t_minishell *shell)
 {
-	ft_free_dp((void **)shell->cmd_split);
+	free(shell->path);
 	free(shell->rl_str);
+	ft_free_dp((void **)shell->env_array);
+	ft_free_dp((void **)shell->cmd_split);
 }
 
 void	free_prev_node(t_cmd **arg)
@@ -52,7 +54,6 @@ void	free_all_child(t_minishell *shell, t_pipe *info)
 {
 	ft_free_dp((void **)shell->cmd_split);
 	ft_free_dp((void **)info->fd);
-	ft_free_dp((void **)shell->env_array);
 	free(info->pipe_pid);
 	free_env(shell->env);
 	free(shell->rl_str);

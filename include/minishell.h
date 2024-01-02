@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2023/12/29 11:52:16 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/02 14:38:51 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
-# include <stdio.h>
+# include "../include/libenv.h"
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
-# include <unistd.h>
+# include <sys/stat.h>
 # include <limits.h>
-# include <stdlib.h>
+# include <stdbool.h>
 
 typedef enum s_type
 {
@@ -51,41 +51,28 @@ typedef struct s_rdr
 	int file_fd;
 }				t_rdr;
 
-typedef struct s_env
-{
-	char			*var;
-	char			*var_value;
-	struct s_env	*next;
-}				t_env;
-
 typedef struct s_minishell
 {
 	char	*rl_str;
 	char	**cmd_split;
 	char	**env_array;
+	char	*path;
 	int		redir_flag;
 	t_rdr	rr;
 	t_env	*env;
-	/* t_env	*env_extra; */
 }				t_minishell;
 
+//Builtin and Execve
 void	builtin_cmd(t_minishell *shell);
-void	non_builtin(t_minishell *shell);
-
-//env
-t_env	*lst_env(char **envp);
-char	**array_env(t_env *env);
-
-//env_utils
-char	*get_env(t_env *env, char *var_str);
-char	*get_env_val(t_env *env, char *str);
-t_env	*get_env_node(t_env *env, char *key);
-t_env	*create_node(char *tmp, char *tmp2);
-t_env	*env_last(t_env *env);
-int		env_size(t_env *env);
+int		non_builtin(t_minishell *shell);
+void	ft_execve(t_minishell *shell);
+int		execve_syntax(char *cmd, t_env *env, char *path);
+void	change_shlvl(char **env_array, t_env *env);
+char	*exec_path(t_minishell *shell);
+void	execve_error(int error);
 
 //Free
-void	clean_program(t_minishell *shell);
+void	execve_clean(t_minishell *shell);
 void	free_env(t_env *env);
 void	free_all_child(t_minishell *shell, t_pipe *info);
 void	free_tokens(t_cmd *tokens);

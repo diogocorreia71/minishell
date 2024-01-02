@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2023/12/28 14:46:47 by rumachad         ###   ########.fr        #
+#    Updated: 2024/01/02 14:37:20 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,11 +17,13 @@ SRC_ENV = env
 SRC_MINI = minishell
 SRC_EXPANSION = expansion
 SRC_PARSER = parser
+SRC_EXEC = execve
 
 SRC = 	$(wildcard $(SRC_BUILTIN)/*.c) \
 		$(wildcard $(SRC_ENV)/*.c) \
 		$(wildcard $(SRC_EXPANSION)/*.c) \
 		$(wildcard $(SRC_PARSER)/*.c) \
+		$(wildcard $(SRC_EXEC)/*.c) \
 		$(wildcard *.c) \
 		
 OBJS = ${SRC:.c=.o}

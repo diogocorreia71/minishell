@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/29 09:40:59 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/02 14:36:26 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,24 @@ void	export(t_env *env, char **cmd_split);
 void	unset(t_env *env, char **cmd_split);
 void	env_print(t_env *env, char **cmd_split, int flag);
 void	ft_exit(t_minishell *shell);
+
+int	non_builtin(t_minishell *shell)
+{
+	int		error;
+
+	shell->env_array = array_env(shell->env);
+	shell->path = exec_path(shell);
+	error = execve_syntax(shell->cmd_split[0], shell->env, shell->path);
+	if (error != 0)
+	{
+		ft_putstr_fd(shell->cmd_split[0], STDERR_FILENO);
+		execve_error(error);
+		free(shell->path);
+		ft_free_dp((void **)shell->env_array);
+		return (-1);
+	}
+	return (0);
+}
 
 void	builtin_cmd(t_minishell *shell)
 {
@@ -37,5 +55,9 @@ void	builtin_cmd(t_minishell *shell)
 	else if (!ft_strncmp(shell->cmd_split[0], "exit", 5))
 		ft_exit(shell);
 	else
-		non_builtin(shell);
+	{
+		if (non_builtin(shell) == -1)
+			return ;
+		ft_execve(shell);
+	}
 }

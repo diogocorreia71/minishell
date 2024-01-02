@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/29 12:15:52 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/02 11:21:22 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,10 @@ int main(int ac, char **av, char **envp)
 	t_minishell	shell;
 	t_cmd		*args;
 
+	ft_memset((void *)&shell, 0, sizeof(t_minishell));
 	if (ac != 1 && av)
 		return (0);
 	shell.env = lst_env(envp);
-	shell.env_array = array_env(shell.env);
-	/* shell.env_extra = (t_env *)malloc(sizeof(t_env)); */
 	while (1)
 	{
 		// 1.Read Command
@@ -70,6 +69,5 @@ int main(int ac, char **av, char **envp)
 		executer(&shell, args);
 		if (shell.redir_flag == 1)
 			reset_fd(&shell.rr);
-		env_update((&shell).env, (&shell).env_array);
 	}
 }
