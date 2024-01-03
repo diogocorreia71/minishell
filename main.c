@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/02 11:21:22 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:22:32 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ int	parser(t_minishell *shell, t_cmd **args)
 	free_first(args);
 	// 4.Command Expandsion ($, ~)
 	expansion(shell, *args);
+	/* while (*args)
+	{
+		printf("%s\n", (*args)->token);
+		*args = (*args)->next;
+	}
+	return (1); */
 	// 5.Quote removal
 	tmp = *args;
 	while (tmp)

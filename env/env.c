@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/02 16:12:23 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:59:23 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,17 @@
 t_env	*create_node_env(char *tmp, char *tmp2, int flag)
 {
 	t_env	*node;
+	char	*a;
 
 	node = malloc(sizeof(t_env));
 	if (node == NULL)
 		return (NULL);
 	node->var = ft_strdup(tmp);
-	node->var_value = ft_strdup(ft_strchr(tmp2, '=') + 1);
+	a = ft_strchr(tmp2, '=');
+	if (a)
+		node->var_value = ft_strdup(ft_strchr(tmp2, '=') + 1);
+	else
+		node->var_value = ft_strdup(tmp2);
 	node->visible = flag;
 	node->next = NULL;
 	return (node);
@@ -77,7 +82,7 @@ void	env_print(t_env *env, char **cmd_split)
 {
 	if (cmd_split[1])
 	{
-		ft_fprintf(STDERR_FILENO, "%s: '%s':No such file or directory\n"
+		ft_fprintf(STDERR_FILENO, "%s: '%s': No such file or directory\n"
 			,cmd_split[0], cmd_split[1]);
 		return ;
 	}
@@ -88,19 +93,6 @@ void	env_print(t_env *env, char **cmd_split)
 			printf("%s=", env->var);
 			printf("%s\n", env->var_value);
 		}
-		env = env->next;
-	}
-}
-
-void	sort_env(t_env *env)
-{
-	//Falta fazer o Sort
-	while (env)
-	{
-		printf("declare -x %s", env->var);
-		if (env->visible == 1)
-			printf("=");
-		printf("%s\n", env->var_value);
 		env = env->next;
 	}
 }

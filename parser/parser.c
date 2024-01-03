@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2023/12/28 13:06:13 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:34:50 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,9 @@ int	nbr_of_words(t_cmd *tokens)
 	i = 0;
 	while (tokens != NULL && tokens->type != pipes)
 	{
+		if (ft_strncmp(tokens->token, "\0", 1))
+			i++;
 		tokens = tokens->next;
-		i++;
 	}
 	return (i);
 }
@@ -110,8 +111,11 @@ int	lst_to_array(t_minishell *shell, t_cmd *tokens)
 	i = 0;
 	while (tokens != NULL && tokens->type != pipes)
 	{
-		shell->cmd_split[i] = ft_strdup(tokens->token);
-		i++;
+		if (ft_strncmp(tokens->token, "\0", 1))
+		{
+			shell->cmd_split[i] = ft_strdup(tokens->token);
+			i++;
+		}
 		tokens = tokens->next;
 	}
 	shell->cmd_split[i] = 0;

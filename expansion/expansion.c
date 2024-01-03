@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/26 13:03:37 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:27:05 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ char	*get_var(char *token)
 	i = 0;
 	if (ft_isalpha(ds[i]) == 0)
 		return (ft_substr(ds, 0, 1));
-	while (ds[i] != ' ' && ds[i] != '"' && ds[i] != '\'' && ds[i])
+	while (ds[i] != ' ' && ds[i] != '"' && ds[i] != '\''
+		&& ds[i] != '$' && ds[i])
 		i++;
 	return (ft_substr(ds, 0, i));
 }
@@ -67,7 +68,7 @@ void	isolate(t_env *env, char **token)
 		var = get_var(*token);
 		val = get_env_val(env, var);
 		if (val == NULL)
-			val = ft_strdup("");
+			val = ft_strdup("\0");
 		*token = replace(var, val, *token);
 		free(var);
 		free(val);

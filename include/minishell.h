@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/02 14:38:51 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 17:02:45 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ typedef struct s_minishell
 	int		redir_flag;
 	t_rdr	rr;
 	t_env	*env;
+	/* t_env	*srt_env; */
 }				t_minishell;
 
 //Builtin and Execve
@@ -70,6 +71,7 @@ int		execve_syntax(char *cmd, t_env *env, char *path);
 void	change_shlvl(char **env_array, t_env *env);
 char	*exec_path(t_minishell *shell);
 void	execve_error(int error);
+char	*get_var_name(char *arg);
 
 //Free
 void	execve_clean(t_minishell *shell);

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/02 14:37:54 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 14:52:23 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,17 +49,17 @@ int	is_dir_err(char *cmd)
 
 int	execve_syntax(char *cmd, t_env *env, char *path)
 {
-	
 	if (ft_strlen(cmd) == 1 && cmd[0] == '.')
 		return (1);
-	if (is_dir_err(cmd) == 1)
+	else if (ft_strchr(cmd, '/') && is_dir_err(cmd) == 1)
 		return (2);
 	else if ((access(path, F_OK) == -1 && (ft_strchr(cmd, '/') ||
 		!get_env(env, "PATH"))))
 		return (3);
 	else if (!access(path, F_OK) && access(path, X_OK) == -1)
 		return (4);
-	else if (access(path, F_OK) == -1)
+	else if (access(path, F_OK | X_OK) == -1
+		|| (cmd[0] == '.' && cmd[1] == '.'))
 		return (5);
 	return (0);
 }

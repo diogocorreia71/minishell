@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/02 14:21:49 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:35:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,13 @@ void	executer(t_minishell *shell, t_cmd *args)
 	{
 		if (lst_to_array(shell, args) != 0)
 			return ;
+		/* int i = 0;
+		while (shell->cmd_split[i])
+		{
+			printf("%s\n", shell->cmd_split[i]);
+			i++;
+		}
+		return ; */
 		builtin_cmd(shell);
 		ft_free_dp((void **)(shell->cmd_split));
 	}

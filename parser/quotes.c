@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/27 15:59:46 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 15:47:15 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ char	what_quote(char *str)
 	i = 0;
 	dquotes = 0;
 	squotes = 0;
+	while (str[i] && str[i] != '\'' && str[i] != '"')
+		i++;
 	while (str[i] == '\'' || str[i] == '"')
 	{
 		if (str[i] == '\'' && !dquotes)

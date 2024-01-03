@@ -6,27 +6,11 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/02 16:12:59 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/03 17:01:25 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	**get_var_name(char *arg)
-{
-	char	**var_name;
-	int		i;
-
-	var_name = (char **)malloc(sizeof(char *) * 2);
-	if (var_name == NULL)
-		return (NULL);
-	i = 0;
-	while (arg[i] != '\0' && arg[i] != '=')
-		i++;
-	var_name[0] = ft_substr(arg, 0, i);
-	var_name[1] = 0;
-	return (var_name);
-}
 
 int	check_export(char *cmd)
 {
@@ -68,11 +52,11 @@ void	create_inv_var(t_env *env, char *var_name)
 	}
 }
 
-void	create_vis_var(t_env *env, char **var_name, char *val)
+void	create_vis_var(t_env *env, char *var_name, char *val)
 {
 	t_env	*tmp;
 
-	tmp = get_env_node(env, *var_name);
+	tmp = get_env_node(env, var_name);
 	if (tmp)
 	{
 		free(tmp->var_value);
@@ -80,18 +64,21 @@ void	create_vis_var(t_env *env, char **var_name, char *val)
 		return;
 	}
 	env = env_last(env);
-	env->next = create_node_env(*var_name, val, 1);
+	env->next = create_node_env(var_name, val, 1);
 }
 
 void	export(t_env *env, char **cmd_split)
 {
-	char	**var_name;
+	t_env	*srt_env;
+	char	*var_name;
 	int		i;
 
 	if (cmd_split[1] == NULL)
 	{
-		//Fazer o Sort
-		sort_env(env);
+		srt_env = dup_env(env);
+		sort_env(srt_env);
+		no_args_exp(srt_env);
+		free_env(srt_env);
 		return ;
 	}
 	i = 0;
@@ -101,9 +88,9 @@ void	export(t_env *env, char **cmd_split)
 			continue;
 		var_name = get_var_name(cmd_split[i]);
 		if (!ft_strchr(cmd_split[i], '='))
-			create_inv_var(env, *var_name);
+			create_inv_var(env, var_name);
 		else
 			create_vis_var(env, var_name, cmd_split[i]);
-		ft_free_dp((void **)var_name);
+		free(var_name);
 	}
 }
