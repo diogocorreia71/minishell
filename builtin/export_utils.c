@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:59:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/03 17:00:48 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/04 11:42:55 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	no_args_exp(t_env *env)
 		printf("declare -x %s", env->var);
 		if (env->visible == 1)
 			printf("=");
-		printf("%s\n", env->var_value);
+		printf("\"%s\"\n", env->var_value);
 		env = env->next;
 	}
 }

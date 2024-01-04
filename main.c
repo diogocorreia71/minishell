@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/03 16:22:32 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/04 17:31:04 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	parser(t_minishell *shell, t_cmd **args)
 	}
 	tmp = *args;
 	// 6.Redirections (>, <)
-	shell->redir_flag = handle_redir(shell, *args);
+	handle_redir(shell, *args);
 	return (0);
 }
 

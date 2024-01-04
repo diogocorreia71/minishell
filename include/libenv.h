@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 10:17:59 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/03 17:02:37 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/04 11:30:54 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ typedef struct s_env
 {
 	char	*var;
 	char	*var_value;
-	int		visible;		
+	int		visible;
 	struct s_env	*next;
 }				t_env;
 
