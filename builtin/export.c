@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/03 17:01:25 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/05 23:13:04 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,6 @@ int	export_syntax(char *cmd)
 
 void	create_inv_var(t_env *env, char *var_name)
 {
-	char	*str;
-
-	str = NULL;
 	if (get_env(env, var_name))
 		return ;
 	else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/04 11:52:06 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/05 23:21:47 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,20 +95,13 @@ void	expand_ds(t_env *env, t_cmd *arg)
 
 void	expansion(t_minishell *shell, t_cmd *args)
 {	
-	t_cmd	*tmp;
-
-	tmp = args;
-	while (tmp)
-	{
-		if (tmp->type == words && (ft_strchr(tmp->token, '$') 
-			|| ft_strchr(tmp->token, '~')))
-			tmp->type = words_ds;
-		tmp = tmp->next;
-	}
 	while (args)
 	{
-		if (args->type == words_ds)
+		if (args->type == words && (ft_strchr(args->token, '$') 
+			|| ft_strchr(args->token, '~')))
 			expand_ds(shell->env, args);
+		if (!ft_strncmp(args->token, "\0", 1))
+			args->type = ignore;
 		args = args->next;
 	}
 }

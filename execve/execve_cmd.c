@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/02 14:36:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/05 23:13:32 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,9 @@ char	*exec_path(t_minishell *shell)
 
 void	ft_execve(t_minishell *shell)
 {
-	char	*path;
 	int		status;
 	pid_t	pid;
 	
-	path = NULL;
 	pid = fork();
 	if (pid < 0)
 	{

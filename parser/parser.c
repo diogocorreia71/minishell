@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2024/01/04 17:33:36 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/05 23:31:24 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	nbr_of_words(t_cmd *tokens)
 	i = 0;
 	while (tokens != NULL && tokens->type != pipes)
 	{
-		if (ft_strncmp(tokens->token, "\0", 1))
+		if (tokens->type != ignore)
 			i++;
 		tokens = tokens->next;
 	}
@@ -111,7 +111,7 @@ int	lst_to_array(t_minishell *shell, t_cmd *tokens)
 	i = 0;
 	while (tokens != NULL && tokens->type != pipes)
 	{
-		if (ft_strncmp(tokens->token, "\0", 1))
+		if (tokens->type != ignore)
 		{
 			shell->cmd_split[i] = ft_strdup(tokens->token);
 			i++;

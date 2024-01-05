@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/04 17:31:04 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/05 23:31:31 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	parser(t_minishell *shell, t_cmd **args)
 	/* while (*args)
 	{
 		printf("%s\n", (*args)->token);
+		printf("%d\n", (*args)->type);
 		*args = (*args)->next;
 	}
 	return (1); */
