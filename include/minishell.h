@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/05 23:15:49 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/15 17:03:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ typedef enum s_type
 	words,
 	pipes,
 	redir,
+	redin,
+	redout,
 	ignore
 }			t_type;
 
@@ -46,8 +48,9 @@ typedef struct s_cmd
 
 typedef struct s_rdr
 {
-	int	nbr_redir;
-	int	orig_fd;
+	int	nbr_redin;
+	int	nbr_redout;
+	int	orig_fd[3];
 	int file_fd;
 }				t_rdr;
 
@@ -60,7 +63,6 @@ typedef struct s_minishell
 	int		redir_flag;
 	t_rdr	rr;
 	t_env	*env;
-	/* t_env	*srt_env; */
 }				t_minishell;
 
 //Builtin and Execve

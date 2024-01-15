@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/04 17:31:32 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/15 16:59:42 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	executer(t_minishell *shell, t_cmd *args)
 	info.nbr_pipes = count_pipes(args);
 	if (info.nbr_pipes == 0)
 	{
+		handle_redir(shell, args);
 		if (lst_to_array(shell, args) != 0)
 			return ;
 		/* int i = 0;

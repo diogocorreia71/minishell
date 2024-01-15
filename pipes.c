@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 23:00:23 by rui               #+#    #+#             */
-/*   Updated: 2023/12/28 12:45:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/15 17:07:17 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,10 @@ int	start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args)
 			ft_fprintf(STDERR_FILENO, "Start pipe fork error\n");
 		if (info->pipe_pid[i] == 0)
 		{
+			open_fd(info->fd, i, info->nbr_pipes);
+			handle_redir(shell, args);
 			if (lst_to_array(shell, args) != 0)
 				exit(1);
-			open_fd(info->fd, i, info->nbr_pipes);
 			builtin_cmd(shell);
 			free_all_child(shell, info);
 			exit(0);

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/03 15:47:15 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:25:30 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ int	handle_quotes(char *str)
 	}
 	if (dquotes == 0 && squotes == 0)
 		return (0);
-	else
-		return (1);
+	return (1);
 }
 
 int	count_quotes(char *rl_str)

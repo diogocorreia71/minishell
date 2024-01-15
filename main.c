@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/05 23:31:31 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/15 16:59:13 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,21 @@ int	parser(t_minishell *shell, t_cmd **args)
 	}
 	tmp = *args;
 	// 6.Redirections (>, <)
-	handle_redir(shell, *args);
 	return (0);
 }
 
-void	reset_fd(t_rdr *rr)
+void	reset_fd(t_rdr *rr, int flag)
 {
-	dup2(rr->orig_fd, STDOUT_FILENO);
-	close(rr->orig_fd);
+	if (flag == 2 || flag == 3)
+	{
+		dup2(rr->orig_fd[0], STDIN_FILENO);
+		close(rr->orig_fd[0]);
+	}
+	if (flag == 1 || flag == 3)
+	{
+		dup2(rr->orig_fd[1], STDOUT_FILENO);
+		close(rr->orig_fd[1]);
+	}
 }
 
 int main(int ac, char **av, char **envp)
@@ -74,7 +81,10 @@ int main(int ac, char **av, char **envp)
 		if (parser(&shell, &args) == 1)
 			continue;
 		executer(&shell, args);
-		if (shell.redir_flag == 1)
-			reset_fd(&shell.rr);
+		if (shell.redir_flag > 0)
+		{
+			reset_fd(&shell.rr, shell.redir_flag);
+			shell.redir_flag = 0;
+		}
 	}
 }
