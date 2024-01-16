@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2024/01/15 10:19:52 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:29:58 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,19 @@ t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens)
 		else if (cmd[i] == '|')
 			tokens->next = create_token("|", pipes);
 		else if (cmd[i] == '>')
-			tokens->next = create_token(">", redir);
+		{
+			if (cmd[i + 1] && cmd[i + 1] == '>')
+				tokens->next = create_token(">>", redout);
+			else
+				tokens->next = create_token(">", redout);
+		}
 		else if (cmd[i] == '<')
-			tokens->next = create_token("<", redir);
+		{
+			if (cmd[i + 1] && cmd[i + 1] == '<')
+				tokens->next = create_token("<<", here_doc);
+			else
+				tokens->next = create_token("<", redin);
+		}
 		else
 			tokens->next = create_cmd_token(cmd + i);
 		tokens = tokens->next;

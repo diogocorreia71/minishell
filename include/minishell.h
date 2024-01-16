@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/15 17:03:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:56:58 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,12 @@ typedef enum s_type
 {
 	words,
 	pipes,
-	redir,
 	redin,
 	redout,
+	append,
+	here_doc,
+	exe_redout,
+	exe_redin,
 	ignore
 }			t_type;
 
@@ -48,6 +51,7 @@ typedef struct s_cmd
 
 typedef struct s_rdr
 {
+	int	nbr_redapp;
 	int	nbr_redin;
 	int	nbr_redout;
 	int	orig_fd[3];
@@ -100,7 +104,9 @@ int		init_fd_pipes(t_pipe *info);
 int		count_pipes(t_cmd *args);
 
 //Redirections
-int		handle_redir(t_minishell *shell, t_cmd *args);
+int		start_redir(t_minishell *shell, t_cmd *args);
+int		has_redir(t_cmd *args);
+void	count_redir(t_cmd *args, int *nbr_redout, int *nbr_redin);
 
 //Expansion
 void	expansion(t_minishell *shell, t_cmd *args);
@@ -112,5 +118,6 @@ void	executer(t_minishell *shell, t_cmd *args);
 //Utils
 int		is_space(char c);
 void	free_first(t_cmd **tokens);
+int		check_unex_token(t_cmd *args);
 
 #endif

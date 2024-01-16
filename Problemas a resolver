@@ -1,2 +1,2 @@
 Resolvido * Pipe e redirection em conjunto. Problema com os fds, acho. 
-*Tratar da flag que reseta od fds depois da redirection.
+*Refazer od redirects. Abrir todos os ficheiros e executar so o ultimo redirect

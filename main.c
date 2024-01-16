@@ -6,11 +6,52 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/15 16:59:13 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:57:24 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	count_redir(t_cmd *args, int *nbr_redout, int *nbr_redin)
+{
+	while (args != NULL)
+	{
+		if (args->type == redout)
+			(*nbr_redout)++;
+		else if (args->type == redin)
+			(*nbr_redin)++;
+		args = args->next;
+	}
+}
+
+void	last_redir(t_cmd *args, int nbr_redir, t_type type)
+{
+	while (nbr_redir != 0)
+	{
+		args = args->next;
+		if (args->type == type)
+			nbr_redir--;
+	}
+	if (type == redout)
+		args->type = exe_redout;
+	else
+		args->type = exe_redin;
+}
+
+int	handle_redir(t_cmd *args)
+{
+	int		nbr_redout;
+	int		nbr_redin;
+	
+	nbr_redout = 0;
+	nbr_redin = 0;
+	count_redir(args, &nbr_redout, &nbr_redin);
+	if (nbr_redout != 0)
+		last_redir(args, nbr_redout, redout);
+	if (nbr_redin != 0)
+		last_redir(args, nbr_redin, redin);
+	return (1);
+}
 
 int	parser(t_minishell *shell, t_cmd **args)
 {
@@ -27,6 +68,7 @@ int	parser(t_minishell *shell, t_cmd **args)
 	// 2.Tokenization 3.Command Identification
 	*args = make_tokens(shell, *args);
 	free_first(args);
+	free(shell->rl_str);
 	// 4.Command Expandsion ($, ~)
 	expansion(shell, *args);
 	/* while (*args)
@@ -45,7 +87,13 @@ int	parser(t_minishell *shell, t_cmd **args)
 		tmp = tmp->next;
 	}
 	tmp = *args;
+	if (check_unex_token(*args) == 1)
+	{
+		free_tokens(*args);
+		return (1);
+	}
 	// 6.Redirections (>, <)
+	handle_redir(*args);
 	return (0);
 }
 
