@@ -6,51 +6,52 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/16 16:57:24 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/17 15:52:16 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	count_redir(t_cmd *args, int *nbr_redout, int *nbr_redin)
+void	count_redir(t_cmd *args, int *nbr_redir)
 {
 	while (args != NULL)
 	{
-		if (args->type == redout)
-			(*nbr_redout)++;
-		else if (args->type == redin)
-			(*nbr_redin)++;
+		if (args->type == redir)
+			(*nbr_redir)++;
 		args = args->next;
 	}
 }
 
-void	last_redir(t_cmd *args, int nbr_redir, t_type type)
+void	chtype(t_cmd *args, int nbr_redir)
 {
 	while (nbr_redir != 0)
 	{
-		args = args->next;
-		if (args->type == type)
+		if (args->type == redir)
+		{
+			if (ft_strncmp(args->token, ">>", 3) == 0)
+				args->type = append;
+			else if (ft_strncmp(args->token, ">", 3) == 0)
+				args->type = redout;
+			else
+				args->type = redin;
 			nbr_redir--;
+		}
+		args = args->next;
 	}
-	if (type == redout)
-		args->type = exe_redout;
-	else
-		args->type = exe_redin;
 }
 
-int	handle_redir(t_cmd *args)
+int	has_redir(int *orig_fd, t_cmd *args)
 {
-	int		nbr_redout;
-	int		nbr_redin;
-	
-	nbr_redout = 0;
-	nbr_redin = 0;
-	count_redir(args, &nbr_redout, &nbr_redin);
-	if (nbr_redout != 0)
-		last_redir(args, nbr_redout, redout);
-	if (nbr_redin != 0)
-		last_redir(args, nbr_redin, redin);
-	return (1);
+	int		nbr_redir;
+
+	nbr_redir = 0;
+	count_redir(args, &nbr_redir);
+	if (nbr_redir == 0)
+		return (false);
+	chtype(args, nbr_redir);
+	orig_fd[0] = dup(STDIN_FILENO);
+	orig_fd[1] = dup(STDOUT_FILENO);
+	return (true);
 }
 
 int	parser(t_minishell *shell, t_cmd **args)
@@ -93,22 +94,16 @@ int	parser(t_minishell *shell, t_cmd **args)
 		return (1);
 	}
 	// 6.Redirections (>, <)
-	handle_redir(*args);
+	shell->nbr_redir = has_redir(shell->orig_fd, *args);
 	return (0);
 }
 
-void	reset_fd(t_rdr *rr, int flag)
+void	reset_fd(int *orig_fd)
 {
-	if (flag == 2 || flag == 3)
-	{
-		dup2(rr->orig_fd[0], STDIN_FILENO);
-		close(rr->orig_fd[0]);
-	}
-	if (flag == 1 || flag == 3)
-	{
-		dup2(rr->orig_fd[1], STDOUT_FILENO);
-		close(rr->orig_fd[1]);
-	}
+	dup2(orig_fd[0], STDIN_FILENO);
+	close(orig_fd[0]);
+	dup2(orig_fd[1], STDOUT_FILENO);
+	close(orig_fd[1]);
 }
 
 int main(int ac, char **av, char **envp)
@@ -129,10 +124,7 @@ int main(int ac, char **av, char **envp)
 		if (parser(&shell, &args) == 1)
 			continue;
 		executer(&shell, args);
-		if (shell.redir_flag > 0)
-		{
-			reset_fd(&shell.rr, shell.redir_flag);
-			shell.redir_flag = 0;
-		}
+		if (shell.nbr_redir != 0)
+			reset_fd(shell.orig_fd);
 	}
 }

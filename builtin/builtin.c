@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/04 15:39:34 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/17 15:04:04 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int	non_builtin(t_minishell *shell)
 
 void	builtin_cmd(t_minishell *shell)
 {
+	if (shell->cmd_split[0] == 0)
+		return ;
 	if (!ft_strncmp(shell->cmd_split[0], "pwd", 4))
 		pwd();
 	else if (!ft_strncmp(shell->cmd_split[0], "echo", 5))

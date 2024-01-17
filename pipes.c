@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 23:00:23 by rui               #+#    #+#             */
-/*   Updated: 2024/01/16 16:11:05 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/17 15:55:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,9 @@ int	start_pipes(t_minishell *shell, t_pipe *info, t_cmd *args)
 		if (info->pipe_pid[i] == 0)
 		{
 			open_fd(info->fd, i, info->nbr_pipes);
-			start_redir(shell, args);
+			if (shell->nbr_redir != 0)
+				if (start_redir(args) == -1)
+					exit(1);
 			if (lst_to_array(shell, args) != 0)
 				exit(1);
 			builtin_cmd(shell);

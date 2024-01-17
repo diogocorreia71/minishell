@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/16 16:56:58 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/17 15:53:34 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,11 @@ typedef enum s_type
 {
 	words,
 	pipes,
+	redir,
+	append,
 	redin,
 	redout,
-	append,
 	here_doc,
-	exe_redout,
-	exe_redin,
 	ignore
 }			t_type;
 
@@ -49,23 +48,15 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }			t_cmd;
 
-typedef struct s_rdr
-{
-	int	nbr_redapp;
-	int	nbr_redin;
-	int	nbr_redout;
-	int	orig_fd[3];
-	int file_fd;
-}				t_rdr;
-
 typedef struct s_minishell
 {
 	char	*rl_str;
 	char	**cmd_split;
 	char	**env_array;
 	char	*path;
-	int		redir_flag;
-	t_rdr	rr;
+	int		orig_fd[2];
+	int		redir;
+	int		nbr_redir;
 	t_env	*env;
 }				t_minishell;
 
@@ -104,9 +95,10 @@ int		init_fd_pipes(t_pipe *info);
 int		count_pipes(t_cmd *args);
 
 //Redirections
-int		start_redir(t_minishell *shell, t_cmd *args);
-int		has_redir(t_cmd *args);
-void	count_redir(t_cmd *args, int *nbr_redout, int *nbr_redin);
+int		start_redir(t_cmd *args);
+int		has_redir(int *orig_fd, t_cmd *args);
+void	count_redir(t_cmd *args, int *nbr_redir);
+void	free_redir(t_cmd *args);
 
 //Expansion
 void	expansion(t_minishell *shell, t_cmd *args);
