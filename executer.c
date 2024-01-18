@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/17 15:55:27 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:06:32 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,12 @@ void	executer(t_minishell *shell, t_cmd *args)
 	t_pipe	info;
 	
 	info.nbr_pipes = count_pipes(args);
+	shell->npipes = info.nbr_pipes;
 	if (info.nbr_pipes == 0)
 	{
-		if (shell->nbr_redir != 0)
-			if (start_redir(args) == -1)
-				return ;
+		// 6.Redirections (>, <)
+		if (start_redir(shell, args) == -1)
+			return ;
 		if (lst_to_array(shell, args) != 0)
 			return ;
 		builtin_cmd(shell);

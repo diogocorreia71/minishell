@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2024/01/16 11:33:34 by rumachad         ###   ########.fr        #
+#    Updated: 2024/01/18 11:43:04 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ SRC = 	$(wildcard $(SRC_BUILTIN)/*.c) \
 		$(wildcard *.c) \
 		
 OBJS = ${SRC:.c=.o}
-CFLAGS = -Wall -Wextra -Werror -I include -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
 
 ${NAME}:	${OBJS}
 			make -C libft
@@ -50,6 +50,6 @@ re: fclean all
 
 val:
 		make
-		valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
+		valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --suppressions=readline.supp ./minishell
 
 .SILENT:

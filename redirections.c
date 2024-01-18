@@ -6,19 +6,20 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:38:34 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/17 15:58:58 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:20:44 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_redir(t_cmd *args)
+void	redir_cmd(t_cmd *args)
 {
 	while (args->type != redin && args->type != redout && args->type != append)
 		args = args->next;
 	while (args != NULL)
 	{
-		args->type = ignore;
+		if (args->type != command)
+			args->type = ignore;
 		args = args->next;
 	}
 }
@@ -61,10 +62,12 @@ int	set_up_file(char *redir_path, t_type type, int exe_redir)
 	file_fd = open(redir_path, flags, 0644);
 	if (exe_redir == true)
 		prep_fd(file_fd, type);
+	else
+		close(file_fd);
 	return (file_fd);
 }
 
-int	see(t_cmd *args, t_type type)
+int	redir_check(t_cmd *args, t_type type)
 {
 	if (args->next)
 		args = args->next;
@@ -80,25 +83,28 @@ int	see(t_cmd *args, t_type type)
 }
 
 
-int	start_redir(t_cmd *args)
+int	start_redir(t_minishell *shell, t_cmd *args)
 {
 	t_cmd	*head;
 	char	*redir_path;
 	int		file_fd;
 
 	head = args;
+	if (has_redir(shell->npipes, shell->orig_fd, args) == false)
+		return (0);
 	while (args != NULL)
 	{
 		if (args->type == redout || args->type == redin || args->type == append)
 		{
 			redir_path = args->next->token;
 			file_fd = set_up_file(redir_path, args->type,
-				see(args, args->type));
+				redir_check(args, args->type));
 			if (file_fd == -1)
 				return (-1);
 		}
 		args = args->next;
 	}
-	free_redir(head);
+	shell->redir_flag = 1;
+	redir_cmd(head);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/17 15:52:16 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:10:37 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	count_redir(t_cmd *args, int *nbr_redir)
 {
-	while (args != NULL)
+	while (args != NULL/*  && args->type != pipes */)
 	{
 		if (args->type == redir)
 			(*nbr_redir)++;
@@ -40,7 +40,13 @@ void	chtype(t_cmd *args, int nbr_redir)
 	}
 }
 
-int	has_redir(int *orig_fd, t_cmd *args)
+void	find_cmd(t_cmd *args)
+{
+	if (args->next->next && args->next->next->type == words)
+		args->next->next->type = command;
+}
+
+int	has_redir(int npipes, int *orig_fd, t_cmd *args)
 {
 	int		nbr_redir;
 
@@ -48,9 +54,14 @@ int	has_redir(int *orig_fd, t_cmd *args)
 	count_redir(args, &nbr_redir);
 	if (nbr_redir == 0)
 		return (false);
+	if (args->type == redir)
+		find_cmd(args);
 	chtype(args, nbr_redir);
-	orig_fd[0] = dup(STDIN_FILENO);
-	orig_fd[1] = dup(STDOUT_FILENO);
+	if (npipes == 0)
+	{
+		orig_fd[0] = dup(STDIN_FILENO);
+		orig_fd[1] = dup(STDOUT_FILENO);
+	}
 	return (true);
 }
 
@@ -93,8 +104,6 @@ int	parser(t_minishell *shell, t_cmd **args)
 		free_tokens(*args);
 		return (1);
 	}
-	// 6.Redirections (>, <)
-	shell->nbr_redir = has_redir(shell->orig_fd, *args);
 	return (0);
 }
 
@@ -124,7 +133,10 @@ int main(int ac, char **av, char **envp)
 		if (parser(&shell, &args) == 1)
 			continue;
 		executer(&shell, args);
-		if (shell.nbr_redir != 0)
+		if (shell.redir_flag == 1)
+		{
 			reset_fd(shell.orig_fd);
+			shell.redir_flag = 0;
+		}
 	}
 }

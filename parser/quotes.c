@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/15 15:25:30 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:30:20 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,23 @@ int	handle_quotes(char *str)
 	int	i;
 	int	squotes;
 	int	dquotes;
+	int	bslash;
 
 	i = 0;
+	bslash = 0;
 	squotes = 0;
 	dquotes = 0;
 	while (str[i])
 	{
 		if (str[i] == '"' && !squotes)
 			dquotes = !dquotes;
-		if (str[i] == '\'' && !dquotes)
+		else if (str[i] == '\'' && !dquotes)
 			squotes = !squotes;
+		else if (str[i] == '\\' && !squotes)
+			bslash = !bslash;
 		i++;
 	}
-	if (dquotes == 0 && squotes == 0)
+	if (dquotes == 0 && squotes == 0 && bslash == 0)
 		return (0);
 	return (1);
 }
@@ -52,7 +56,7 @@ int	count_quotes(char *rl_str)
 			dquotes++;
 			nbr_quotes++;
 		}
-		if (rl_str[i] == '\'' && !dquotes)
+		else if (rl_str[i] == '\'' && !dquotes)
 		{
 			squotes++;
 			nbr_quotes++;

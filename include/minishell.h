@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/17 15:53:34 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:11:19 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef enum s_type
 	redin,
 	redout,
 	here_doc,
+	command,
 	ignore
 }			t_type;
 
@@ -55,8 +56,8 @@ typedef struct s_minishell
 	char	**env_array;
 	char	*path;
 	int		orig_fd[2];
-	int		redir;
-	int		nbr_redir;
+	int		redir_flag;
+	int		npipes;
 	t_env	*env;
 }				t_minishell;
 
@@ -95,10 +96,9 @@ int		init_fd_pipes(t_pipe *info);
 int		count_pipes(t_cmd *args);
 
 //Redirections
-int		start_redir(t_cmd *args);
-int		has_redir(int *orig_fd, t_cmd *args);
+int		start_redir(t_minishell *shell, t_cmd *args);
+int		has_redir(int npipes, int *orig_fd, t_cmd *args);
 void	count_redir(t_cmd *args, int *nbr_redir);
-void	free_redir(t_cmd *args);
 
 //Expansion
 void	expansion(t_minishell *shell, t_cmd *args);
