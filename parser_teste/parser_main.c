@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_main.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 02:23:44 by rui               #+#    #+#             */
-/*   Updated: 2024/01/21 22:17:28 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/22 10:00:04 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,26 @@ types get_redir_type(char *token)
 	return (type);
 }
 
+types	get_next_token_type(lst_tokens *tokens)
+{
+	if (tokens->next == NULL)
+		return (DONE);
+	else
+		return (tokens->next->token_type);
+}
+
 cmd *parse_redir(lst_tokens **tokens, cmd *exec_cmd)
 {
 	types type;
 	
-	type = get_token_type(*tokens);
-	if (type == DONE)
+	if (get_next_token_type(*tokens) == DONE)
 	{
-		printf("syntax error");
+		printf("syntax error (newline)");
 		return (exec_cmd);
 	}
 	type = get_redir_type((*tokens)->token);
 	*tokens = (*tokens)->next;
-	if (get_token_type(*tokens) != word)
+	if (get_next_token_type(*tokens) != word)
 	{
 		printf("syntax error");
 		return (exec_cmd);
@@ -70,7 +77,7 @@ cmd *parse_exec(lst_tokens **tokens)
 			cmd = parse_redir(tokens, cmd);
 		if (get_token_type(*tokens) != FILENAME)
 			pointer_cast->args[i++] = (*tokens)->token;
-		*tokens = (*tokens)->next;
+		(*tokens) = (*tokens)->next;
 	}
 	return (cmd);
 }

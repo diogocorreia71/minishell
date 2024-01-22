@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/05 23:21:47 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/22 12:58:04 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	isolate(t_env *env, char **token)
 }
 
 
-void	expand_ds(t_env *env, t_cmd *arg)
+void	expand_ds(t_env *env, t_lst_tokens *arg)
 {
 	char	*dsign;
 
@@ -93,15 +93,15 @@ void	expand_ds(t_env *env, t_cmd *arg)
 	isolate(env, &arg->token);
 }
 
-void	expansion(t_minishell *shell, t_cmd *args)
+void	expansion(t_minishell *shell, t_lst_tokens *args)
 {	
 	while (args)
 	{
-		if (args->type == words && (ft_strchr(args->token, '$') 
+		if (args->type == WORD && (ft_strchr(args->token, '$') 
 			|| ft_strchr(args->token, '~')))
 			expand_ds(shell->env, args);
 		if (!ft_strncmp(args->token, "\0", 1))
-			args->type = ignore;
+			args->type = IGNORE;
 		args = args->next;
 	}
 }

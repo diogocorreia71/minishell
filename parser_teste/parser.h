@@ -23,6 +23,12 @@ typedef struct cmd
 	types type;
 }			cmd;
 
+typedef struct exec
+{
+	types type;
+	char	*args[50];
+}			exec;
+
 typedef struct lst_tokens
 {
 	char *token;
@@ -30,11 +36,6 @@ typedef struct lst_tokens
 	struct lst_tokens	*next;
 }		lst_tokens;
 
-typedef struct exec
-{
-	types type;
-	char	*args[50];
-}			exec;
 
 typedef struct s_pipe
 {

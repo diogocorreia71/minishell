@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:31:44 by rui               #+#    #+#             */
-/*   Updated: 2023/11/26 19:32:26 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/22 15:41:20 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,22 @@
 int	is_space(char c)
 {
 	if (c == ' ')
-		return (1);
+		return (YES);
 	else
-		return (0);
+		return (NO);
 }
 
-void	free_first(t_cmd **tokens)
+void	free_first(t_lst_tokens **tokens)
 {
-	t_cmd	*tmp;
+	t_lst_tokens	*tmp;
 
 	tmp = *tokens;
 	*tokens = (*tokens)->next;
 	free(tmp);
+}
+
+void	close_fd(int pipe_fd[2])
+{
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 }

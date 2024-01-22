@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/16 13:04:08 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:26:09 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,13 @@ void	free_env(t_env *env)
 void	execve_clean(t_minishell *shell)
 {
 	free(shell->path);
-	free(shell->rl_str);
-	ft_free_dp((void **)shell->env_array);
 	ft_free_dp((void **)shell->cmd_split);
+	ft_free_dp((void **)shell->env_array);
 }
 
-void	free_prev_node(t_cmd **arg)
+void	free_prev_node(t_lst_tokens **arg)
 {
-	t_cmd	*tmp;
+	t_lst_tokens	*tmp;
 
 	tmp = *arg;
 	*arg = (*arg)->next;
@@ -44,17 +43,15 @@ void	free_prev_node(t_cmd **arg)
 	free(tmp);
 }
 
-void	free_tokens(t_cmd *tokens)
+void	free_tokens(t_lst_tokens **tokens)
 {
-	while (tokens != NULL)
-		free_prev_node(&tokens);
+	while (*tokens != NULL)
+		free_prev_node(tokens);
 }
 
-void	free_all_child(t_minishell *shell, t_pipe *info)
+void	free_all_child(t_minishell *shell)
 {
 	ft_free_dp((void **)shell->cmd_split);
-	ft_free_dp((void **)info->fd);
-	free(info->pipe_pid);
 	free_env(shell->env);
 }
 

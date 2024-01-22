@@ -1,30 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/21 16:17:17 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 17:47:27 by rumachad         ###   ########.fr       */
+/*   Created: 2024/01/22 11:40:01 by rumachad          #+#    #+#             */
+/*   Updated: 2024/01/22 11:40:17 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_exit(t_minishell *shell, t_exec *cmd)
+t_id	get_token_type(t_lst_tokens *arg)
 {
-	printf("exit\n");
-	if (shell->cmd_split[1] && ft_isdigit(shell->cmd_split[1][0]) == 0)
-		ft_fprintf(2, "exit: %s: numeric argument required\n",
-			shell->cmd_split[1]);
-	else if (shell->cmd_split[1] && shell->cmd_split[2])
-	{
-		ft_fprintf(2, "exit: too many arguments\n");
-		return ;
-	}
-	free_env(shell->env);
-	ft_free_dp((void **)shell->cmd_split);
-	free(cmd);
-	exit(EXIT_SUCCESS);
+	if (arg == NULL)
+		return (DONE);
+	else
+		return (arg->type);
+}
+
+t_id	get_redir_type(char *token)
+{
+	t_id	type;
+
+	type = WORD;
+	if (ft_strncmp(token, ">", 2) == 0)
+		type = REDIR_OUT;
+	else if (ft_strncmp(token, "<", 2) == 0)
+		type = REDIR_IN;
+	else if (ft_strncmp(token, ">>", 3) == 0)
+		type = APPEND;
+	return (type);
 }

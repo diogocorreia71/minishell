@@ -5,130 +5,93 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2024/01/17 11:06:53 by rumachad         ###   ########.fr       */
+/*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
+/*   Updated: 2024/01/22 18:25:55 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_cmd	*create_token(char *token, t_type type)
+t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer)
 {
-	t_cmd	*node;
-
-	node = malloc(sizeof(t_cmd));
-	if (node == NULL)
+	t_id		redir_type;
+	
+	redir_type = get_redir_type((*args)->token);
+	(*args) = (*args)->next;
+	if ((*args)->type != WORD)
+	{
+		ft_fprintf(STDERR_FILENO, "Syntax error\n");
 		return (NULL);
-	node->type = type;
-	node->token = ft_strdup(token);
-	node->next = NULL;
-	return (node);
+	}
+	(*args)->type = IGNORE;
+	if (redir_type == REDIR_OUT)
+		struct_pointer = redir_constructor(struct_pointer, 1,
+			O_WRONLY | O_CREAT | O_TRUNC, (*args)->token);
+	else if (redir_type == REDIR_IN)
+		struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, (*args)->token);
+	else if (redir_type == APPEND)
+		struct_pointer = redir_constructor(struct_pointer, 1,
+			O_WRONLY | O_CREAT | O_APPEND, (*args)->token);
+	return (struct_pointer);
 }
 
-t_cmd	*create_cmd_token(char *token)
+t_generic	*parser_exec(t_lst_tokens **args)
 {
-	t_cmd	*tokens;
-	char	*str;
-	int		i;
-	int		dquotes;
-	int		squotes;
+	t_generic	*struct_pointer;
+	t_exec		*exec_cast;
+	t_id		token_type;
+	int			i;
 
+	struct_pointer = exec_constructor();
+	exec_cast = (t_exec *)struct_pointer;
 	i = 0;
-	dquotes = 0;
-	squotes = 0;
-	while (token[i])
+	while ((*args) && (*args)->type != PIPE)
 	{
-		if (token[i] == '"' && !squotes)
-			dquotes = !dquotes;
-		else if (token[i] == '\'' && !dquotes)
-			squotes = !squotes;
-		else if ((!dquotes && !squotes)
-			&& (token[i] == '|'  || token[i] == ' '))
-			break ;
-		i++;
+		token_type = (*args)->type;
+		if (token_type == REDIR)
+			struct_pointer = parse_redir(args, struct_pointer);
+		if ((*args)->type != IGNORE)
+		{
+			if (exec_cast->argv != NULL)
+				exec_cast->argv = ft_strjoin_get(exec_cast->argv, " ");
+			exec_cast->argv = ft_strjoin_get(exec_cast->argv, (*args)->token);
+		}
+		(*args) = (*args)->next;
 	}
-	str = ft_substr(token, 0, i);
-	tokens = create_token(str, words);
-	free(str);
-	return (tokens);
+	return (struct_pointer);
 }
 
-t_cmd	*make_tokens(t_minishell *shell, t_cmd *tokens)
+t_generic	*parser_pipe(t_lst_tokens **args)
 {
-	t_cmd	*tmp;
-	int		i;
-	int		k;
-	char	*cmd;
-
-	i = -1;
-	cmd = shell->rl_str;
-	tokens = malloc(sizeof(t_cmd));
-	tmp = tokens;
-	while (cmd[++i])
+	t_generic	*struct_pointer;
+	
+	if (get_token_type(*args) == PIPE)
 	{
-		k = 0;
-		if (is_space(cmd[i]))
-			continue;
-		else if (cmd[i] == '|')
-			tokens->next = create_token("|", pipes);
-		else if (cmd[i] == '>')
-		{
-			if (cmd[i + 1] && cmd[i + 1] == '>')
-				tokens->next = create_token(">>", redir);
-			else
-				tokens->next = create_token(">", redir);
-		}
-		else if (cmd[i] == '<')
-		{
-			if (cmd[i + 1] && cmd[i + 1] == '<')
-				tokens->next = create_token("<<", here_doc);
-			else
-				tokens->next = create_token("<", redir);
-		}
-		else
-			tokens->next = create_cmd_token(cmd + i);
-		tokens = tokens->next;
-		while (tokens->token[k + 1])
-			k++;
-		i = i + k;
+		ft_fprintf(STDERR_FILENO, "Syntax error\n");
+		return (NULL);
 	}
-	return (tmp);
+	struct_pointer = parser_exec(args);
+	if (struct_pointer && get_token_type((*args)) == PIPE)
+	{
+		(*args) = (*args)->next;
+		if (get_token_type((*args)) != WORD)
+		{
+			ft_fprintf(STDERR_FILENO, "Syntax error\n");
+			return (NULL);
+		}
+		struct_pointer = pipe_constructor(struct_pointer, parser_pipe(args));
+	}
+	return (struct_pointer);
 }
 
-int	nbr_of_words(t_cmd *tokens)
+t_generic	*parser_tokens(t_lst_tokens **args)
 {
-	int	i;
+	t_generic		*tree_root;
+	t_lst_tokens	*tmp;
 
-	i = 0;
-	while (tokens != NULL && tokens->type != pipes)
-	{
-		if (tokens->type != ignore)
-			i++;
-		tokens = tokens->next;
-	}
-	return (i);
-}
-
-int	lst_to_array(t_minishell *shell, t_cmd *tokens)
-{
-	t_cmd	*tmp;
-	int		i;
-
-	tmp = tokens;
-	shell->cmd_split = (char **)malloc(sizeof(char *) * (nbr_of_words(tokens) + 1));
-	if (shell->cmd_split == NULL)
-		return (ft_fprintf(STDERR_FILENO, "Malloc cmd_split error\n"));
-	i = 0;
-	while (tokens != NULL && tokens->type != pipes)
-	{
-		if (tokens->type != ignore)
-		{
-			shell->cmd_split[i] = ft_strdup(tokens->token);
-			i++;
-		}
-		tokens = tokens->next;
-	}
-	shell->cmd_split[i] = 0;
-	free_tokens(tmp);
-	return (0);
+	tmp = (*args);
+	if (tmp == NULL)
+		return (NULL);
+	tree_root = parser_pipe(&tmp);
+	return (tree_root);
 }
