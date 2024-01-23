@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 18:12:59 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 16:52:32 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int main(int ac, char **av, char **envp)
 	t_lst_tokens	*args;
 	t_generic		*cmd;
 
+	//Leaks REDIR | EXEC
 	ft_memset((void *)&shell, 0, sizeof(t_minishell));
 	if (ac != 1 && av)
 		return (0);
@@ -56,11 +57,12 @@ int main(int ac, char **av, char **envp)
 			continue;
 		if (lexer_parser(&shell, &args) == 1)
 			continue;
-		cmd = parser_tokens(&args);
+		cmd = parser_tokens(&args, &shell.state);
 		if (cmd)
 		{
-			free_tokens(&args);
 			executer_cmd(&shell, cmd);
+			if (shell.state == PIPED)
+				free_tree(cmd);
 		}
 	}
 }

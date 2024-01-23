@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/23 00:27:00 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/23 16:36:42 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,11 @@ typedef enum s_id
 	DONE,
 	IGNORE,
 	YES,
-	NO
+	NO,
+	PIPED,
+	NOT_PIPED,
+	LEFT,
+	RIGHT
 }			t_id;
 
 typedef struct s_generic
@@ -81,6 +85,7 @@ typedef struct s_minishell
 	int		redir_flag;
 	int		npipes;
 	t_env	*env;
+	t_id	state;
 }				t_minishell;
 
 //Builtin and Execve
@@ -104,7 +109,7 @@ char	what_quote(char *str);
 //Parser
 int				count_quotes(char *rl_str);
 t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens);
-t_generic		*parser_tokens(t_lst_tokens **args);;
+t_generic		*parser_tokens(t_lst_tokens **args, t_id *shell_state);
 
 //Pipes
 int		start_pipes(t_minishell *shell, t_pipe *info, t_lst_tokens *args);
@@ -137,11 +142,10 @@ t_id	    get_redir_type(char *token);
 t_id	    get_token_type(t_lst_tokens *arg);
 
 //Free
-void	execve_clean(t_minishell *shell);
 void	free_env(t_env *env);
-void	free_all_child(t_minishell *shell);
 void	free_tokens(t_lst_tokens **tokens);
-void	free_prev_node(t_lst_tokens **arg);
+void	free_child(t_minishell *shell, t_pipe *cmd, t_id tree_node);
+void	clean_program(t_minishell *shell, t_generic *cmd, t_id mode);
 void	free_tree(t_generic *cmd);
 
 //Utils

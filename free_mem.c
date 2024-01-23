@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 16:26:09 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 17:03:44 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,32 +26,46 @@ void	free_env(t_env *env)
 	}	
 }
 
-void	execve_clean(t_minishell *shell)
-{
-	free(shell->path);
-	ft_free_dp((void **)shell->cmd_split);
-	ft_free_dp((void **)shell->env_array);
-}
-
-void	free_prev_node(t_lst_tokens **arg)
+void	free_tokens(t_lst_tokens **args)
 {
 	t_lst_tokens	*tmp;
-
-	tmp = *arg;
-	*arg = (*arg)->next;
-	free(tmp->token);
-	free(tmp);
+	
+	while (*args != NULL)
+	{
+		tmp = *args;
+		*args = (*args)->next;
+		free(tmp->token);
+		free(tmp);
+	}
 }
 
-void	free_tokens(t_lst_tokens **tokens)
+void	free_tree(t_generic *cmd)
 {
-	while (*tokens != NULL)
-		free_prev_node(tokens);
+	if (cmd->type == EXEC)
+	{
+		free(((t_exec *)cmd)->argv);
+		free(((t_exec *)cmd));
+	}
+	else if (cmd->type == REDIR)
+	{
+		free_tree(((t_redir *)cmd)->cmd);
+		free(((t_redir *)cmd)->filename);
+		free(((t_redir *)cmd));
+	}
+	else if (cmd->type == PIPE)
+	{
+		free_tree(((t_pipe *)cmd)->left);
+		free_tree(((t_pipe *)cmd)->right);
+		free(cmd);
+	}
 }
 
-void	free_all_child(t_minishell *shell)
+void	free_child(t_minishell *shell, t_pipe *cmd, t_id tree_node)
 {
-	ft_free_dp((void **)shell->cmd_split);
+	if (tree_node == LEFT)
+		free_tree(cmd->right);
+	else if (tree_node == RIGHT)
+		free_tree(cmd->left);
+	free(cmd);
 	free_env(shell->env);
 }
-

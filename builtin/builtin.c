@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 17:53:24 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:19:46 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int	non_builtin(t_minishell *shell)
 		ft_putstr_fd(shell->cmd_split[0], STDERR_FILENO);
 		execve_error(error);
 		free(shell->path);
-		ft_free_dp((void **)shell->cmd_split);
 		ft_free_dp((void **)shell->env_array);
 		return (-1);
 	}
@@ -60,8 +59,6 @@ t_id	is_builtin(char *command)
 
 void	builtin_cmd(t_minishell *shell, t_exec *cmd)
 {
-	if (shell->cmd_split[0] == 0)
-		return ;
 	if (!ft_strncmp(shell->cmd_split[0], "pwd", 4))
 		pwd();
 	else if (!ft_strncmp(shell->cmd_split[0], "echo", 5))

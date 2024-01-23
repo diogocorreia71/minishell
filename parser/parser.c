@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 01:15:22 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/23 16:07:16 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_generic	*parser_exec(t_lst_tokens **args)
 	return (struct_pointer);
 }
 
-t_generic	*parser_pipe(t_lst_tokens **args)
+t_generic	*parser_pipe(t_lst_tokens **args, t_id *shell_state)
 {
 	t_generic	*struct_pointer;
 	
@@ -75,12 +75,13 @@ t_generic	*parser_pipe(t_lst_tokens **args)
 			ft_fprintf(STDERR_FILENO, "Syntax error\n");
 			return (NULL);
 		}
-		struct_pointer = pipe_constructor(struct_pointer, parser_pipe(args));
+		struct_pointer = pipe_constructor(struct_pointer, parser_pipe(args, shell_state));
+		*shell_state = PIPED;
 	}
 	return (struct_pointer);
 }
 
-t_generic	*parser_tokens(t_lst_tokens **args)
+t_generic	*parser_tokens(t_lst_tokens **args, t_id *shell_state)
 {
 	t_generic		*tree_root;
 	t_lst_tokens	*tmp;
@@ -88,6 +89,8 @@ t_generic	*parser_tokens(t_lst_tokens **args)
 	tmp = (*args);
 	if (tmp == NULL)
 		return (NULL);
-	tree_root = parser_pipe(&tmp);
+	*shell_state = NOT_PIPED;
+	tree_root = parser_pipe(&tmp, shell_state);
+	free_tokens(args);
 	return (tree_root);
 }

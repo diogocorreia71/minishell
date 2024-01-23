@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2024/01/22 18:31:40 by rumachad         ###   ########.fr        #
+#    Updated: 2024/01/23 14:44:42 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ SRC_EXPANSION = expansion
 SRC_LEXER = lexer
 SRC_PARSER = parser
 SRC_EXEC = execve
+SRC_EXECUTION = execution
 
 SRC = 	$(wildcard $(SRC_BUILTIN)/*.c) \
 		$(wildcard $(SRC_ENV)/*.c) \
@@ -26,6 +27,7 @@ SRC = 	$(wildcard $(SRC_BUILTIN)/*.c) \
 		$(wildcard $(SRC_LEXER)/*.c) \
 		$(wildcard $(SRC_EXEC)/*.c) \
 		$(wildcard $(SRC_PARSER)/*.c) \
+		$(wildcard $(SRC_EXECUTION)/*.c) \
 		$(wildcard *.c) \
 		
 OBJS = ${SRC:.c=.o}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 01:52:34 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/23 16:22:57 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	run_exec(t_minishell *shell, t_exec *cmd)
 			return ;
 		ft_execve(shell);
 	}
+	ft_free_dp((void **)shell->cmd_split);
 	free(cmd);
 }
 
@@ -63,7 +64,8 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		close_fd(pipe_fd);
 		executer_cmd(shell, cmd->left);
-		exit(0);
+		free_child(shell, cmd, LEFT);
+		exit(EXIT_SUCCESS);
 	}
 	pipe_pid_right = fork();
 	if (pipe_pid_right == 0)
@@ -71,9 +73,10 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 		dup2(pipe_fd[0], STDIN_FILENO);
 		close_fd(pipe_fd);
 		executer_cmd(shell, cmd->right);
-		exit(0);
+		free_child(shell, cmd, RIGHT);
+		exit(EXIT_SUCCESS);
 	}
 	close_fd(pipe_fd);
-	waitpid(pipe_pid_left, NULL, 0);
 	waitpid(pipe_pid_right, NULL, 0);
+	waitpid(pipe_pid_left, NULL, 0);
 }

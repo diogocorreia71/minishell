@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:17:17 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 17:47:27 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 14:20:00 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	ft_exit(t_minishell *shell, t_exec *cmd)
 		ft_fprintf(2, "exit: too many arguments\n");
 		return ;
 	}
-	free_env(shell->env);
 	ft_free_dp((void **)shell->cmd_split);
+	free_env(shell->env);
 	free(cmd);
 	exit(EXIT_SUCCESS);
 }
