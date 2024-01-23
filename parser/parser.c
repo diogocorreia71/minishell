@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 18:25:55 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 01:15:22 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer)
 	t_id		redir_type;
 	
 	redir_type = get_redir_type((*args)->token);
-	(*args) = (*args)->next;
-	if ((*args)->type != WORD)
+	if (get_token_type((*args)->next) != WORD)
 	{
 		ft_fprintf(STDERR_FILENO, "Syntax error\n");
-		return (NULL);
+		return (struct_pointer);
 	}
+	(*args) = (*args)->next;
 	(*args)->type = IGNORE;
 	if (redir_type == REDIR_OUT)
 		struct_pointer = redir_constructor(struct_pointer, 1,
@@ -39,16 +39,12 @@ t_generic	*parser_exec(t_lst_tokens **args)
 {
 	t_generic	*struct_pointer;
 	t_exec		*exec_cast;
-	t_id		token_type;
-	int			i;
 
 	struct_pointer = exec_constructor();
 	exec_cast = (t_exec *)struct_pointer;
-	i = 0;
 	while ((*args) && (*args)->type != PIPE)
 	{
-		token_type = (*args)->type;
-		if (token_type == REDIR)
+		if ((*args)->type == REDIR)
 			struct_pointer = parse_redir(args, struct_pointer);
 		if ((*args)->type != IGNORE)
 		{

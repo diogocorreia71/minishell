@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 18:36:37 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 01:52:34 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,23 +49,24 @@ void	run_redir(t_minishell *shell, t_redir *cmd)
 void	run_pipe(t_minishell *shell, t_pipe *cmd)
 {
 	int	pipe_fd[2];
-	int	pipe_pid;
+	int	pipe_pid_right;
+	int	pipe_pid_left;
 	
 	if (pipe(pipe_fd) == -1)
 	{
 		ft_fprintf(STDERR_FILENO, "Pipe creation error\n");
 		return ;
 	}
-	pipe_pid = fork();
-	if (pipe_pid == 0)
+	pipe_pid_left = fork();
+	if (pipe_pid_left == 0)
 	{
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		close_fd(pipe_fd);
 		executer_cmd(shell, cmd->left);
 		exit(0);
 	}
-	pipe_pid = fork();
-	if (pipe_pid == 0)
+	pipe_pid_right = fork();
+	if (pipe_pid_right == 0)
 	{
 		dup2(pipe_fd[0], STDIN_FILENO);
 		close_fd(pipe_fd);
@@ -73,5 +74,6 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 		exit(0);
 	}
 	close_fd(pipe_fd);
-	waitpid(pipe_pid, NULL, 0);
+	waitpid(pipe_pid_left, NULL, 0);
+	waitpid(pipe_pid_right, NULL, 0);
 }
