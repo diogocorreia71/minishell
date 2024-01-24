@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 16:07:16 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 00:23:20 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer)
 	if (get_token_type((*args)->next) != WORD)
 	{
 		ft_fprintf(STDERR_FILENO, "Syntax error\n");
-		return (struct_pointer);
+		return (NULL);
 	}
 	(*args) = (*args)->next;
 	(*args)->type = IGNORE;
@@ -32,6 +32,8 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer)
 	else if (redir_type == APPEND)
 		struct_pointer = redir_constructor(struct_pointer, 1,
 			O_WRONLY | O_CREAT | O_APPEND, (*args)->token);
+	/* else if (redir_type == HERE_DOC)
+		struct_pointer = redir_constructor(struct_pointer); */
 	return (struct_pointer);
 }
 
@@ -57,9 +59,10 @@ t_generic	*parser_exec(t_lst_tokens **args)
 	return (struct_pointer);
 }
 
-t_generic	*parser_pipe(t_lst_tokens **args, t_id *shell_state)
+t_generic	*parser_pipe(t_lst_tokens **args)
 {
 	t_generic	*struct_pointer;
+	t_id		token_type;
 	
 	if (get_token_type(*args) == PIPE)
 	{
@@ -70,18 +73,18 @@ t_generic	*parser_pipe(t_lst_tokens **args, t_id *shell_state)
 	if (struct_pointer && get_token_type((*args)) == PIPE)
 	{
 		(*args) = (*args)->next;
-		if (get_token_type((*args)) != WORD)
+		token_type = get_token_type((*args));
+		if (token_type != WORD || token_type != REDIR)
 		{
 			ft_fprintf(STDERR_FILENO, "Syntax error\n");
 			return (NULL);
 		}
-		struct_pointer = pipe_constructor(struct_pointer, parser_pipe(args, shell_state));
-		*shell_state = PIPED;
+		struct_pointer = pipe_constructor(struct_pointer, parser_pipe(args));
 	}
 	return (struct_pointer);
 }
 
-t_generic	*parser_tokens(t_lst_tokens **args, t_id *shell_state)
+t_generic	*parser_tokens(t_lst_tokens **args)
 {
 	t_generic		*tree_root;
 	t_lst_tokens	*tmp;
@@ -89,8 +92,7 @@ t_generic	*parser_tokens(t_lst_tokens **args, t_id *shell_state)
 	tmp = (*args);
 	if (tmp == NULL)
 		return (NULL);
-	*shell_state = NOT_PIPED;
-	tree_root = parser_pipe(&tmp, shell_state);
+	tree_root = parser_pipe(&tmp);
 	free_tokens(args);
 	return (tree_root);
 }

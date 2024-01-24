@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/23 16:36:42 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 00:18:44 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,6 @@ typedef enum s_id
 	IGNORE,
 	YES,
 	NO,
-	PIPED,
-	NOT_PIPED,
-	LEFT,
-	RIGHT
 }			t_id;
 
 typedef struct s_generic
@@ -85,7 +81,6 @@ typedef struct s_minishell
 	int		redir_flag;
 	int		npipes;
 	t_env	*env;
-	t_id	state;
 }				t_minishell;
 
 //Builtin and Execve
@@ -109,7 +104,7 @@ char	what_quote(char *str);
 //Parser
 int				count_quotes(char *rl_str);
 t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens);
-t_generic		*parser_tokens(t_lst_tokens **args, t_id *shell_state);
+t_generic		*parser_tokens(t_lst_tokens **args);
 
 //Pipes
 int		start_pipes(t_minishell *shell, t_pipe *info, t_lst_tokens *args);
@@ -144,7 +139,7 @@ t_id	    get_token_type(t_lst_tokens *arg);
 //Free
 void	free_env(t_env *env);
 void	free_tokens(t_lst_tokens **tokens);
-void	free_child(t_minishell *shell, t_pipe *cmd, t_id tree_node);
+void	free_child(t_minishell *shell, t_pipe *cmd);
 void	clean_program(t_minishell *shell, t_generic *cmd, t_id mode);
 void	free_tree(t_generic *cmd);
 

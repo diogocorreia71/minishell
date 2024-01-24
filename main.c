@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 16:52:32 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 00:18:20 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,11 @@ int main(int ac, char **av, char **envp)
 			continue;
 		if (lexer_parser(&shell, &args) == 1)
 			continue;
-		cmd = parser_tokens(&args, &shell.state);
+		cmd = parser_tokens(&args);
 		if (cmd)
 		{
 			executer_cmd(&shell, cmd);
-			if (shell.state == PIPED)
-				free_tree(cmd);
+			free_tree(cmd);
 		}
 	}
 }

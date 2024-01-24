@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 17:03:44 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 23:38:41 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,8 @@ void	free_tree(t_generic *cmd)
 	}
 }
 
-void	free_child(t_minishell *shell, t_pipe *cmd, t_id tree_node)
+void	free_child(t_minishell *shell, t_pipe *cmd)
 {
-	if (tree_node == LEFT)
-		free_tree(cmd->right);
-	else if (tree_node == RIGHT)
-		free_tree(cmd->left);
-	free(cmd);
+	free_tree((t_generic *)cmd);
 	free_env(shell->env);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 16:22:57 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 00:09:34 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	run_exec(t_minishell *shell, t_exec *cmd)
 {
 	shell->cmd_split = ft_split(cmd->argv, ' ');
-	free(cmd->argv);
 	if (is_builtin(shell->cmd_split[0]) == YES)
 		builtin_cmd(shell, cmd);
 	else
@@ -25,7 +24,6 @@ void	run_exec(t_minishell *shell, t_exec *cmd)
 		ft_execve(shell);
 	}
 	ft_free_dp((void **)shell->cmd_split);
-	free(cmd);
 }
 
 void	run_redir(t_minishell *shell, t_redir *cmd)
@@ -35,16 +33,17 @@ void	run_redir(t_minishell *shell, t_redir *cmd)
 	
 	orig_fd = dup(cmd->redir_fd);
 	file_fd = open(cmd->filename, cmd->open_flags, 0644);
-	if (cmd->redir_fd == 1)
+	if (file_fd == -1)
 	{
-		dup2(file_fd, cmd->redir_fd);
-		close(file_fd);
-		executer_cmd(shell, cmd->cmd);
+		ft_fprintf(STDERR_FILENO, "%s: No such file or directory\n", cmd->filename);
+		close(orig_fd);
+		return ;
 	}
+	dup2(file_fd, cmd->redir_fd);
+	close(file_fd);
+	executer_cmd(shell, cmd->cmd);
 	dup2(orig_fd, cmd->redir_fd);
 	close(orig_fd);
-	free(cmd->filename);
-	free(cmd);
 }
 
 void	run_pipe(t_minishell *shell, t_pipe *cmd)
@@ -64,7 +63,7 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		close_fd(pipe_fd);
 		executer_cmd(shell, cmd->left);
-		free_child(shell, cmd, LEFT);
+		free_child(shell, cmd);
 		exit(EXIT_SUCCESS);
 	}
 	pipe_pid_right = fork();
@@ -73,7 +72,7 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 		dup2(pipe_fd[0], STDIN_FILENO);
 		close_fd(pipe_fd);
 		executer_cmd(shell, cmd->right);
-		free_child(shell, cmd, RIGHT);
+		free_child(shell, cmd);
 		exit(EXIT_SUCCESS);
 	}
 	close_fd(pipe_fd);

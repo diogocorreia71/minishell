@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:17:17 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 14:20:00 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/23 23:21:22 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,6 @@ void	ft_exit(t_minishell *shell, t_exec *cmd)
 	}
 	ft_free_dp((void **)shell->cmd_split);
 	free_env(shell->env);
-	free(cmd);
+	free_tree((t_generic *)cmd);
 	exit(EXIT_SUCCESS);
 }
