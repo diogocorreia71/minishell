@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct_constructors.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:34:11 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 00:28:34 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/24 12:30:40 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,17 @@ t_generic	*redir_constructor(t_generic *cmd, int fd, int flags, char *filename)
 	redir_cmd->open_flags = flags;
 	redir_cmd->filename = ft_strdup(filename);
 	if (cmd->type == EXEC)
-		redir_cmd->cmd = cmd;
+		redir_cmd->last_pointer = cmd;
 	else
 	{
 		tmp = cmd;
 		while (tmp->type != EXEC)
 		{
 			last_redir = tmp;
-			tmp = ((t_redir *)tmp)->cmd;
+			tmp = ((t_redir *)tmp)->last_pointer;
 		}
-		((t_redir *)last_redir)->cmd = (t_generic *)redir_cmd;
-		redir_cmd->cmd = tmp;
+		((t_redir *)last_redir)->last_pointer = (t_generic *)redir_cmd;
+		redir_cmd->last_pointer = tmp;
 		return (cmd);
 	}
 	return ((t_generic *)redir_cmd);

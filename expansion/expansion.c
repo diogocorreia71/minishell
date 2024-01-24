@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/22 12:58:04 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 18:06:59 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*get_env_val(t_env *env, char *str)
 
 	env_value = get_env(env, str);
 	if (env_value == NULL)
-		return (NULL);
+		return (ft_strdup("\0"));
 	return (ft_strdup(env_value));
 }
 
@@ -57,51 +57,52 @@ char	*replace(char *var, char *val, char *token)
 	return (new_tk);
 }
 
-void	isolate(t_env *env, char **token)
+char	*isolate(t_env *env, char *token)
 {
 	char	*var;
 	char	*val;
 
-	while (ft_strchr(*token, '$'))
+	while (ft_strchr(token, '$'))
 	{
 		//ex: $HOME, var = HOME
-		var = get_var(*token);
+		var = get_var(token);
 		val = get_env_val(env, var);
 		if (val == NULL)
 			val = ft_strdup("\0");
-		*token = replace(var, val, *token);
+		token = replace(var, val, token);
 		free(var);
 		free(val);
 	}
+	return (token);
 }
 
-
-void	expand_ds(t_env *env, t_lst_tokens *arg)
+char	*expand_ds(t_env *env, char *token)
 {
-	char	*dsign;
-
-	if (what_quote(arg->token) == '\'')
-		return ;
-	if (ft_strchr(arg->token, '~') && what_quote(arg->token) == '\0')
-	{
-		expand_tilde(env, &arg->token);
-		return ;
-	}
-	dsign = ft_strchr(arg->token, '$');
-	if (!dsign || (dsign && !ft_isprint(*(dsign + 1))))
-		return ;
-	isolate(env, &arg->token);
+	char	*new_expanded_token;
+	
+	new_expanded_token = token;
+	if (ft_strchr(token, '~'))
+		new_expanded_token = expand_tilde(env, token);
+	else if (ft_strchr(token, '$'))
+		new_expanded_token = isolate(env, token);
+	return (new_expanded_token);
 }
 
-void	expansion(t_minishell *shell, t_lst_tokens *args)
+t_lst_tokens	*expansion(t_minishell *shell, t_lst_tokens *args)
 {	
+	t_lst_tokens	*head;
+	char			*prev_token;
+
+	prev_token = args->token;
+	head = args;
 	while (args)
 	{
-		if (args->type == WORD && (ft_strchr(args->token, '$') 
-			|| ft_strchr(args->token, '~')))
-			expand_ds(shell->env, args);
+		if (!is_inside_squote(args->token) && ft_strncmp(prev_token, "<<", 3))
+			args->token = expand_ds(shell->env, args->token);
 		if (!ft_strncmp(args->token, "\0", 1))
 			args->type = IGNORE;
+		prev_token = args->token;
 		args = args->next;
 	}
+	return (head);
 }

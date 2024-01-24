@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 00:09:34 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/24 15:32:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	run_exec(t_minishell *shell, t_exec *cmd)
 {
+	if (cmd->argv == NULL)
+		return ;
 	shell->cmd_split = ft_split(cmd->argv, ' ');
 	if (is_builtin(shell->cmd_split[0]) == YES)
 		builtin_cmd(shell, cmd);
@@ -41,7 +43,8 @@ void	run_redir(t_minishell *shell, t_redir *cmd)
 	}
 	dup2(file_fd, cmd->redir_fd);
 	close(file_fd);
-	executer_cmd(shell, cmd->cmd);
+	if (cmd->last_pointer)
+		executer_cmd(shell, cmd->last_pointer);
 	dup2(orig_fd, cmd->redir_fd);
 	close(orig_fd);
 }

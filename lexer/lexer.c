@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2024/01/22 16:11:57 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 17:31:17 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,17 @@ t_lst_tokens	*create_cmd_token(char *token)
 	return (tokens);
 }
 
+char	*lexer_get_var(char *ds_str)
+{
+	int	i;
+
+	i = 0;
+	while (ds_str[i] != ' ' && ds_str[i] != '"'
+		&& ds_str[i] != '\'' && ds_str[i])
+		i++;
+	return (ft_substr(ds_str, 0, i));
+}
+
 t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens)
 {
 	t_lst_tokens	*head;
@@ -85,6 +96,8 @@ t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens)
 			else
 				tokens->next = create_token("<", REDIR);
 		}
+		else if (cmd[i] == '$')
+			tokens->next = create_token(lexer_get_var(cmd + i), EXPAND);
 		else
 			tokens->next = create_cmd_token(cmd + i);
 		tokens = tokens->next;

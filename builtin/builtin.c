@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 14:19:46 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 15:29:08 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	non_builtin(t_minishell *shell)
 		execve_error(error);
 		free(shell->path);
 		ft_free_dp((void **)shell->env_array);
+		ft_free_dp((void **)shell->cmd_split);
 		return (-1);
 	}
 	return (0);

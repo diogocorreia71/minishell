@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/24 00:18:44 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/24 18:02:07 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 typedef enum s_id
 {
 	WORD,
+	EXPAND,
 	PIPE,
 	REDIR,
 	APPEND,
@@ -52,7 +53,7 @@ typedef struct s_exec
 typedef struct s_redir
 {
 	t_id		type;
-	t_generic	*cmd;
+	t_generic	*last_pointer;
 	int			redir_fd;
 	char		*filename;
 	int			open_flags;
@@ -78,8 +79,6 @@ typedef struct s_minishell
 	char	**cmd_split;
 	char	**env_array;
 	char	*path;
-	int		redir_flag;
-	int		npipes;
 	t_env	*env;
 }				t_minishell;
 
@@ -95,45 +94,38 @@ char	*get_var_name(char *arg);
 
 
 //Handle quotes
-int		cases_quotes(t_minishell *shell);
 char	*remove_quotes(char *str);
 int		count_quotes(char *rl_str);
 int		handle_quotes(char *str);
-char	what_quote(char *str);
+char	is_inside_squote(char *str);
+
+//Lexer
+t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens);
 
 //Parser
 int				count_quotes(char *rl_str);
-t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens);
-t_generic		*parser_tokens(t_lst_tokens **args);
-
-//Pipes
-int		start_pipes(t_minishell *shell, t_pipe *info, t_lst_tokens *args);
-int		init_fd_pipes(t_pipe *info);
-int		count_pipes(t_lst_tokens *args);
-
-//Redirections
-int		start_redir(t_minishell *shell, t_lst_tokens *args);
-int		has_redir(int npipes, int *orig_fd, t_lst_tokens *args);
-void	count_redir(t_lst_tokens *args, int *nbr_redir);
-
-//Expansion
-void	expansion(t_minishell *shell, t_lst_tokens *args);
-void	expand_tilde(t_env *env, char **token);
-
-//Executer
-t_id	is_builtin(char *command);
-void	executer_cmd(t_minishell *shell, t_generic *cmd);
-void	run_exec(t_minishell *shell, t_exec *cmd);
-void	run_redir(t_minishell *shell, t_redir *cmd);
-void	run_pipe(t_minishell *shell, t_pipe *cmd);
-
+t_generic		*parser_tokens(t_env *env, t_lst_tokens **args);
 //Constructors
 t_generic	*exec_constructor(void);
 t_generic	*redir_constructor(t_generic *cmd, int fd, int flags, char *filename);
 t_generic	*pipe_constructor(t_generic *left, t_generic *right);
 
+//Expansion
+t_lst_tokens	*expansion(t_minishell *shell, t_lst_tokens *args);
+char			*get_var(char *token);
+char			*expand_tilde(t_env *env, char *token);
+char			*ds_expand(char *token, t_env *env);
+
+//Executer
+t_id	is_builtin(char *command);
+void	executer_cmd(t_minishell *shell, t_generic *cmd);
+void	prepare_hereDoc(t_generic *struct_pointer, char *delimiter);
+void	run_exec(t_minishell *shell, t_exec *cmd);
+void	run_redir(t_minishell *shell, t_redir *cmd);
+void	run_pipe(t_minishell *shell, t_pipe *cmd);
+
 //Utils (get_type)
-t_id	    get_redir_type(char *token);
+t_id		get_redir_type(char *token, t_id token_type);
 t_id	    get_token_type(t_lst_tokens *arg);
 
 //Free

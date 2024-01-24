@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/18 15:30:20 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/24 15:18:06 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ char	*remove_quotes(char *str)
 	return (tmp);
 }
 
-char	what_quote(char *str)
+char	is_inside_squote(char *str)
 {
 	int	i;
 	int	squotes;

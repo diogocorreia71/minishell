@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 23:38:41 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/24 16:33:20 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ void	free_tree(t_generic *cmd)
 		free(((t_exec *)cmd)->argv);
 		free(((t_exec *)cmd));
 	}
-	else if (cmd->type == REDIR)
+	else if (cmd->type == REDIR || cmd->type == HERE_DOC)
 	{
-		free_tree(((t_redir *)cmd)->cmd);
+		free_tree(((t_redir *)cmd)->last_pointer);
 		free(((t_redir *)cmd)->filename);
 		free(((t_redir *)cmd));
 	}
