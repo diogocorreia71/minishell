@@ -3,79 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 18:10:11 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/25 01:22:42 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ds_expand(char *token, t_env *env)
+/* char	*ds_expand(char *token, t_env *env)
 {
 	char	*expanded_token;
 	char	*var;
+	char	*val;
 	int		i;
 
 	i = 0;
-	token++;
 	expanded_token = NULL;
-	while (*token)
+	while (token[i])
 	{
-		while (*token && *token != '$')
-		{
-			token++;
+		token++;
+		i++;
+		while (token[i] && token[i] != '$')
 			i++;
-		}
 		var = ft_substr(token, 0, i);
-		if (expanded_token == NULL)
-			expanded_token = ft_strjoin_get(get_env_val(env, var), token);
-		expanded_token = ft_strjoin_get(expanded_token, token);
+		val = get_env_val(env, var);
+		expanded_token = ft_strjoin_get(expanded_token, val);
 		free(var);
+		free(val);
+		token = token + i;
+		i = 0;
 	}
 	return (expanded_token);
-}
+} */
 
-int	lexer_parser(t_minishell *shell, t_lst_tokens **args)
+t_generic	*lexer_parser(t_minishell *shell, t_lst_tokens **args)
 {
-	t_generic		*cmd;
+	t_generic	*cmd;
 	
 	*args = NULL;
 	add_history(shell->rl_str);
-	if (handle_quotes(shell->rl_str) == 1)
-	{
-		ft_fprintf(STDERR_FILENO, "Invalid Quotes\n");
-		free(shell->rl_str);
-		return (1);
-	}
 	*args = make_tokens(shell, *args);
 	free_first(args);
+	free(shell->rl_str);
 	/* while ((*args))
 	{
 		printf("%s\n", (*args)->token);
 		printf("%d\n", (*args)->type);
 		(*args) = (*args)->next;
-	}
-	return (1); */
-	free(shell->rl_str);
-	cmd = parser_tokens(shell->env, args);
-	/* *args = expansion(shell, *args);
-	tmp = *args;
-	while (tmp)
-	{
-		if (count_quotes(tmp->token) != 0)
-			tmp->token = remove_quotes(tmp->token);
-		tmp = tmp->next;
 	} */
-	return (1);
-	return (0);
+	cmd = parser_tokens(shell->env, args);
+	return (cmd);
 }
 
 int main(int ac, char **av, char **envp)
 {
 	t_minishell		shell;
 	t_lst_tokens	*args;
+	t_generic		*cmd;
 
 	ft_memset((void *)&shell, 0, sizeof(t_minishell));
 	if (ac != 1 && av)
@@ -87,13 +73,14 @@ int main(int ac, char **av, char **envp)
 		shell.rl_str = readline("minishell$ ");
 		if (ft_strlen(shell.rl_str) == 0)
 			continue;
-		if (lexer_parser(&shell, &args) == 1)
+		if (unclosed_quotes(shell.rl_str) == YES)
 			continue;
-		/* if (cmd)
+		cmd = lexer_parser(&shell, &args);
+		if (cmd)
 		{
 			executer_cmd(&shell, cmd);
 			free_tree(cmd);
-		} */
+		}
 	}
 	return (0);
 }

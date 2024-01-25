@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct_constructors.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:34:11 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 12:30:40 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/25 02:20:25 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,19 @@ t_generic	*pipe_constructor(t_generic *left, t_generic *right)
 	pipe_cmd->left = left;
 	pipe_cmd->right = right;
 	return ((t_generic *)pipe_cmd);
+}
+
+t_generic	*heredoc_constructor(t_generic *cmd, char *delimiter, int flags)
+{
+	t_heredoc	*heredoc_cmd;
+	
+	heredoc_cmd = (t_heredoc *)malloc(sizeof(t_heredoc) * 1);
+	heredoc_cmd->type = HERE_DOC;
+	heredoc_cmd->delimiter = delimiter;
+	heredoc_cmd->open_flags = flags;
+	heredoc_cmd->heredoc_redir = cmd;
+	heredoc_cmd->expansion = YES;
+	if (token_has_quotes(delimiter) == YES)
+		heredoc_cmd->expansion = NO;
+	return ((t_generic *)heredoc_cmd);	
 }

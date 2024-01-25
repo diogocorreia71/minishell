@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 15:18:06 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/25 01:23:20 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,17 @@ int	handle_quotes(char *str)
 	return (1);
 }
 
+t_id	unclosed_quotes(char *rl_str)
+{
+	if (handle_quotes(rl_str) == 1)
+	{
+		ft_fprintf(STDERR_FILENO, "Invalid Quotes\n");
+		free(rl_str);
+		return (YES);
+	}
+	return (NO);
+}
+
 int	count_quotes(char *rl_str)
 {
 	int		i;
@@ -66,21 +77,37 @@ int	count_quotes(char *rl_str)
 	return (nbr_quotes);
 }
 
-char	*remove_quotes(char *str)
+t_id	token_has_quotes(char *token)
 {
-	char	*tmp;
+	int	i;
+
+	i = 0;
+	while (token[i])
+	{
+		if (token[i] == '"' || token[i] == '\'')
+			return (YES);
+		i++;
+	}
+	return (NO);
+}
+
+char	*remove_quotes(char *token)
+{
+	char	*new_token;
 	char	*word;
 	int		squotes;
 	int		dquotes;
 	int		i;
 	int		k;
 	
-	word = ft_strdup(str);
-	tmp = (char *)malloc(sizeof(char) * (ft_strlen(str)
-		- count_quotes(str) + 1));
-	if (tmp == NULL)
+	if (token_has_quotes(token) == NO)
+		return (token);
+	word = ft_strdup(token);
+	new_token = (char *)malloc(sizeof(char) * (ft_strlen(token)
+		- count_quotes(token) + 1));
+	if (new_token == NULL)
 		return (NULL);
-	free(str);
+	free(token);
 	i = -1;
 	k = 0;
 	squotes = 0;
@@ -97,12 +124,12 @@ char	*remove_quotes(char *str)
 			squotes = !squotes;
 			continue;
 		}
-		tmp[k] = word[i];
+		new_token[k] = word[i];
 		k++;
 	}
-	tmp[k] = '\0';
+	new_token[k] = '\0';
 	free(word);
-	return (tmp);
+	return (new_token);
 }
 
 char	is_inside_squote(char *str)

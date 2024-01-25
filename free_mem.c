@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 16:33:20 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/25 02:25:44 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,16 @@ void	free_tree(t_generic *cmd)
 		free(((t_exec *)cmd)->argv);
 		free(((t_exec *)cmd));
 	}
-	else if (cmd->type == REDIR || cmd->type == HERE_DOC)
+	else if (cmd->type == REDIR)
 	{
 		free_tree(((t_redir *)cmd)->last_pointer);
 		free(((t_redir *)cmd)->filename);
 		free(((t_redir *)cmd));
+	}
+	else if (cmd->type == HERE_DOC)
+	{
+		free_tree(((t_heredoc *)cmd)->heredoc_redir);
+		free(((t_heredoc *)cmd));
 	}
 	else if (cmd->type == PIPE)
 	{
