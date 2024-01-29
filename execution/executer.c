@@ -6,7 +6,7 @@
 /*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/25 02:23:08 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/28 22:08:24 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	prepare_hereDoc(t_generic *struct_pointer, t_env *env)
 		if (ft_strcmp(here_doc->delimiter, input) == 0)
 			break ;
 		if (here_doc->expansion == YES)
-			input = expand_ds(env, input);
+			input = expand_token(env, input);
 		ft_fprintf(here_doc_fd, "%s\n", input);
 		free(input);
 	}

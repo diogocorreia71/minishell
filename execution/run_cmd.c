@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 15:32:12 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/28 16:28:37 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	run_exec(t_minishell *shell, t_exec *cmd)
 {
-	if (cmd->argv == NULL)
+	if (cmd->argv[0] == '\0')
 		return ;
 	shell->cmd_split = ft_split(cmd->argv, ' ');
 	if (is_builtin(shell->cmd_split[0]) == YES)

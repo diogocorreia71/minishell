@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 16:36:15 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/28 22:53:39 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,26 @@
 
 char	*exec_path(t_minishell *shell)
 {
-	char	**bin_dir;
-	char	*path1;
-	char	*path2;
-	int		i;
+	char		**bin_dir;
+	char		*path1;
+	char		*path2;
+	int			i;
+	struct stat buffer;
+	
 
-	i = 0;
+	i = -1;
 	bin_dir = ft_split(get_env(shell->env, "PATH"), ':');
-	while (bin_dir && bin_dir[i])
+	while (bin_dir && bin_dir[++i])
 	{
 		path1 = ft_strjoin(bin_dir[i], "/");
 		path2 = ft_strjoin(path1, shell->cmd_split[0]);
 		free(path1);
-		if (access(path2, F_OK) == 0)
+		if (!stat(path2, &buffer) && S_ISREG(buffer.st_mode) == 1)
 		{
 			ft_free_dp((void **)bin_dir);
 			return (path2);
 		}
 		free(path2);
-		i++;
 	}
 	if (bin_dir)
 		ft_free_dp((void **)bin_dir);

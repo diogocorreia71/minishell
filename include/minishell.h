@@ -6,7 +6,7 @@
 /*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/25 02:17:45 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/28 23:25:50 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/stat.h>
 # include <limits.h>
 # include <stdbool.h>
+# include <signal.h>
 
 typedef enum s_id
 {
@@ -95,7 +96,7 @@ typedef struct s_minishell
 void	builtin_cmd(t_minishell *shell, t_exec *cmd);
 int		non_builtin(t_minishell *shell);
 void	ft_execve(t_minishell *shell);
-int		execve_syntax(char *cmd, t_env *env, char *path);
+int		execve_syntax(t_env *env, char *path);
 void	change_shlvl(char **env_array, t_env *env);
 char	*exec_path(t_minishell *shell);
 void	execve_error(int error);
@@ -122,10 +123,8 @@ t_generic	*pipe_constructor(t_generic *left, t_generic *right);
 t_generic	*heredoc_constructor(t_generic *cmd, char *delimiter, int flags);
 
 //Expansion
-t_lst_tokens	*expansion(t_minishell *shell, t_lst_tokens *args);
-char			*get_var(char *token);
 char			*expand_tilde(t_env *env, char *token);
-char			*expand_ds(t_env *env, char *token);
+char			*expand_token(t_env *env, char *token);
 
 //Executer
 t_id	is_builtin(char *command);

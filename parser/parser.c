@@ -6,7 +6,7 @@
 /*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/25 02:21:06 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/28 22:07:10 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *en
 	(*args) = (*args)->next;
 	if (redir_type != HERE_DOC)
 	{
-		(*args)->token = expand_ds(env, (*args)->token);
+		(*args)->token = expand_token(env, (*args)->token);
 		(*args)->token = remove_quotes((*args)->token);
 	}
 	(*args)->type = IGNORE;
@@ -67,7 +67,7 @@ t_generic	*parser_exec(t_env *env, t_lst_tokens **args)
 			if (exec_cast->argv != NULL)
 				exec_cast->argv = ft_strjoin_get(exec_cast->argv, " ");
 			if ((*args)->type == EXPAND)
-				(*args)->token = expand_ds(env, (*args)->token);
+				(*args)->token = expand_token(env, (*args)->token);
 			(*args)->token = remove_quotes((*args)->token);
 			exec_cast->argv = ft_strjoin_get(exec_cast->argv, (*args)->token);
 		}

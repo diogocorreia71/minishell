@@ -6,7 +6,7 @@
 /*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/25 01:22:42 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/28 23:59:33 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,30 @@ t_generic	*lexer_parser(t_minishell *shell, t_lst_tokens **args)
 	free(shell->rl_str);
 	/* while ((*args))
 	{
+		if ((*args)->type == EXPAND)
+			(*args)->token = new_expand(shell->env, (*args)->token);
 		printf("%s\n", (*args)->token);
-		printf("%d\n", (*args)->type);
 		(*args) = (*args)->next;
-	} */
+	}
+	return (NULL); */
 	cmd = parser_tokens(shell->env, args);
 	return (cmd);
+}
+
+void	main_signal_handler(int signum)
+{
+	if (signum == SIGINT)
+	{
+		rl_replace_line("", 1);
+		printf("\n");
+		rl_on_new_line();
+		/* rl_redisplay(); */
+	}
+	else if (signum == SIGQUIT)
+	{
+		rl_clear_history();
+		exit(1);
+	}
 }
 
 int main(int ac, char **av, char **envp)
@@ -63,6 +81,8 @@ int main(int ac, char **av, char **envp)
 	t_lst_tokens	*args;
 	t_generic		*cmd;
 
+	signal(SIGINT, main_signal_handler);
+	signal(SIGQUIT, main_signal_handler);
 	ft_memset((void *)&shell, 0, sizeof(t_minishell));
 	if (ac != 1 && av)
 		return (0);

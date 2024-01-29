@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 15:29:08 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/28 22:13:17 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	non_builtin(t_minishell *shell)
 
 	shell->env_array = array_env(shell->env);
 	shell->path = exec_path(shell);
-	error = execve_syntax(shell->cmd_split[0], shell->env, shell->path);
+	error = execve_syntax(shell->env, shell->path);
 	if (error != 0)
 	{
 		ft_putstr_fd(shell->cmd_split[0], STDERR_FILENO);

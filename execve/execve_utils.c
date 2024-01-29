@@ -3,14 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   execve_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/03 14:52:23 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/28 23:16:11 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	is_dir_err(char *cmd)
+{
+	int	i;
+	int	counter;
+
+	i = 0;
+	counter = 0;
+	while (cmd[i])
+	{
+		if (counter > 2)
+			break;
+		else if (cmd[i] == '.')
+			counter++;
+		else if (cmd[i] == '/')
+			counter = 0;
+		i++;
+	}
+	if (counter <= 2 && cmd[i] == '\0')
+		return (true);
+	return (false);
+}
 
 void	execve_error(int error)
 {
@@ -25,41 +47,37 @@ void	execve_error(int error)
 	else
 		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 }
-int	is_dir_err(char *cmd)
-{
-	int	i;
-	int	counter;
 
-	i = 0;
-	counter = 0;
-	while (cmd[i])
-	{
-		if ((cmd[i] != '/' && cmd[i] != '.') || counter > 2)
-			break;
-		else if (cmd[i] == '.')
-			counter++;
-		else if (cmd[i] == '/')
-			counter = 0;
-		i++;
-	}
-	if (counter <= 2 && cmd[i] == '\0')
-		return (true);
-	return (false);
+int	check_stat(char *path, struct stat *buffer, int *is_file, int *is_dir)
+{
+	int	check;
+
+	*is_dir = 0;
+	*is_file = 0;
+	check = stat(path, buffer);
+	if (check == -1)
+		return (0);
+	*is_file = S_ISDIR(buffer->st_mode);
+	*is_dir = S_ISREG(buffer->st_mode);
+	return (1);
 }
 
-int	execve_syntax(char *cmd, t_env *env, char *path)
+int	execve_syntax(t_env *env, char *path)
 {
-	if (ft_strlen(cmd) == 1 && cmd[0] == '.')
+	struct stat buffer;
+	int			is_file;
+	int			is_dir;
+	
+	check_stat(path, &buffer, &is_file, &is_dir);
+	if (ft_strlen(path) == 1 && path[0] == '.')
 		return (1);
-	else if (ft_strchr(cmd, '/') && is_dir_err(cmd) == 1)
+	else if (is_dir == 0 && is_file == 1)
 		return (2);
-	else if ((access(path, F_OK) == -1 && (ft_strchr(cmd, '/') ||
-		!get_env(env, "PATH"))))
+	else if ((is_dir == 0 && (ft_strchr(path, '/') || !get_env(env, "PATH"))))
 		return (3);
-	else if (!access(path, F_OK) && access(path, X_OK) == -1)
+	else if (is_file == 1 && access(path, X_OK) == -1)
 		return (4);
-	else if (access(path, F_OK | X_OK) == -1
-		|| (cmd[0] == '.' && cmd[1] == '.'))
+	else if (is_file == 0 && is_dir == 0)
 		return (5);
 	return (0);
 }
