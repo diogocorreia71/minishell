@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:17:17 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 23:21:22 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 12:59:37 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	ft_exit(t_minishell *shell, t_exec *cmd)
 	else if (shell->cmd_split[1] && shell->cmd_split[2])
 	{
 		ft_fprintf(2, "exit: too many arguments\n");
+		g_exit_status = 1;
 		return ;
 	}
 	ft_free_dp((void **)shell->cmd_split);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 16:57:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/25 01:23:20 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 10:37:46 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ t_id	token_has_quotes(char *token)
 	int	i;
 
 	i = 0;
+	if (token == NULL)
+		return (NO);
 	while (token[i])
 	{
 		if (token[i] == '"' || token[i] == '\'')

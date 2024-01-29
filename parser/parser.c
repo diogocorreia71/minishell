@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/28 22:07:10 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 17:27:37 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_generic	*create_redir_ptr(t_id redir_type, t_generic *struct_pointer, t_env *env, char *filename)
+{
+	if (redir_type == REDIR_OUT)
+		struct_pointer = redir_constructor(struct_pointer, 1,
+			O_WRONLY | O_CREAT | O_TRUNC, filename);
+	else if (redir_type == REDIR_IN)
+		struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, filename);
+	else if (redir_type == APPEND)
+		struct_pointer = redir_constructor(struct_pointer, 1,
+			O_WRONLY | O_CREAT | O_APPEND, filename);
+	else if (redir_type == HERE_DOC)
+	{
+		struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, "hereDoc");
+		struct_pointer = heredoc_constructor(struct_pointer, filename,
+			O_WRONLY | O_CREAT | O_TRUNC);
+		run_hereDoc((t_heredoc *)struct_pointer, env);
+	}
+	return (struct_pointer);
+}
 
 t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *env)
 {
@@ -22,32 +42,13 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *en
 		return (struct_pointer);
 	next_token_type = get_token_type((*args)->next);
 	if (next_token_type != WORD && next_token_type != EXPAND)
-	{
-		ft_fprintf(STDERR_FILENO, "Syntax error\n");
-		return (struct_pointer);
-	}
+		return (print_syntax_error((*args)->next, struct_pointer));
 	(*args) = (*args)->next;
-	if (redir_type != HERE_DOC)
-	{
+	if (redir_type != HERE_DOC && (*args)->type == EXPAND)
 		(*args)->token = expand_token(env, (*args)->token);
-		(*args)->token = remove_quotes((*args)->token);
-	}
+	(*args)->token = remove_quotes((*args)->token);
 	(*args)->type = IGNORE;
-	if (redir_type == REDIR_OUT)
-		struct_pointer = redir_constructor(struct_pointer, 1,
-			O_WRONLY | O_CREAT | O_TRUNC, (*args)->token);
-	else if (redir_type == REDIR_IN)
-		struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, (*args)->token);
-	else if (redir_type == APPEND)
-		struct_pointer = redir_constructor(struct_pointer, 1,
-			O_WRONLY | O_CREAT | O_APPEND, (*args)->token);
-	else if (redir_type == HERE_DOC)
-	{
-		struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, "hereDoc");
-		struct_pointer = heredoc_constructor(struct_pointer, (*args)->token,
-			O_WRONLY | O_CREAT | O_TRUNC);
-		prepare_hereDoc(struct_pointer, env);
-	}
+	struct_pointer = create_redir_ptr(redir_type, struct_pointer, env, (*args)->token);
 	return (struct_pointer);
 }
 
@@ -62,6 +63,8 @@ t_generic	*parser_exec(t_env *env, t_lst_tokens **args)
 	{
 		if ((*args)->type == REDIR)
 			struct_pointer = parse_redir(args, struct_pointer, env);
+		if (struct_pointer == NULL)
+			return (free_tree(struct_pointer), NULL);
 		if ((*args)->type != IGNORE)
 		{
 			if (exec_cast->argv != NULL)
@@ -81,22 +84,16 @@ t_generic	*parser_pipe(t_env *env, t_lst_tokens **args)
 	t_generic	*struct_pointer;
 	t_id		token_type;
 	
-	if (get_token_type(*args) == PIPE)
-	{
-		ft_fprintf(STDERR_FILENO, "Syntax error\n");
-		return (NULL);
-	}
 	struct_pointer = parser_exec(env, args);
 	if (struct_pointer && get_token_type((*args)) == PIPE)
 	{
 		(*args) = (*args)->next;
 		token_type = get_token_type((*args));
 		if (token_type != WORD && token_type != REDIR && token_type != EXPAND)
-		{
-			ft_fprintf(STDERR_FILENO, "Syntax error\n");
-			return (NULL);
-		}
+			return (print_syntax_error((*args), struct_pointer));
 		struct_pointer = pipe_constructor(struct_pointer, parser_pipe(env, args));
+		if (((t_pipe *)struct_pointer)->right == NULL)
+			return (free_tree(struct_pointer), NULL);
 	}
 	return (struct_pointer);
 }
@@ -105,7 +102,7 @@ t_generic	*parser_tokens(t_env *env, t_lst_tokens **args)
 {
 	t_generic		*tree_root;
 	t_lst_tokens	*tmp;
-
+	
 	tmp = (*args);
 	if (tmp == NULL)
 		return (NULL);

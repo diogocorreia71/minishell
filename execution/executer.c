@@ -3,22 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/28 22:08:24 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 17:35:31 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	prepare_hereDoc(t_generic *struct_pointer, t_env *env)
+int	check_hereDoc_input(char *input, char *delimiter)
 {
-	t_heredoc	*here_doc;
+	if (input == NULL)
+	{
+		//Dar fork() no HereDoc
+		//Linha do hereDoc, ctrl+d dentro do hereDoc(ver mais tarde)
+		printf("warning: here-document delimited by end-of-file (wanted `%s')\n", delimiter);
+		exit(EXIT_FAILURE);
+	}
+	if (ft_strcmp(delimiter, input) == 0)
+		return (1);
+	return (0);
+}
+
+void	run_hereDoc(t_heredoc *here_doc, t_env *env)
+{
 	int			here_doc_fd;
 	char		*input;
 
-	here_doc = (t_heredoc *)struct_pointer;
 	here_doc->delimiter = remove_quotes(here_doc->delimiter);
 	here_doc_fd = open("hereDoc", here_doc->open_flags, 0644);
 	if (here_doc_fd == -1)
@@ -29,7 +41,7 @@ void	prepare_hereDoc(t_generic *struct_pointer, t_env *env)
 	while (1)
 	{
 		input = readline("> ");
-		if (ft_strcmp(here_doc->delimiter, input) == 0)
+		if (check_hereDoc_input(input, here_doc->delimiter) == 1)
 			break ;
 		if (here_doc->expansion == YES)
 			input = expand_token(env, input);

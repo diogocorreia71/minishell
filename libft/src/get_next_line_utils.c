@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/04 15:37:19 by rumachad          #+#    #+#             */
-/*   Updated: 2023/11/09 14:59:29 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/29 10:32:50 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ char	*ft_strjoin_get(char *s1, char *s2)
 	int				i;
 	int				j;
 
+	if (!s2)
+		return (NULL);
 	if (!s1)
 	{
 		s1 = (char *)malloc(1 * sizeof(char));
@@ -40,8 +42,6 @@ char	*ft_strjoin_get(char *s1, char *s2)
 			return (NULL);
 		s1[0] = '\0';
 	}
-	if (!s2)
-		return (NULL);
 	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (str == NULL)
 		return (NULL);

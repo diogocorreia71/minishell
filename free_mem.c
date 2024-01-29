@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/25 02:25:44 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 17:15:53 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	free_tokens(t_lst_tokens **args)
 
 void	free_tree(t_generic *cmd)
 {
+	if (cmd == NULL)
+		return ;
 	if (cmd->type == EXEC)
 	{
 		free(((t_exec *)cmd)->argv);

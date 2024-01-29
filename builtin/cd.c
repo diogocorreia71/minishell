@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:31:42 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/27 11:32:42 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/29 12:50:26 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,17 +54,20 @@ void	cd(t_minishell *shell)
 	if (shell->cmd_split[2])
 	{
 		ft_fprintf(2, "cd: too many arguments\n");
+		g_exit_status = 1;
 		return ;
 	}
 	path = cd_syntax(shell->env, shell->cmd_split, &key);
 	if (path == NULL)
 	{
 		ft_fprintf(2, "cd: %s not set", key);
+		g_exit_status = 1;
 		return ;
 	}
 	if (chdir(path) == -1)
 	{
 		ft_fprintf(2, "cd: %s: no such file or directory\n", path);
+		g_exit_status = 1;
 		free(path);
 		return ;
 	}

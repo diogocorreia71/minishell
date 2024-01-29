@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/28 22:53:39 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 13:14:47 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,29 @@ char	*exec_path(t_minishell *shell)
 	return (ft_strdup(shell->cmd_split[0]));
 }
 
+void	child_signal_handler(int signum)
+{
+	if (signum == SIGINT)
+	{
+		printf("\n");
+		g_exit_status = 128 + SIGINT;
+	}
+	else if (signum == SIGQUIT)
+	{
+		printf("Quit (core dumped)\n");
+		g_exit_status = 128 + SIGQUIT;
+	}
+}
+
 void	ft_execve(t_minishell *shell)
 {
 	pid_t	pid;
+	int		status;
 	
 	pid = fork();
 	if (pid < 0)
 	{
-		ft_fprintf(STDERR_FILENO, "Error fork (function: non_builtin)\n");
+		ft_fprintf(STDERR_FILENO, "Error fork (function: execve)\n");
 		return ;
 	}
 	else if (pid == 0)
@@ -56,7 +71,8 @@ void	ft_execve(t_minishell *shell)
 			change_shlvl(shell->env_array, shell->env);
 		execve(shell->path, shell->cmd_split, shell->env_array);
 	}
-	waitpid(pid, NULL, 0);
+	waitpid(pid, &status, 0);
+	g_exit_status = WEXITSTATUS(status);
 	free(shell->path);
 	ft_free_dp((void **)shell->env_array);
 }

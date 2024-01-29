@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/05 23:13:04 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 13:00:04 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	export_syntax(char *cmd)
 	if (check_export(cmd) == 1)
 	{
 		ft_fprintf(2, "export: `%s': not a valid identifier\n", cmd);
+		g_exit_status = 1;
 		return (1);
 	}
 	return (0);

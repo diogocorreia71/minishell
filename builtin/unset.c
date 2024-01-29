@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:29:35 by rumachad          #+#    #+#             */
-/*   Updated: 2023/12/26 17:03:34 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/29 13:00:20 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	unset_syntax(char *cmd)
 	if (check_unset(cmd) == 1)
 	{
 		ft_fprintf(2, "unset: `%s': not a valid identifier\n", cmd);
+		g_exit_status = 1;
 		return (1);
 	}
 	return (0);

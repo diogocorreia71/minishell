@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/28 23:16:11 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 12:42:40 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	is_dir_err(char *cmd)
 	while (cmd[i])
 	{
 		if (counter > 2)
-			break;
+			break ;
 		else if (cmd[i] == '.')
 			counter++;
 		else if (cmd[i] == '/')
@@ -64,21 +64,21 @@ int	check_stat(char *path, struct stat *buffer, int *is_file, int *is_dir)
 
 int	execve_syntax(t_env *env, char *path)
 {
-	struct stat buffer;
+	struct stat	buffer;
 	int			is_file;
 	int			is_dir;
-	
+
 	check_stat(path, &buffer, &is_file, &is_dir);
 	if (ft_strlen(path) == 1 && path[0] == '.')
-		return (1);
+		return (g_exit_status = 2, 1);
 	else if (is_dir == 0 && is_file == 1)
-		return (2);
+		return (g_exit_status = 126, 2);
 	else if ((is_dir == 0 && (ft_strchr(path, '/') || !get_env(env, "PATH"))))
-		return (3);
+		return (g_exit_status = 127, 3);
 	else if (is_file == 1 && access(path, X_OK) == -1)
-		return (4);
+		return (g_exit_status = 126, 4);
 	else if (is_file == 0 && is_dir == 0)
-		return (5);
+		return (g_exit_status = 127, 5);
 	return (0);
 }
 

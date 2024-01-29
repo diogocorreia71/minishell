@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/28 23:25:50 by rui              ###   ########.fr       */
+/*   Updated: 2024/01/29 17:30:47 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <sys/stat.h>
+# include <termios.h>
 # include <limits.h>
 # include <stdbool.h>
 # include <signal.h>
@@ -38,6 +39,7 @@ typedef enum s_id
 	IGNORE,
 	YES,
 	NO,
+	NO_EXECUTE,
 }			t_id;
 
 typedef struct s_generic
@@ -63,8 +65,8 @@ typedef struct s_redir
 typedef struct s_heredoc
 {
 	t_id		type;
-	t_id		expansion;
 	t_generic	*heredoc_redir;
+	t_id		expansion;
 	char		*delimiter;
 	int			open_flags;
 }				t_heredoc;
@@ -91,6 +93,8 @@ typedef struct s_minishell
 	char	*path;
 	t_env	*env;
 }				t_minishell;
+
+extern int	g_exit_status;
 
 //Builtin and Execve
 void	builtin_cmd(t_minishell *shell, t_exec *cmd);
@@ -134,7 +138,7 @@ void	run_redir(t_minishell *shell, t_redir *cmd);
 void	run_pipe(t_minishell *shell, t_pipe *cmd);
 
 //HereDoc
-void	prepare_hereDoc(t_generic *struct_pointer, t_env *env);
+void	run_hereDoc(t_heredoc *struct_pointer, t_env *env);
 
 //Utils (get_type)
 t_id		get_redir_type(char *token, t_id token_type);
@@ -146,6 +150,11 @@ void	free_tokens(t_lst_tokens **tokens);
 void	free_child(t_minishell *shell, t_pipe *cmd);
 void	clean_program(t_minishell *shell, t_generic *cmd, t_id mode);
 void	free_tree(t_generic *cmd);
+void	*print_syntax_error(t_lst_tokens *arg, t_generic *cmd);
+
+//Signal
+void	main_signal_handler(int signum);
+void	child_signal_handler(int signum);
 
 //Utils
 int		is_space(char c);
