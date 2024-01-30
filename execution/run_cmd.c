@@ -6,11 +6,28 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 12:35:05 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:51:55 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	run_hereDoc(t_heredoc *here_doc, t_env *env, int hereDoc_fd)
+{
+	char	*input;
+	
+	while (1)
+	{
+		input = readline("> ");
+		if (check_hereDoc_input(input, here_doc->delimiter) == 1)
+			break ;
+		if (here_doc->expansion == YES)
+			input = expand_token(env, input);
+		ft_fprintf(hereDoc_fd, "%s\n", input);
+		free(input);
+	}
+	close(hereDoc_fd);
+}
 
 void	run_exec(t_minishell *shell, t_exec *cmd)
 {

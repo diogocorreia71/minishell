@@ -6,11 +6,18 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 17:15:53 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:44:57 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	free_hereDoc(t_env *env, t_generic *cmd, char *input)
+{
+	free(input);
+	free_tree(cmd);
+	free_env(env);
+}
 
 void	free_env(t_env *env)
 {

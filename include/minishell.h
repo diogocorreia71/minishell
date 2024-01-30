@@ -6,22 +6,23 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/29 17:30:47 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:03:40 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# define _XOPEN_SOURCE 700
 # include "../libft/libft.h"
 # include "../include/libenv.h"
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/wait.h>
 # include <sys/stat.h>
-# include <termios.h>
 # include <limits.h>
 # include <stdbool.h>
+# include <sys/types.h>
 # include <signal.h>
 
 typedef enum s_id
@@ -138,7 +139,10 @@ void	run_redir(t_minishell *shell, t_redir *cmd);
 void	run_pipe(t_minishell *shell, t_pipe *cmd);
 
 //HereDoc
-void	run_hereDoc(t_heredoc *struct_pointer, t_env *env);
+void	init_hereDoc(t_heredoc *here_doc, t_env *env);
+void	init_hereDoc_handler(void);
+int		check_hereDoc_input(char *input, char *delimiter);
+void	run_hereDoc(t_heredoc *here_doc, t_env *env, int hereDoc_fd);
 
 //Utils (get_type)
 t_id		get_redir_type(char *token, t_id token_type);
@@ -148,13 +152,14 @@ t_id	    get_token_type(t_lst_tokens *arg);
 void	free_env(t_env *env);
 void	free_tokens(t_lst_tokens **tokens);
 void	free_child(t_minishell *shell, t_pipe *cmd);
-void	clean_program(t_minishell *shell, t_generic *cmd, t_id mode);
 void	free_tree(t_generic *cmd);
+void	free_hereDoc(t_env *env, t_generic *cmd, char *input);
 void	*print_syntax_error(t_lst_tokens *arg, t_generic *cmd);
 
 //Signal
 void	main_signal_handler(int signum);
 void	child_signal_handler(int signum);
+void	init_signal_handler(void (*signal_handler)(int));
 
 //Utils
 int		is_space(char c);

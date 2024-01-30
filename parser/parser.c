@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 17:27:37 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/30 15:49:16 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_generic	*create_redir_ptr(t_id redir_type, t_generic *struct_pointer, t_env *e
 		struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, "hereDoc");
 		struct_pointer = heredoc_constructor(struct_pointer, filename,
 			O_WRONLY | O_CREAT | O_TRUNC);
-		run_hereDoc((t_heredoc *)struct_pointer, env);
+		init_hereDoc((t_heredoc *)struct_pointer, env);
 	}
 	return (struct_pointer);
 }
