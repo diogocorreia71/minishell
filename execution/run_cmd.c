@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/30 16:51:55 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:43:08 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,13 @@ void	run_hereDoc(t_heredoc *here_doc, t_env *env, int hereDoc_fd)
 void	run_exec(t_minishell *shell, t_exec *cmd)
 {
 	g_exit_status = 0;
-	shell->cmd_split = ft_split(cmd->argv, ' ');
+	if (ft_strchr(cmd->argv, ' '))
+		shell->cmd_split = ft_split(cmd->argv, ' ');
+	else
+	{
+		shell->cmd_split = (char **)malloc(sizeof(char *));
+		shell->cmd_split[0] = ft_strdup(cmd->argv);
+	}
 	if (shell->cmd_split == NULL)
 		return ;
 	if (is_builtin(shell->cmd_split[0]) == YES)

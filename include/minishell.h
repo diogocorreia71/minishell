@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/30 17:03:40 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/31 15:25:21 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ typedef enum s_id
 	YES,
 	NO,
 	NO_EXECUTE,
+	SIGAFR,
+	SIGCHILD,
+	SIGMAIN,
 }			t_id;
 
 typedef struct s_generic
@@ -157,9 +160,7 @@ void	free_hereDoc(t_env *env, t_generic *cmd, char *input);
 void	*print_syntax_error(t_lst_tokens *arg, t_generic *cmd);
 
 //Signal
-void	main_signal_handler(int signum);
-void	child_signal_handler(int signum);
-void	init_signal_handler(void (*signal_handler)(int));
+void	init_signals(t_id handler_type);
 
 //Utils
 int		is_space(char c);

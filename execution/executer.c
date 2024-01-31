@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/30 17:02:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/31 17:27:47 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,6 @@ int	check_hereDoc_input(char *input, char *delimiter)
 	return (0);
 }
 
-void	init_hereDoc_handler(void)
-{
-	struct sigaction	sig;
-	
-	sig.sa_flags = 0;
-	sigemptyset(&(sig.sa_mask));
-	sig.sa_handler = SIG_DFL;
-	sigaction(SIGINT, &sig, NULL);
-	sigaction(SIGQUIT, &sig, NULL);
-}
-
 void	init_hereDoc(t_heredoc *here_doc, t_env *env)
 {
 	int		hereDoc_fd;
@@ -52,11 +41,11 @@ void	init_hereDoc(t_heredoc *here_doc, t_env *env)
 			ft_fprintf(STDERR_FILENO, "Error starting hereDoc fd\n");
 			exit(1);
 		}
-		init_hereDoc_handler();
+		/* init_signals(SIGCHILD); */
 		run_hereDoc(here_doc, env, hereDoc_fd);
+		exit(0);
 	}
 	waitpid(-1, NULL, 0);
-	init_signal_handler(main_signal_handler);
 }
 
 void	executer_cmd(t_minishell *shell, t_generic *cmd)

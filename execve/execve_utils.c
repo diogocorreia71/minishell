@@ -6,33 +6,11 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 12:42:40 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/31 14:40:44 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	is_dir_err(char *cmd)
-{
-	int	i;
-	int	counter;
-
-	i = 0;
-	counter = 0;
-	while (cmd[i])
-	{
-		if (counter > 2)
-			break ;
-		else if (cmd[i] == '.')
-			counter++;
-		else if (cmd[i] == '/')
-			counter = 0;
-		i++;
-	}
-	if (counter <= 2 && cmd[i] == '\0')
-		return (true);
-	return (false);
-}
 
 void	execve_error(int error)
 {
@@ -57,8 +35,8 @@ int	check_stat(char *path, struct stat *buffer, int *is_file, int *is_dir)
 	check = stat(path, buffer);
 	if (check == -1)
 		return (0);
-	*is_file = S_ISDIR(buffer->st_mode);
-	*is_dir = S_ISREG(buffer->st_mode);
+	*is_dir = S_ISDIR(buffer->st_mode);
+	*is_file = S_ISREG(buffer->st_mode);
 	return (1);
 }
 
@@ -71,13 +49,13 @@ int	execve_syntax(t_env *env, char *path)
 	check_stat(path, &buffer, &is_file, &is_dir);
 	if (ft_strlen(path) == 1 && path[0] == '.')
 		return (g_exit_status = 2, 1);
-	else if (is_dir == 0 && is_file == 1)
+	else if (is_dir == true && is_file == false)
 		return (g_exit_status = 126, 2);
-	else if ((is_dir == 0 && (ft_strchr(path, '/') || !get_env(env, "PATH"))))
+	else if ((is_file == false && (ft_strchr(path, '/') || !get_env(env, "PATH"))))
 		return (g_exit_status = 127, 3);
-	else if (is_file == 1 && access(path, X_OK) == -1)
+	else if (is_file == true && access(path, X_OK) == -1)
 		return (g_exit_status = 126, 4);
-	else if (is_file == 0 && is_dir == 0)
+	else if (is_file == false && is_dir == false)
 		return (g_exit_status = 127, 5);
 	return (0);
 }

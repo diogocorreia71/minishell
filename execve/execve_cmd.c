@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 13:14:47 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:51:15 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,10 @@ char	*exec_path(t_minishell *shell)
 	return (ft_strdup(shell->cmd_split[0]));
 }
 
-void	child_signal_handler(int signum)
-{
-	if (signum == SIGINT)
-	{
-		printf("\n");
-		g_exit_status = 128 + SIGINT;
-	}
-	else if (signum == SIGQUIT)
-	{
-		printf("Quit (core dumped)\n");
-		g_exit_status = 128 + SIGQUIT;
-	}
-}
-
 void	ft_execve(t_minishell *shell)
 {
 	pid_t	pid;
-	int		status;
-	
+
 	pid = fork();
 	if (pid < 0)
 	{
@@ -71,8 +56,7 @@ void	ft_execve(t_minishell *shell)
 			change_shlvl(shell->env_array, shell->env);
 		execve(shell->path, shell->cmd_split, shell->env_array);
 	}
-	waitpid(pid, &status, 0);
-	g_exit_status = WEXITSTATUS(status);
+	waitpid(pid, NULL, 0);
 	free(shell->path);
 	ft_free_dp((void **)shell->env_array);
 }

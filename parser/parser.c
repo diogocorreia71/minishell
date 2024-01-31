@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/30 15:49:16 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/31 14:29:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,10 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *en
 		return (print_syntax_error((*args)->next, struct_pointer));
 	(*args) = (*args)->next;
 	if (redir_type != HERE_DOC && (*args)->type == EXPAND)
+	{
 		(*args)->token = expand_token(env, (*args)->token);
-	(*args)->token = remove_quotes((*args)->token);
+		(*args)->token = remove_quotes((*args)->token);
+	}
 	(*args)->type = IGNORE;
 	struct_pointer = create_redir_ptr(redir_type, struct_pointer, env, (*args)->token);
 	return (struct_pointer);

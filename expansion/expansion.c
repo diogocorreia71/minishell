@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 14:52:20 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:07:02 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,6 @@ char	*handle_ds(t_env *env, char *token)
 		}
 		i++;
 	}
-	if (token[0] == '\0')
-		return (free(token), NULL);
 	return (token);
 }
 
