@@ -6,17 +6,17 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/30 15:44:57 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:34:19 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_hereDoc(t_env *env, t_generic *cmd, char *input)
+void	free_heredoc(t_lst_tokens *head, t_env *env, t_generic *cmd)
 {
-	free(input);
-	free_tree(cmd);
 	free_env(env);
+	free_tokens(&head);
+	free_tree((t_generic *)cmd);
 }
 
 void	free_env(t_env *env)
@@ -64,6 +64,7 @@ void	free_tree(t_generic *cmd)
 	else if (cmd->type == HERE_DOC)
 	{
 		free_tree(((t_heredoc *)cmd)->heredoc_redir);
+		free(((t_heredoc *)cmd)->delimiter);
 		free(((t_heredoc *)cmd));
 	}
 	else if (cmd->type == PIPE)

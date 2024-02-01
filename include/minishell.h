@@ -6,14 +6,13 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/01/31 15:25:21 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:23:50 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define _XOPEN_SOURCE 700
 # include "../libft/libft.h"
 # include "../include/libenv.h"
 # include <readline/readline.h>
@@ -40,10 +39,9 @@ typedef enum s_id
 	IGNORE,
 	YES,
 	NO,
-	NO_EXECUTE,
-	SIGAFR,
 	SIGCHILD,
 	SIGMAIN,
+	SIGHERE,
 }			t_id;
 
 typedef struct s_generic
@@ -142,10 +140,10 @@ void	run_redir(t_minishell *shell, t_redir *cmd);
 void	run_pipe(t_minishell *shell, t_pipe *cmd);
 
 //HereDoc
-void	init_hereDoc(t_heredoc *here_doc, t_env *env);
-void	init_hereDoc_handler(void);
-int		check_hereDoc_input(char *input, char *delimiter);
-void	run_hereDoc(t_heredoc *here_doc, t_env *env, int hereDoc_fd);
+void	init_heredoc(t_heredoc *here_doc, t_env *env, t_lst_tokens *head);
+void	init_heredoc_handler(void);
+int		check_heredoc_input(char *input, char *delimiter);
+void	run_heredoc(t_heredoc *here_doc, t_env *env, int hereDoc_fd);
 
 //Utils (get_type)
 t_id		get_redir_type(char *token, t_id token_type);
@@ -156,13 +154,15 @@ void	free_env(t_env *env);
 void	free_tokens(t_lst_tokens **tokens);
 void	free_child(t_minishell *shell, t_pipe *cmd);
 void	free_tree(t_generic *cmd);
-void	free_hereDoc(t_env *env, t_generic *cmd, char *input);
+void	free_heredoc(t_lst_tokens *head, t_env *env, t_generic *cmd);
 void	*print_syntax_error(t_lst_tokens *arg, t_generic *cmd);
 
 //Signal
 void	init_signals(t_id handler_type);
+void	main_signal_handler(int signum);
 
 //Utils
+char	**expand_argv(char *argv);
 int		is_space(char c);
 void	free_first(t_lst_tokens **tokens);
 int		check_unex_token(t_lst_tokens *args);

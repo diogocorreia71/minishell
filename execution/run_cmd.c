@@ -6,41 +6,39 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/31 18:43:08 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/01 16:25:46 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	run_hereDoc(t_heredoc *here_doc, t_env *env, int hereDoc_fd)
+void	run_heredoc(t_heredoc *here_doc, t_env *env, int heredoc_fd)
 {
 	char	*input;
 	
 	while (1)
 	{
 		input = readline("> ");
-		if (check_hereDoc_input(input, here_doc->delimiter) == 1)
+		if (check_heredoc_input(input, here_doc->delimiter) == 1)
+		{
+			free(input);
 			break ;
+		}
 		if (here_doc->expansion == YES)
 			input = expand_token(env, input);
-		ft_fprintf(hereDoc_fd, "%s\n", input);
+		ft_fprintf(heredoc_fd, "%s\n", input);
 		free(input);
 	}
-	close(hereDoc_fd);
+	close(heredoc_fd);
 }
 
 void	run_exec(t_minishell *shell, t_exec *cmd)
 {
 	g_exit_status = 0;
-	if (ft_strchr(cmd->argv, ' '))
-		shell->cmd_split = ft_split(cmd->argv, ' ');
-	else
-	{
-		shell->cmd_split = (char **)malloc(sizeof(char *));
-		shell->cmd_split[0] = ft_strdup(cmd->argv);
-	}
-	if (shell->cmd_split == NULL)
+	if (cmd->argv == NULL)
 		return ;
+	shell->cmd_split = expand_argv(cmd->argv);
+	return ;
 	if (is_builtin(shell->cmd_split[0]) == YES)
 		builtin_cmd(shell, cmd);
 	else
@@ -77,7 +75,9 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 	int	pipe_fd[2];
 	int	pipe_pid_right;
 	int	pipe_pid_left;
+	int	status;
 	
+	status = 0;
 	if (pipe(pipe_fd) == -1)
 	{
 		ft_fprintf(STDERR_FILENO, "Pipe creation error\n");
@@ -86,22 +86,26 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 	pipe_pid_left = fork();
 	if (pipe_pid_left == 0)
 	{
+		init_signals(SIGCHILD);
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		close_fd(pipe_fd);
 		executer_cmd(shell, cmd->left);
 		free_child(shell, cmd);
-		exit(EXIT_SUCCESS);
+		exit(g_exit_status);
 	}
 	pipe_pid_right = fork();
 	if (pipe_pid_right == 0)
 	{
+		init_signals(SIGCHILD);
 		dup2(pipe_fd[0], STDIN_FILENO);
 		close_fd(pipe_fd);
 		executer_cmd(shell, cmd->right);
 		free_child(shell, cmd);
-		exit(EXIT_SUCCESS);
+		exit(g_exit_status);
 	}
 	close_fd(pipe_fd);
-	waitpid(pipe_pid_right, NULL, 0);
-	waitpid(pipe_pid_left, NULL, 0);
+	init_signals(IGNORE);
+	waitpid(pipe_pid_left, &status, 0);
+	waitpid(pipe_pid_right, &status, 0);
+	g_exit_status = WEXITSTATUS(status);
 }

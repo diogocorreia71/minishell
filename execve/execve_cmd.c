@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/31 18:51:15 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/01 13:09:04 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,32 @@ char	*exec_path(t_minishell *shell)
 	return (ft_strdup(shell->cmd_split[0]));
 }
 
+void	exec_exit_status(int status)
+{
+	int	exit_status;
+
+	exit_status = 0;
+	if (WIFEXITED(status))
+	{
+		exit_status = WEXITSTATUS(status);
+		g_exit_status = exit_status;
+	}
+	else if (WIFSIGNALED(status))
+	{
+		exit_status = WTERMSIG(status);
+		if (exit_status == 3)
+			printf("Quit (core dumped)");
+		printf("\n");
+		g_exit_status = 128 + exit_status;
+	}
+}
+
 void	ft_execve(t_minishell *shell)
 {
 	pid_t	pid;
+	int		status;
 
+	status = 0;
 	pid = fork();
 	if (pid < 0)
 	{
@@ -52,11 +74,14 @@ void	ft_execve(t_minishell *shell)
 	}
 	else if (pid == 0)
 	{
+		init_signals(SIGCHILD);
 		if (ft_strncmp(shell->cmd_split[0], "./minishell", 12) == 0)
 			change_shlvl(shell->env_array, shell->env);
 		execve(shell->path, shell->cmd_split, shell->env_array);
 	}
-	waitpid(pid, NULL, 0);
+	init_signals(IGNORE);
+	waitpid(pid, &status, 0);
+	exec_exit_status(status);
 	free(shell->path);
 	ft_free_dp((void **)shell->env_array);
 }

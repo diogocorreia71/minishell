@@ -6,13 +6,22 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/31 14:29:12 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:53:52 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_generic	*create_redir_ptr(t_id redir_type, t_generic *struct_pointer, t_env *env, char *filename)
+t_generic	*create_heredoc_ptr(t_generic *struct_pointer, t_env *env, t_lst_tokens *head, char *delimiter)
+{
+	struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, "hereDoc");
+	struct_pointer = heredoc_constructor(struct_pointer, ft_strdup(delimiter),
+		O_WRONLY | O_CREAT | O_TRUNC);
+	init_heredoc((t_heredoc *)struct_pointer, env, head);
+	return (struct_pointer);
+}
+
+t_generic	*create_redir_ptr(t_id redir_type, t_generic *struct_pointer, char *filename)
 {
 	if (redir_type == REDIR_OUT)
 		struct_pointer = redir_constructor(struct_pointer, 1,
@@ -22,17 +31,10 @@ t_generic	*create_redir_ptr(t_id redir_type, t_generic *struct_pointer, t_env *e
 	else if (redir_type == APPEND)
 		struct_pointer = redir_constructor(struct_pointer, 1,
 			O_WRONLY | O_CREAT | O_APPEND, filename);
-	else if (redir_type == HERE_DOC)
-	{
-		struct_pointer = redir_constructor(struct_pointer, 0, O_RDONLY, "hereDoc");
-		struct_pointer = heredoc_constructor(struct_pointer, filename,
-			O_WRONLY | O_CREAT | O_TRUNC);
-		init_hereDoc((t_heredoc *)struct_pointer, env);
-	}
 	return (struct_pointer);
 }
 
-t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *env)
+t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *env, t_lst_tokens *head)
 {
 	t_id		redir_type;
 	t_id		next_token_type;
@@ -50,7 +52,10 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *en
 		(*args)->token = remove_quotes((*args)->token);
 	}
 	(*args)->type = IGNORE;
-	struct_pointer = create_redir_ptr(redir_type, struct_pointer, env, (*args)->token);
+	if (redir_type == HERE_DOC)
+		struct_pointer = create_heredoc_ptr(struct_pointer, env, head, (*args)->token);
+	else
+		struct_pointer = create_redir_ptr(redir_type, struct_pointer, (*args)->token);
 	return (struct_pointer);
 }
 
@@ -58,13 +63,15 @@ t_generic	*parser_exec(t_env *env, t_lst_tokens **args)
 {
 	t_generic	*struct_pointer;
 	t_exec		*exec_cast;
+	t_lst_tokens	*head;
 
+	head = (*args);
 	struct_pointer = exec_constructor();
 	exec_cast = (t_exec *)struct_pointer;
 	while ((*args) && (*args)->type != PIPE)
 	{
 		if ((*args)->type == REDIR)
-			struct_pointer = parse_redir(args, struct_pointer, env);
+			struct_pointer = parse_redir(args, struct_pointer, env, head);
 		if (struct_pointer == NULL)
 			return (free_tree(struct_pointer), NULL);
 		if ((*args)->type != IGNORE)
@@ -73,7 +80,6 @@ t_generic	*parser_exec(t_env *env, t_lst_tokens **args)
 				exec_cast->argv = ft_strjoin_get(exec_cast->argv, " ");
 			if ((*args)->type == EXPAND)
 				(*args)->token = expand_token(env, (*args)->token);
-			(*args)->token = remove_quotes((*args)->token);
 			exec_cast->argv = ft_strjoin_get(exec_cast->argv, (*args)->token);
 		}
 		(*args) = (*args)->next;
