@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 15:31:41 by rumachad          #+#    #+#              #
-#    Updated: 2023/12/27 10:16:31 by rumachad         ###   ########.fr        #
+#    Updated: 2024/02/03 19:57:57 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,21 +37,20 @@ CC = cc
 RM = rm -f
 CFLAGS = -Wall -Werror -Wextra
 
-%.o:	%.c
+%.o:%.c
 		cc ${CFLAGS} -c $< -o $@
 
 ${NAME_LIBFT}:	${OBJS_LIBFT}
 			ar rcs libft.a ${OBJS_LIBFT} libft.h
-			mv ${OBJS_LIBFT} objs
 
-all:	${NAME}
+all:	${NAME_LIBFT}
 
 clean:
-		${RM} objs/*.o
+		${RM} ${OBJS_LIBFT}
 
 fclean: clean
 		${RM} libft.a
 
-re:	fclean ${NAME}
+re:	fclean ${NAME_LIBFT}
 
 .PHONY:	all	clean fclean re

@@ -6,31 +6,46 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2024/02/01 15:40:32 by rumachad         ###   ########.fr        #
+#    Updated: 2024/02/03 20:02:59 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
-SRC_BUILTIN = builtin
-SRC_ENV = env
-SRC_MINI = minishell
-SRC_EXPANSION = expansion
-SRC_LEXER = lexer
-SRC_PARSER = parser
-SRC_EXEC = execve
-SRC_EXECUTION = execution
+VPATH = builtin env execution execve expansion lexer parser utils_errors
+SRC = main.c \
+	parser.c \
+	execve_utils.c \
+	execve_cmd.c \
+	struct_constructors.c \
+	parser_utils.c \
+	signals.c \
+	export_utils.c \
+	exit.c \
+	pwd.c \
+	builtin.c \
+	export.c \
+	unset.c \
+	cd.c \
+	echo.c \
+	expansion.c \
+	expansion2.c \
+	env.c \
+	env_utils.c \
+	lexer.c \
+	quotes.c \
+	quotes_utils.c \
+	heredoc.c \
+	run_cmd.c \
+	executer.c \
+	check_sys.c \
+	syntax_error.c \
+	utils.c \
+	free_mem_lst.c \
+	free_mem.c \
 
-SRC = 	$(wildcard $(SRC_BUILTIN)/*.c) \
-		$(wildcard $(SRC_ENV)/*.c) \
-		$(wildcard $(SRC_EXPANSION)/*.c) \
-		$(wildcard $(SRC_LEXER)/*.c) \
-		$(wildcard $(SRC_EXEC)/*.c) \
-		$(wildcard $(SRC_PARSER)/*.c) \
-		$(wildcard $(SRC_EXECUTION)/*.c) \
-		$(wildcard *.c) \
-		
-OBJS = ${SRC:.c=.o}
+OBJS_DIR = obj
+OBJS = $(addprefix $(OBJS_DIR)/,$(SRC:.c=.o))
 CFLAGS = -Wall -Wextra -Werror -I include #-fsanitize=address
 
 ${NAME}:	${OBJS}
@@ -38,8 +53,9 @@ ${NAME}:	${OBJS}
 			ar rcs minishell.a $(OBJS)
 			cc ${CFLAGS} minishell.a libft/libft.a -lreadline -o $@
 
-%.o: %.c
-	cc ${CFLAGS} -c -o $@ $<
+$(OBJS_DIR)/%.o: %.c
+	mkdir -p $(OBJS_DIR)
+	cc ${CFLAGS} -c $< -o $@
 
 all: ${NAME}
 
@@ -52,8 +68,3 @@ fclean: clean
 
 re: fclean all
 
-val:
-		make
-		valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --suppressions=readline.supp ./minishell
-
-.SILENT:

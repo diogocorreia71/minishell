@@ -1,29 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executer.c                                         :+:      :+:    :+:   */
+/*   syntax_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 12:20:58 by rumachad         ###   ########.fr       */
+/*   Created: 2024/01/29 15:02:28 by rumachad          #+#    #+#             */
+/*   Updated: 2024/02/03 12:21:44 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	executer_cmd(t_minishell *shell, t_gen *cmd)
+void	*print_syntax_error(t_lst_tokens *arg, t_gen *cmd)
 {
-	if (cmd->type == EXEC)
-		run_exec(shell, (t_exec *)cmd);
-	else if (cmd->type == REDIR)
-		run_redir(shell, (t_redir *)cmd);
-	else if (cmd->type == PIPE)
-		run_pipeline(shell, (t_pipe *)cmd);
-	else if (cmd->type == HERE_DOC)
-	{
-		if (((t_heredoc *)cmd)->heredoc_redir != NULL)
-			run_redir(shell, (t_redir *)((t_heredoc *)cmd)->heredoc_redir);
-		unlink("hereDoc");
-	}
+	if (arg != NULL)
+		ft_fprintf(STDERR_FILENO,
+			"syntax error near unexpected token `%s'\n", arg->token);
+	else
+		ft_fprintf(STDERR_FILENO,
+			"syntax error near unexpected token `newline'\n");
+	g_exit_status = 2;
+	free_tree(cmd);
+	return (NULL);
 }

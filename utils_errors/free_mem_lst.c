@@ -1,36 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   free_mem_lst.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/26 19:31:44 by rui               #+#    #+#             */
-/*   Updated: 2024/01/26 15:50:06 by rui              ###   ########.fr       */
+/*   Created: 2024/02/03 17:48:40 by rumachad          #+#    #+#             */
+/*   Updated: 2024/02/03 17:48:50 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_space(char c)
+void	free_env(t_env *env)
 {
-	if (c == ' ')
-		return (YES);
-	else
-		return (NO);
+	t_env	*tmp;
+
+	while (env != NULL)
+	{
+		tmp = env;
+		env = env->next;
+		free(tmp->var);
+		free(tmp->var_value);
+		free(tmp);
+	}
 }
 
-void	free_first(t_lst_tokens **tokens)
+void	free_tokens(t_lst_tokens **args)
 {
 	t_lst_tokens	*tmp;
 
-	tmp = *tokens;
-	*tokens = (*tokens)->next;
-	free(tmp);
-}
-
-void	close_fd(int pipe_fd[2])
-{
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
+	while (*args != NULL)
+	{
+		tmp = *args;
+		*args = (*args)->next;
+		free(tmp->token);
+		free(tmp);
+	}
 }

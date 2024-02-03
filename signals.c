@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 15:09:39 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 02:07:44 by rui              ###   ########.fr       */
+/*   Updated: 2024/02/03 17:57:44 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	main_signal_handler(int signum)
 		printf("\n");
 		rl_on_new_line();
 		rl_redisplay();
+		g_exit_status = 130;
 	}
 }
 

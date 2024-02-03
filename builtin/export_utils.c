@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:59:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/04 11:42:55 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 11:59:21 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	swap_node(t_env *sorted_env, t_env *tmp)
 	buff = sorted_env->var;
 	sorted_env->var = tmp->var;
 	tmp->var = buff;
-	
 	buff = sorted_env->var_value;
 	sorted_env->var_value = tmp->var_value;
 	tmp->var_value = buff;

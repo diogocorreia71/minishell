@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/31 18:07:02 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 19:15:54 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*get_env_val(t_env *env, char *str)
 	return (ft_strdup(env_value));
 }
 
-char	*get_value(char *token, int *i, t_env *env)
+char	*get_value(char *token, int *i, t_env *env, int dquotes)
 {
 	int		start;
 	char	*var;
@@ -30,10 +30,15 @@ char	*get_value(char *token, int *i, t_env *env)
 
 	(*i)++;
 	start = *i;
-	if (token[*i] == '?')
+	if (ft_isdigit(token[*i]) != 0)
+		return (++(*i), ft_strdup(""));
+	else if (!ft_strncmp(token, "$", 2) || (dquotes == 1
+			&& (token[*i] == '"' || token[*i] == '\'')))
+		return (ft_strdup("$"));
+	else if (token[*i] == '?')
 		return (++(*i), ft_itoa(g_exit_status));
 	while (token[*i] && token[*i] != '"' && token[*i] != '\''
-		&& token[*i] != '$')
+		&& token[*i] != '$' && token[*i] != ' ')
 		(*i)++;
 	var = ft_substr(token, start, (*i) - start);
 	value = get_env_val(env, var);
@@ -41,13 +46,15 @@ char	*get_value(char *token, int *i, t_env *env)
 	return (value);
 }
 
-int	expand(char **token, int i, char *behind_expand, t_env *env)
+int	expand(char **token, int i, int dquotes, t_env *env)
 {
 	int		len_skip;
+	char	*behind_expand;
 	char	*value;
 	char	*join;
 
-	value = get_value(token[0], &i, env);
+	behind_expand = ft_substr(token[0], 0, i);
+	value = get_value(token[0], &i, env, dquotes);
 	len_skip = ft_strlen(value);
 	join = ft_strjoin(behind_expand, value);
 	free(value);
@@ -61,7 +68,6 @@ int	expand(char **token, int i, char *behind_expand, t_env *env)
 
 char	*handle_ds(t_env *env, char *token)
 {
-	char	*behind_expand;
 	int		squotes;
 	int		dquotes;
 	int		i;
@@ -77,8 +83,7 @@ char	*handle_ds(t_env *env, char *token)
 			dquotes = !dquotes;
 		else if (token[i] == '$' && !squotes)
 		{
-			behind_expand = ft_substr(token, 0, i);
-			i = i + expand(&token, i, behind_expand, env);
+			i = i + expand(&token, i, dquotes, env);
 			continue ;
 		}
 		i++;
@@ -86,11 +91,11 @@ char	*handle_ds(t_env *env, char *token)
 	return (token);
 }
 
-char	*expand_token(t_env *env, char *token)
+char	*expand_token(t_env *env, char *token, char *(handle)(t_env *, char *))
 {
 	if (token[0] == '~')
 		token = expand_tilde(env, token);
 	else
-		token = handle_ds(env, token);
+		token = handle(env, token);
 	return (token);
 }

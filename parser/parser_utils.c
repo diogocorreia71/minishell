@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:40:01 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 01:44:21 by rui              ###   ########.fr       */
+/*   Updated: 2024/02/03 17:45:52 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,41 @@ t_id	get_redir_type(char *token, t_id token_type)
 	return (type);
 }
 
-int	count_tokens(t_lst_tokens *args)
+int	prepare_token(t_lst_tokens **args, t_env *env)
 {
-	int	count;
+	if ((*args)->type == EXPAND)
+		(*args)->token = expand_token(env, (*args)->token, handle_ds);
+	if ((*args)->token[0] == '\0')
+		return (-1);
+	(*args)->token = remove_quotes((*args)->token);
+	(*args)->type = WORD;
+	return (0);
+}
 
-	count = 0;
-	while (args && args->type != PIPE)
+char	**fill_argv(t_lst_tokens *args, int nbr_args)
+{
+	char	**argv;
+	int		i;
+
+	argv = (char **)ft_calloc(sizeof(char *), (nbr_args + 1));
+	i = 0;
+	while (args && i < nbr_args)
 	{
-		if (args->type == REDIR)
+		if (args->token[0] == '\0')
+		{
+			args = args->next;
+			continue ;
+		}
+		else if (args->type == REDIR)
 		{
 			args = args->next;
 			if (args)
 				args = args->next;
 			continue ;
 		}
-		count++;
+		argv[i++] = ft_strdup(args->token);
 		args = args->next;
 	}
-	return (count);
+	argv[i] = 0;
+	return (argv);
 }

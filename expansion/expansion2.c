@@ -1,21 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion_tilde.c                                  :+:      :+:    :+:   */
+/*   expansion2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 12:58:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 14:54:49 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 17:47:37 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+char	*handle_heredoc_ds(t_env *env, char *token)
+{
+	int		i;
+
+	i = 0;
+	while (token[i])
+	{
+		if (token[i] == '$')
+		{
+			i = i + expand(&token, i, 0, env);
+			continue ;
+		}
+		i++;
+	}
+	return (token);
+}
+
 char	*tilde_value(t_env *env, char *token)
 {
 	char	*value;
-	
+
 	value = NULL;
 	if (!ft_strncmp(token, "~+", 3))
 		value = get_env_val(env, "PWD");

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:29:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 13:00:20 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 12:00:22 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ int	unset_syntax(char *cmd)
 }
 
 void	del_var(t_env *env, t_env *tmp)
-{	
+{
 	while (env->next->var != tmp->var)
 		env = env->next;
-	env->next =env->next->next;
+	env->next = env->next->next;
 	free(tmp->var);
 	free(tmp->var_value);
 	free(tmp);
@@ -53,15 +53,15 @@ void	unset(t_env *env, char **cmd_split)
 {
 	t_env	*tmp;
 	int		i;
-	
+
 	i = -1;
 	while (cmd_split[++i])
 	{
 		if (unset_syntax(cmd_split[i]) == 1)
-			continue;
+			continue ;
 		tmp = get_env_node(env, cmd_split[i]);
 		if (tmp == NULL)
-			continue;
+			continue ;
 		del_var(env, tmp);
 	}
 }

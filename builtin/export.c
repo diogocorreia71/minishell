@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 13:00:04 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 11:59:48 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	create_vis_var(t_env *env, char *var_name, char *val)
 	{
 		free(tmp->var_value);
 		tmp->var_value = ft_strdup(ft_strchr(val, '=') + 1);
-		return;
+		return ;
 	}
 	env = env_last(env);
 	env->next = create_node_env(var_name, val, 1);
@@ -83,7 +83,7 @@ void	export(t_env *env, char **cmd_split)
 	while (cmd_split[++i])
 	{
 		if (export_syntax(cmd_split[i]) == 1)
-			continue;
+			continue ;
 		var_name = get_var_name(cmd_split[i]);
 		if (!ft_strchr(cmd_split[i], '='))
 			create_inv_var(env, var_name);

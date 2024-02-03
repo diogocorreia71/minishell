@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:31:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 12:50:26 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 19:17:11 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,29 +46,39 @@ void	cd_env_update(t_env *env)
 	pwd->var_value = getcwd(NULL, 0);
 }
 
+void	cd_error_print(int error, char *key, char *path)
+{
+	if (error == 1)
+		ft_fprintf(STDERR_FILENO, "cd: too many arguments\n");
+	else if (error == 2)
+		ft_fprintf(STDERR_FILENO, "cd: %s not set", key);
+	else if (error == 3)
+	{
+		ft_fprintf(STDERR_FILENO, "cd: %s: No such file or directory\n", path);
+		free(path);
+	}
+	g_exit_status = 1;
+}
+
 void	cd(t_minishell *shell)
 {
 	char	*path;
 	char	*key;
 
-	if (shell->cmd_split[2])
+	if (shell->cmd_split[1] && shell->cmd_split[2] != 0)
 	{
-		ft_fprintf(2, "cd: too many arguments\n");
-		g_exit_status = 1;
+		cd_error_print(1, NULL, NULL);
 		return ;
 	}
 	path = cd_syntax(shell->env, shell->cmd_split, &key);
 	if (path == NULL)
 	{
-		ft_fprintf(2, "cd: %s not set", key);
-		g_exit_status = 1;
+		cd_error_print(2, key, NULL);
 		return ;
 	}
 	if (chdir(path) == -1)
 	{
-		ft_fprintf(2, "cd: %s: no such file or directory\n", path);
-		g_exit_status = 1;
-		free(path);
+		cd_error_print(3, NULL, path);
 		return ;
 	}
 	if (ft_strncmp(key, "OLDPWD", 7) == 0)

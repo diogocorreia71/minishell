@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/31 14:40:44 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 11:46:13 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ int	execve_syntax(t_env *env, char *path)
 		return (g_exit_status = 2, 1);
 	else if (is_dir == true && is_file == false)
 		return (g_exit_status = 126, 2);
-	else if ((is_file == false && (ft_strchr(path, '/') || !get_env(env, "PATH"))))
+	else if ((is_file == false
+			&& (ft_strchr(path, '/') || !get_env(env, "PATH"))))
 		return (g_exit_status = 127, 3);
 	else if (is_file == true && access(path, X_OK) == -1)
 		return (g_exit_status = 126, 4);

@@ -3,63 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 02:12:12 by rui              ###   ########.fr       */
+/*   Updated: 2024/02/03 17:51:03 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_heredoc(t_lst_tokens *head, t_env *env, t_generic *cmd)
+void	free_heredoc(t_lst_tokens *head, t_env *env, t_gen *cmd)
 {
 	free_env(env);
 	free_tokens(&head);
-	free_tree((t_generic *)cmd);
+	free_tree((t_gen *)cmd);
 }
 
-void	free_env(t_env *env)
+void	free_exec(t_exec *cmd)
 {
-	t_env	*tmp;
-
-	while (env != NULL)
-	{
-		tmp = env;
-		env = env->next;
-		free(tmp->var);
-		free(tmp->var_value);
-		free(tmp);
-	}	
+	if (cmd->argv != NULL)
+		ft_free_dp((void **)cmd->argv);
+	free(cmd);
 }
 
-void	free_tokens(t_lst_tokens **args)
+void	free_redir(t_redir *cmd)
 {
-	t_lst_tokens	*tmp;
-	
-	while (*args != NULL)
-	{
-		tmp = *args;
-		*args = (*args)->next;
-		free(tmp->token);
-		free(tmp);
-	}
+	free(cmd->filename);
+	free(cmd);
 }
 
-void	free_tree(t_generic *cmd)
+void	free_tree(t_gen *cmd)
 {
 	if (cmd == NULL)
 		return ;
 	if (cmd->type == EXEC)
-	{
-		ft_free_dp((void **)((t_exec *)cmd)->argv);
-		free(((t_exec *)cmd));
-	}
+		free_exec((t_exec *)cmd);
 	else if (cmd->type == REDIR)
 	{
 		free_tree(((t_redir *)cmd)->last_pointer);
-		free(((t_redir *)cmd)->filename);
-		free(((t_redir *)cmd));
+		free_redir((t_redir *)cmd);
 	}
 	else if (cmd->type == HERE_DOC)
 	{
@@ -77,6 +59,6 @@ void	free_tree(t_generic *cmd)
 
 void	free_child(t_minishell *shell, t_pipe *cmd)
 {
-	free_tree((t_generic *)cmd);
+	free_tree((t_gen *)cmd);
 	free_env(shell->env);
 }

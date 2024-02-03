@@ -1,29 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executer.c                                         :+:      :+:    :+:   */
+/*   quotes_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 12:20:58 by rumachad         ###   ########.fr       */
+/*   Created: 2024/02/03 12:56:04 by rumachad          #+#    #+#             */
+/*   Updated: 2024/02/03 12:56:25 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	executer_cmd(t_minishell *shell, t_gen *cmd)
+t_id	unclosed_quotes(char *rl_str)
 {
-	if (cmd->type == EXEC)
-		run_exec(shell, (t_exec *)cmd);
-	else if (cmd->type == REDIR)
-		run_redir(shell, (t_redir *)cmd);
-	else if (cmd->type == PIPE)
-		run_pipeline(shell, (t_pipe *)cmd);
-	else if (cmd->type == HERE_DOC)
+	if (handle_quotes(rl_str) == 1)
 	{
-		if (((t_heredoc *)cmd)->heredoc_redir != NULL)
-			run_redir(shell, (t_redir *)((t_heredoc *)cmd)->heredoc_redir);
-		unlink("hereDoc");
+		ft_fprintf(STDERR_FILENO, "Invalid Quotes\n");
+		free(rl_str);
+		return (YES);
 	}
+	return (NO);
+}
+
+t_id	token_has_quotes(char *token)
+{
+	int	i;
+
+	i = 0;
+	if (token == NULL)
+		return (NO);
+	while (token[i])
+	{
+		if (token[i] == '"' || token[i] == '\'')
+			return (YES);
+		i++;
+	}
+	return (NO);
 }

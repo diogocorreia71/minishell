@@ -1,24 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   syntax_error.c                                     :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/29 15:02:28 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 16:31:16 by rumachad         ###   ########.fr       */
+/*   Created: 2023/11/26 19:31:44 by rui               #+#    #+#             */
+/*   Updated: 2024/02/03 17:55:23 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*print_syntax_error(t_lst_tokens *arg, t_generic *cmd)
+int	is_space(char c)
 {
-	if (arg != NULL)
-		ft_fprintf(STDERR_FILENO, "syntax error near unexpected token `%s'\n", arg->token);
+	if (c == ' ')
+		return (YES);
 	else
-		ft_fprintf(STDERR_FILENO, "syntax error near unexpected token `newline'\n");
-	g_exit_status = 2;
-	free_tree(cmd);
-	return (NULL);
+		return (NO);
+}
+
+void	free_first(t_lst_tokens **tokens)
+{
+	t_lst_tokens	*tmp;
+
+	tmp = *tokens;
+	*tokens = (*tokens)->next;
+	free(tmp);
+}
+
+void	close_fd(int pipe_fd[2])
+{
+	check_close(close(pipe_fd[0]));
+	check_close(close(pipe_fd[1]));
 }
