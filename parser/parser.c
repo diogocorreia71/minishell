@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/01 15:53:52 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:22:15 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,25 @@ t_generic	*parse_redir(t_lst_tokens **args, t_generic	*struct_pointer, t_env *en
 		(*args)->token = expand_token(env, (*args)->token);
 		(*args)->token = remove_quotes((*args)->token);
 	}
-	(*args)->type = IGNORE;
 	if (redir_type == HERE_DOC)
 		struct_pointer = create_heredoc_ptr(struct_pointer, env, head, (*args)->token);
 	else
 		struct_pointer = create_redir_ptr(redir_type, struct_pointer, (*args)->token);
+	(*args) = (*args)->next;
 	return (struct_pointer);
+}
+
+char *fill_argv(t_lst_tokens *args, t_env *env)
+{
+	char	*cmd_arg;
+	
+	if (args->type == EXPAND)
+		args->token = expand_token(env, args->token);
+	if (args->token[0] == '\0')
+		return (0);
+	args->token = remove_quotes(args->token);
+	cmd_arg = ft_strdup(args->token);
+	return (cmd_arg);
 }
 
 t_generic	*parser_exec(t_env *env, t_lst_tokens **args)
@@ -64,26 +77,26 @@ t_generic	*parser_exec(t_env *env, t_lst_tokens **args)
 	t_generic	*struct_pointer;
 	t_exec		*exec_cast;
 	t_lst_tokens	*head;
+	int				nbr_args;
 
 	head = (*args);
-	struct_pointer = exec_constructor();
+	nbr_args = count_tokens((*args));
+	struct_pointer = exec_constructor(nbr_args);
+	nbr_args = 0;
 	exec_cast = (t_exec *)struct_pointer;
 	while ((*args) && (*args)->type != PIPE)
 	{
 		if ((*args)->type == REDIR)
+		{
 			struct_pointer = parse_redir(args, struct_pointer, env, head);
+			continue ;
+		}
 		if (struct_pointer == NULL)
 			return (free_tree(struct_pointer), NULL);
-		if ((*args)->type != IGNORE)
-		{
-			if (exec_cast->argv != NULL)
-				exec_cast->argv = ft_strjoin_get(exec_cast->argv, " ");
-			if ((*args)->type == EXPAND)
-				(*args)->token = expand_token(env, (*args)->token);
-			exec_cast->argv = ft_strjoin_get(exec_cast->argv, (*args)->token);
-		}
+		exec_cast->argv[nbr_args++] = fill_argv((*args), env);
 		(*args) = (*args)->next;
 	}
+	exec_cast->argv[nbr_args] = 0;
 	return (struct_pointer);
 }
 

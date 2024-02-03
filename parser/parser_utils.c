@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:40:01 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/24 16:26:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 01:44:21 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,24 @@ t_id	get_redir_type(char *token, t_id token_type)
 	else if (ft_strncmp(token, "<<", 3) == 0)
 		type = HERE_DOC;
 	return (type);
+}
+
+int	count_tokens(t_lst_tokens *args)
+{
+	int	count;
+
+	count = 0;
+	while (args && args->type != PIPE)
+	{
+		if (args->type == REDIR)
+		{
+			args = args->next;
+			if (args)
+				args = args->next;
+			continue ;
+		}
+		count++;
+		args = args->next;
+	}
+	return (count);
 }

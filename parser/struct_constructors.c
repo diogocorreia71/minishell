@@ -3,22 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   struct_constructors.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:34:11 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/29 15:44:09 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:28:26 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_generic	*exec_constructor(void)
+//Proteger todos os mallocs
+t_generic	*exec_constructor(int nbr_args)
 {
 	t_exec	*exec_cmd;
 
 	exec_cmd = (t_exec *)malloc(sizeof(t_exec) * 1);
 	exec_cmd->type = EXEC;
-	exec_cmd->argv = NULL;
+	exec_cmd->argv = (char **)malloc(sizeof(char *) * (nbr_args + 1));
+	exec_cmd->argv[0] = 0;
 	return ((t_generic *)exec_cmd);
 }
 

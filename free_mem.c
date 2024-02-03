@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/01 15:34:19 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 02:12:12 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	free_tree(t_generic *cmd)
 		return ;
 	if (cmd->type == EXEC)
 	{
-		free(((t_exec *)cmd)->argv);
+		ft_free_dp((void **)((t_exec *)cmd)->argv);
 		free(((t_exec *)cmd));
 	}
 	else if (cmd->type == REDIR)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 16:36:27 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/01 15:39:47 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 02:40:04 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	executer_cmd(t_minishell *shell, t_generic *cmd)
 	else if (cmd->type == REDIR)
 		run_redir(shell, (t_redir *)cmd);
 	else if (cmd->type == PIPE)
-		run_pipe(shell, (t_pipe *)cmd);
+		run_pipeline(shell, (t_pipe *)cmd);
 	else if (cmd->type == HERE_DOC)
 	{
 		if (((t_heredoc *)cmd)->heredoc_redir != NULL)

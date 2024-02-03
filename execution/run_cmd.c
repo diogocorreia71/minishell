@@ -3,23 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/01 16:25:46 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:30:45 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	run_heredoc(t_heredoc *here_doc, t_env *env, int heredoc_fd)
+int	run_heredoc(t_heredoc *here_doc, t_env *env, int heredoc_fd)
 {
 	char	*input;
 	
 	while (1)
 	{
 		input = readline("> ");
-		if (check_heredoc_input(input, here_doc->delimiter) == 1)
+		if (input == NULL)
+			return (-1);
+		else if (ft_strcmp(here_doc->delimiter, input) == 0)
 		{
 			free(input);
 			break ;
@@ -30,15 +32,15 @@ void	run_heredoc(t_heredoc *here_doc, t_env *env, int heredoc_fd)
 		free(input);
 	}
 	close(heredoc_fd);
+	return (0);
 }
 
 void	run_exec(t_minishell *shell, t_exec *cmd)
 {
 	g_exit_status = 0;
-	if (cmd->argv == NULL)
+	if (cmd->argv[0] == 0)
 		return ;
-	shell->cmd_split = expand_argv(cmd->argv);
-	return ;
+	shell->cmd_split = cmd->argv;
 	if (is_builtin(shell->cmd_split[0]) == YES)
 		builtin_cmd(shell, cmd);
 	else
@@ -47,7 +49,6 @@ void	run_exec(t_minishell *shell, t_exec *cmd)
 			return ;
 		ft_execve(shell);
 	}
-	ft_free_dp((void **)shell->cmd_split);
 }
 
 void	run_redir(t_minishell *shell, t_redir *cmd)
@@ -70,7 +71,21 @@ void	run_redir(t_minishell *shell, t_redir *cmd)
 	close(orig_fd);
 }
 
-void	run_pipe(t_minishell *shell, t_pipe *cmd)
+void	run_pipe(t_minishell *shell, t_pipe *cmd, int pipe_fd[2], int fd)
+{
+	shell->in_pipe = YES;
+	init_signals(SIGCHILD);
+	dup2(pipe_fd[fd], fd);
+	close_fd(pipe_fd);
+	if (fd == 1)
+		executer_cmd(shell, cmd->left);
+	else
+		executer_cmd(shell, cmd->right);
+	free_child(shell, cmd);
+	exit(g_exit_status);
+}
+
+void	run_pipeline(t_minishell *shell, t_pipe *cmd)
 {
 	int	pipe_fd[2];
 	int	pipe_pid_right;
@@ -85,26 +100,12 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd)
 	}
 	pipe_pid_left = fork();
 	if (pipe_pid_left == 0)
-	{
-		init_signals(SIGCHILD);
-		dup2(pipe_fd[1], STDOUT_FILENO);
-		close_fd(pipe_fd);
-		executer_cmd(shell, cmd->left);
-		free_child(shell, cmd);
-		exit(g_exit_status);
-	}
+		run_pipe(shell, cmd, pipe_fd, STDOUT_FILENO);
 	pipe_pid_right = fork();
 	if (pipe_pid_right == 0)
-	{
-		init_signals(SIGCHILD);
-		dup2(pipe_fd[0], STDIN_FILENO);
-		close_fd(pipe_fd);
-		executer_cmd(shell, cmd->right);
-		free_child(shell, cmd);
-		exit(g_exit_status);
-	}
+		run_pipe(shell, cmd, pipe_fd, STDIN_FILENO);
 	close_fd(pipe_fd);
-	init_signals(IGNORE);
+	init_signals(SIGIGNORE);
 	waitpid(pipe_pid_left, &status, 0);
 	waitpid(pipe_pid_right, &status, 0);
 	g_exit_status = WEXITSTATUS(status);

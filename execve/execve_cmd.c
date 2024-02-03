@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/01 13:09:04 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 02:05:35 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	ft_execve(t_minishell *shell)
 			change_shlvl(shell->env_array, shell->env);
 		execve(shell->path, shell->cmd_split, shell->env_array);
 	}
-	init_signals(IGNORE);
+	init_signals(SIGIGNORE);
 	waitpid(pid, &status, 0);
 	exec_exit_status(status);
 	free(shell->path);

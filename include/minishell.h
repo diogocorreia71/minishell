@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/02/01 16:23:50 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:14:37 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ typedef enum s_id
 	HERE_DOC,
 	EXEC,
 	DONE,
-	IGNORE,
 	YES,
 	NO,
+	SIGIGNORE,
 	SIGCHILD,
 	SIGMAIN,
 	SIGHERE,
@@ -52,7 +52,7 @@ typedef struct s_generic
 typedef struct s_exec
 {
 	t_id	type;
-	char	*argv;
+	char	**argv;
 }				t_exec;
 
 typedef struct s_redir
@@ -93,6 +93,7 @@ typedef struct s_minishell
 	char	**cmd_split;
 	char	**env_array;
 	char	*path;
+	t_id	in_pipe;
 	t_env	*env;
 }				t_minishell;
 
@@ -123,7 +124,7 @@ t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens);
 int				count_quotes(char *rl_str);
 t_generic		*parser_tokens(t_env *env, t_lst_tokens **args);
 //Constructors
-t_generic	*exec_constructor(void);
+t_generic	*exec_constructor(int nbr_args);
 t_generic	*redir_constructor(t_generic *cmd, int fd, int flags, char *filename);
 t_generic	*pipe_constructor(t_generic *left, t_generic *right);
 t_generic	*heredoc_constructor(t_generic *cmd, char *delimiter, int flags);
@@ -137,13 +138,13 @@ t_id	is_builtin(char *command);
 void	executer_cmd(t_minishell *shell, t_generic *cmd);
 void	run_exec(t_minishell *shell, t_exec *cmd);
 void	run_redir(t_minishell *shell, t_redir *cmd);
-void	run_pipe(t_minishell *shell, t_pipe *cmd);
+void	run_pipeline(t_minishell *shell, t_pipe *cmd);
 
 //HereDoc
 void	init_heredoc(t_heredoc *here_doc, t_env *env, t_lst_tokens *head);
 void	init_heredoc_handler(void);
 int		check_heredoc_input(char *input, char *delimiter);
-void	run_heredoc(t_heredoc *here_doc, t_env *env, int hereDoc_fd);
+int		run_heredoc(t_heredoc *here_doc, t_env *env, int heredoc_fd);
 
 //Utils (get_type)
 t_id		get_redir_type(char *token, t_id token_type);
@@ -167,5 +168,6 @@ int		is_space(char c);
 void	free_first(t_lst_tokens **tokens);
 int		check_unex_token(t_lst_tokens *args);
 void	close_fd(int pipe_fd[2]);
+int		count_tokens(t_lst_tokens *args);
 
 #endif

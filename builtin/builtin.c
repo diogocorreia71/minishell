@@ -6,7 +6,7 @@
 /*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/28 22:13:17 by rui              ###   ########.fr       */
+/*   Updated: 2024/02/03 03:16:49 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ int	non_builtin(t_minishell *shell)
 		execve_error(error);
 		free(shell->path);
 		ft_free_dp((void **)shell->env_array);
-		ft_free_dp((void **)shell->cmd_split);
 		return (-1);
 	}
 	return (0);

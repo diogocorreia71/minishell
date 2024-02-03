@@ -3,27 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 15:39:25 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/01 15:39:53 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 03:14:11 by rui              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_heredoc_input(char *input, char *delimiter)
+void	eof_heredoc(char *delimiter)
 {
-	if (input == NULL)
-	{
-		ft_fprintf(STDERR_FILENO, "warning: here-document ");
-		ft_fprintf(STDERR_FILENO, "delimited by end-of-file (wanted `%s')\n"
-			, delimiter);
-		exit(0);
-	}
-	if (ft_strcmp(delimiter, input) == 0)
-		return (1);
-	return (0);
+	ft_fprintf(STDERR_FILENO, "warning: here-document ");
+	ft_fprintf(STDERR_FILENO, "delimited by end-of-file (wanted `%s')\n"
+		, delimiter);
 }
 
 void	heredoc_exit_status(t_heredoc *here_doc, int status)
@@ -64,11 +57,12 @@ void	init_heredoc(t_heredoc *here_doc, t_env *env, t_lst_tokens *head)
 			exit(1);
 		}
 		init_signals(SIGHERE);
-		run_heredoc(here_doc, env, heredoc_fd);
+		if (run_heredoc(here_doc, env, heredoc_fd) == -1)
+			eof_heredoc(here_doc->delimiter);
 		free_heredoc(head, env, (t_generic *)here_doc);
 		exit(0);
 	}
-	init_signals(IGNORE);
+	init_signals(SIGIGNORE);
 	waitpid(heredoc_pid, &status, 0);
 	heredoc_exit_status(here_doc, status);
 	init_signals(SIGMAIN);
