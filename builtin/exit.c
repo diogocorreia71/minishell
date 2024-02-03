@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:17:17 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 20:14:49 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/02/03 20:35:41 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ int	check_exit(int status, char **cmd_split)
 int	check_exit_args(char **cmd_split, int status)
 {
 	if (status < 0)
-			g_exit_status = 256 + status;
-		else
-			g_exit_status = status;
+		g_exit_status = 256 + status;
+	else
+		g_exit_status = status;
 	if (cmd_split[1] && cmd_split[2])
 	{
 		ft_fprintf(2, "exit: too many arguments\n");
@@ -54,7 +54,7 @@ void	ft_exit(t_minishell *shell, t_exec *cmd)
 	if (check_exit(status, shell->cmd_split) == -1)
 	{
 		ft_fprintf(STDERR_FILENO, "exit: %s: numeric argument required\n",
-				shell->cmd_split[1]);
+			shell->cmd_split[1]);
 		g_exit_status = 2;
 	}
 	else
