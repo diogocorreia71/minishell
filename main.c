@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 18:47:55 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:56:22 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	check_input(char *input, t_env *env)
 		printf("exit\n");
 		exit(EXIT_SUCCESS);
 	}
-	else if (ft_strlen(input) == 0)
+	else if (ft_strlen(input) == 0 || space_input(input))
 		return (1);
 	else if (unclosed_quotes(input) == YES)
 		return (1);

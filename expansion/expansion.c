@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 19:15:54 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:59:35 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*get_env_val(t_env *env, char *str)
 	return (ft_strdup(env_value));
 }
 
-char	*get_value(char *token, int *i, t_env *env, int dquotes)
+char	*get_value(char *token, int *i, t_env *env)
 {
 	int		start;
 	char	*var;
@@ -32,11 +32,11 @@ char	*get_value(char *token, int *i, t_env *env, int dquotes)
 	start = *i;
 	if (ft_isdigit(token[*i]) != 0)
 		return (++(*i), ft_strdup(""));
-	else if (!ft_strncmp(token, "$", 2) || (dquotes == 1
-			&& (token[*i] == '"' || token[*i] == '\'')))
-		return (ft_strdup("$"));
 	else if (token[*i] == '?')
 		return (++(*i), ft_itoa(g_exit_status));
+	else if (token[*i - 1] == '$' && (is_space(token[*i]) || token[*i] == '"'
+			|| !token[*i]))
+		return (ft_strdup("$"));
 	while (token[*i] && token[*i] != '"' && token[*i] != '\''
 		&& token[*i] != '$' && token[*i] != ' ')
 		(*i)++;
@@ -46,7 +46,7 @@ char	*get_value(char *token, int *i, t_env *env, int dquotes)
 	return (value);
 }
 
-int	expand(char **token, int i, int dquotes, t_env *env)
+int	expand(char **token, int i, t_env *env)
 {
 	int		len_skip;
 	char	*behind_expand;
@@ -54,7 +54,7 @@ int	expand(char **token, int i, int dquotes, t_env *env)
 	char	*join;
 
 	behind_expand = ft_substr(token[0], 0, i);
-	value = get_value(token[0], &i, env, dquotes);
+	value = get_value(token[0], &i, env);
 	len_skip = ft_strlen(value);
 	join = ft_strjoin(behind_expand, value);
 	free(value);
@@ -83,7 +83,7 @@ char	*handle_ds(t_env *env, char *token)
 			dquotes = !dquotes;
 		else if (token[i] == '$' && !squotes)
 		{
-			i = i + expand(&token, i, dquotes, env);
+			i = i + expand(&token, i, env);
 			continue ;
 		}
 		i++;

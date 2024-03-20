@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:29:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 12:00:22 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:19:14 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	check_unset(char *cmd)
 		return (1);
 	while (cmd[i])
 	{
-		if (ft_isalnum(cmd[i]) == 0)
+		if (ft_isalnum(cmd[i]) == 0 && cmd[i] != '_')
 			return (1);
 		i++;
 	}
@@ -54,7 +54,9 @@ void	unset(t_env *env, char **cmd_split)
 	t_env	*tmp;
 	int		i;
 
-	i = -1;
+	i = 0;
+	if (cmd_split[1] && check_option(cmd_split[1]))
+		return ;
 	while (cmd_split[++i])
 	{
 		if (unset_syntax(cmd_split[i]) == 1)

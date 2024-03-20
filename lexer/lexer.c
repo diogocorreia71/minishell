@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2024/02/03 12:46:01 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 15:39:13 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_lst_tokens	*create_token(char *token, t_id type)
 
 t_id	finish_token(char c)
 {
-	if (c == '|' || c == '>' || c == '<' || c == ' ')
+	if (c == '|' || c == '>' || c == '<' || c == ' ' || c == 9)
 		return (YES);
 	return (NO);
 }
@@ -90,25 +90,25 @@ t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens)
 	t_lst_tokens	*head;
 	int				i;
 	int				k;
-	char			*cmd;
 
 	i = -1;
-	cmd = shell->rl_str;
 	tokens = malloc(sizeof(t_lst_tokens) * 1);
+	if (tokens == NULL)
+		return (NULL);
 	head = tokens;
-	while (cmd[++i])
+	while (shell->rl_str[++i])
 	{
 		k = 0;
-		if (is_space(cmd[i]) == YES)
+		if (is_space(shell->rl_str[i]) == YES)
 			continue ;
-		else if (cmd[i] == '|' || cmd[i] == '>' || cmd[i] == '<')
-			tokens->next = create_operator_token(cmd, i);
+		if (shell->rl_str[i] == '|' || shell->rl_str[i] == '>' || shell->rl_str[i] == '<')
+			tokens->next = create_operator_token(shell->rl_str, i);
 		else
-			tokens->next = create_cmd_token(cmd + i, WORD);
+			tokens->next = create_cmd_token(shell->rl_str + i, WORD);
 		tokens = tokens->next;
 		while (tokens->token[k + 1])
 			k++;
-		i = i + k;
+		i += k;
 	}
 	return (head);
 }

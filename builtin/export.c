@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 11:59:48 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:09:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	check_export(char *cmd)
 		return (1);
 	while (cmd[i] != '\0' && cmd[i] != '=')
 	{
-		if (ft_isalnum(cmd[i]) == 0)
+		if (ft_isalnum(cmd[i]) == 0 && cmd[i] != '_')
 			return (1);
 		i++;
 	}
@@ -67,19 +67,17 @@ void	create_vis_var(t_env *env, char *var_name, char *val)
 
 void	export(t_env *env, char **cmd_split)
 {
-	t_env	*srt_env;
 	char	*var_name;
 	int		i;
 
 	if (cmd_split[1] == NULL)
 	{
-		srt_env = dup_env(env);
-		sort_env(srt_env);
-		no_args_exp(srt_env);
-		free_env(srt_env);
+		declare_env(env);
 		return ;
 	}
 	i = 0;
+	if (check_option(cmd_split[1]))
+		return ;
 	while (cmd_split[++i])
 	{
 		if (export_syntax(cmd_split[i]) == 1)

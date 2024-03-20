@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rui <rui@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 03:16:49 by rui              ###   ########.fr       */
+/*   Updated: 2024/03/20 15:35:40 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pwd(void);
+void	pwd(char **cmd_split);
 void	cd(t_minishell *shell);
 void	echo(t_minishell *shell);
 void	export(t_env *env, char **cmd_split);
@@ -22,19 +22,15 @@ void	ft_exit(t_minishell *shell, t_exec *cmd);
 
 int	non_builtin(t_minishell *shell)
 {
-	int		error;
-
 	shell->env_array = array_env(shell->env);
 	shell->path = exec_path(shell);
-	error = execve_syntax(shell->env, shell->path);
-	if (error != 0)
+	/* if (error != 0)
 	{
 		ft_putstr_fd(shell->cmd_split[0], STDERR_FILENO);
-		execve_error(error);
 		free(shell->path);
 		ft_free_dp((void **)shell->env_array);
 		return (-1);
-	}
+	} */
 	return (0);
 }
 
@@ -60,7 +56,7 @@ t_id	is_builtin(char *command)
 void	builtin_cmd(t_minishell *shell, t_exec *cmd)
 {
 	if (!ft_strncmp(shell->cmd_split[0], "pwd", 4))
-		pwd();
+		pwd(shell->cmd_split);
 	else if (!ft_strncmp(shell->cmd_split[0], "echo", 5))
 		echo(shell);
 	else if (!ft_strncmp(shell->cmd_split[0], "cd", 3))

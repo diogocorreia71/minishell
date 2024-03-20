@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 12:58:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 17:47:37 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:45:29 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*handle_heredoc_ds(t_env *env, char *token)
 	{
 		if (token[i] == '$')
 		{
-			i = i + expand(&token, i, 0, env);
+			i = i + expand(&token, i, env);
 			continue ;
 		}
 		i++;

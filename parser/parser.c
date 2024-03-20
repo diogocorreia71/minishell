@@ -6,13 +6,13 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 16:29:03 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 10:42:35 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_gen	*create_heredoc_ptr(t_gen *cmd_ptr, t_env *env, 
+t_gen	*create_heredoc_ptr(t_gen *cmd_ptr, t_env *env,
 	t_lst_tokens *head, char *delimiter)
 {
 	cmd_ptr = redir_constructor(cmd_ptr, 0, O_RDONLY, "hereDoc");

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/02/03 17:46:17 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:11:58 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 # include <sys/types.h>
 # include <signal.h>
 
+# define YES 1
+# define NO 0
+
 typedef enum s_id
 {
 	WORD,
@@ -36,8 +39,6 @@ typedef enum s_id
 	HERE_DOC,
 	EXEC,
 	DONE,
-	YES,
-	NO,
 	SIGIGNORE,
 	SIGCHILD,
 	SIGMAIN,
@@ -103,10 +104,9 @@ extern int	g_exit_status;
 void			builtin_cmd(t_minishell *shell, t_exec *cmd);
 int				non_builtin(t_minishell *shell);
 void			ft_execve(t_minishell *shell);
-int				execve_syntax(t_env *env, char *path);
 void			change_shlvl(char **env_array, t_env *env);
 char			*exec_path(t_minishell *shell);
-void			execve_error(int error);
+void			execve_error(t_env *env, char *path);
 char			*get_var_name(char *arg);
 
 //Handle quotes
@@ -134,7 +134,7 @@ char			*expand_token(t_env *env, char *token,
 					char *(handle)(t_env *, char *));
 char			*handle_ds(t_env *env, char *token);
 char			*handle_heredoc_ds(t_env *env, char *token);
-int				expand(char **token, int i, int dquotes, t_env *env);
+int				expand(char **token, int i, t_env *env);
 
 //Executer
 t_id			is_builtin(char *command);
@@ -175,6 +175,9 @@ void			close_fd(int pipe_fd[2]);
 int				count_tokens(t_lst_tokens *args);
 int				prepare_token(t_lst_tokens **args, t_env *env);
 char			**fill_argv(t_lst_tokens *args, int nbr_args);
+int				space_input(char *str);
+int				check_option(char *cmd);
+void			swap_node(t_env *sorted_env, t_env *tmp);
 
 //Sys_calls
 int				check_fd(int fd, char *message);

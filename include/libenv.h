@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 10:17:59 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 12:27:08 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:12:20 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,6 @@ t_env	*env_last(t_env *env);
 int		env_size(t_env *env);
 void	no_args_exp(t_env *env);
 void	sort_env(t_env *sorted_env);
+void	declare_env(t_env *env);
 
 #endif

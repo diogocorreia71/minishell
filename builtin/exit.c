@@ -6,20 +6,29 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/21 16:17:17 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 20:35:41 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:51:59 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_exit(int status, char **cmd_split)
+char	number_signal(char c)
+{
+	if (c == '+' || c == '-')
+		return (YES);
+	return (NO);
+}
+
+int	check_exit(char **cmd_split, int *status)
 {
 	int	i;
 
-	if (status < 0)
+	i = 0;
+	if (!cmd_split[1])
+		return (0);
+	*status = ft_atoi(cmd_split[1]);
+	if (number_signal(cmd_split[1][0]))
 		i = 1;
-	else
-		i = 0;
 	while (cmd_split[1][i])
 	{
 		if (ft_isdigit(cmd_split[1][i]) == 0)
@@ -49,19 +58,14 @@ void	ft_exit(t_minishell *shell, t_exec *cmd)
 	int	status;
 
 	status = 0;
-	if (shell->cmd_split[1])
-		status = ft_atoi(shell->cmd_split[1]);
-	if (check_exit(status, shell->cmd_split) == -1)
+	if (check_exit(shell->cmd_split, &status) == -1)
 	{
-		ft_fprintf(STDERR_FILENO, "exit: %s: numeric argument required\n",
+		ft_fprintf(STDERR_FILENO, "%s: numeric argument required\n",
 			shell->cmd_split[1]);
 		g_exit_status = 2;
 	}
-	else
-	{
-		if (check_exit_args(shell->cmd_split, status) == -1)
-			return ;
-	}
+	else if (check_exit_args(shell->cmd_split, status) == -1)
+		return ;
 	if (shell->in_pipe == NO)
 		printf("exit\n");
 	free_env(shell->env);
