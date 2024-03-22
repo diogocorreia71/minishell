@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 11:59:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/22 15:30:54 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@ char	*get_env_val(t_env *env, char *str)
 	if (env_value == NULL)
 		return (ft_strdup(""));
 	return (ft_strdup(env_value));
+}
+
+int	expand_stop(char c)
+{
+	if (ft_isalnum(c) == 0)
+		return (YES);
+	return (NO);
 }
 
 char	*get_value(char *token, int *i, t_env *env)
@@ -37,8 +44,7 @@ char	*get_value(char *token, int *i, t_env *env)
 	else if (token[*i - 1] == '$' && (is_space(token[*i]) || token[*i] == '"'
 			|| !token[*i]))
 		return (ft_strdup("$"));
-	while (token[*i] && token[*i] != '"' && token[*i] != '\''
-		&& token[*i] != '$' && token[*i] != ' ')
+	while (token[*i] && !expand_stop(token[*i]))
 		(*i)++;
 	var = ft_substr(token, start, (*i) - start);
 	value = get_env_val(env, var);

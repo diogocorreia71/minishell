@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 11:56:22 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:04:35 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,22 @@ t_gen	*lexer_parser(t_minishell *shell, t_lst_tokens **args)
 	free(shell->rl_str);
 	cmd = parser_tokens(shell->env, args);
 	return (cmd);
+}
+
+void	executer_cmd(t_minishell *shell, t_gen *cmd)
+{
+	if (cmd->type == EXEC)
+		run_exec(shell, (t_exec *)cmd);
+	else if (cmd->type == REDIR)
+		run_redir(shell, (t_redir *)cmd);
+	else if (cmd->type == PIPE)
+		run_pipeline(shell, (t_pipe *)cmd);
+	else if (cmd->type == HERE_DOC)
+	{
+		if (((t_heredoc *)cmd)->heredoc_redir != NULL)
+			run_redir(shell, (t_redir *)((t_heredoc *)cmd)->heredoc_redir);
+		unlink("hereDoc");
+	}
 }
 
 int	check_input(char *input, t_env *env)
@@ -76,9 +92,11 @@ int	main(int ac, char **av, char **envp)
 		cmd = lexer_parser(&shell, &args);
 		if (cmd != NULL)
 		{
+			shell.ast_head = cmd;
 			executer_cmd(&shell, cmd);
-			free_tree(cmd);
+			free_tree(shell.ast_head);
 		}
 	}
 	return (0);
 }
+

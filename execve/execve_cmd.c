@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 14:27:42 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/21 14:00:24 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ void	ft_execve(t_minishell *shell)
 	int		status;
 
 	status = 0;
+	shell->path = exec_path(shell);
+	shell->env_array = array_env(shell->env);
 	pid = fork();
 	if (check_fork(pid) < 0)
 		return ;
@@ -74,7 +76,7 @@ void	ft_execve(t_minishell *shell)
 		if (ft_strncmp(shell->cmd_split[0], "./minishell", 12) == 0)
 			change_shlvl(shell->env_array, shell->env);
 		execve(shell->path, shell->cmd_split, shell->env_array);
-		execve_error(shell->env, shell->path);
+		execve_error(shell, shell->path);
 	}
 	init_signals(SIGIGNORE);
 	check_wait(waitpid(pid, &status, 0));

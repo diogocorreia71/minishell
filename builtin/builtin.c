@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 15:35:40 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/21 13:57:47 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,6 @@ void	export(t_env *env, char **cmd_split);
 void	unset(t_env *env, char **cmd_split);
 void	env_print(t_env *env, char **cmd_split, int flag);
 void	ft_exit(t_minishell *shell, t_exec *cmd);
-
-int	non_builtin(t_minishell *shell)
-{
-	shell->env_array = array_env(shell->env);
-	shell->path = exec_path(shell);
-	/* if (error != 0)
-	{
-		ft_putstr_fd(shell->cmd_split[0], STDERR_FILENO);
-		free(shell->path);
-		ft_free_dp((void **)shell->env_array);
-		return (-1);
-	} */
-	return (0);
-}
 
 t_id	is_builtin(char *command)
 {

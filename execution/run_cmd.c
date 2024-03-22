@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 17:28:32 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/22 15:30:57 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,7 @@ void	run_exec(t_minishell *shell, t_exec *cmd)
 	if (is_builtin(shell->cmd_split[0]) == YES)
 		builtin_cmd(shell, cmd);
 	else
-	{
-		if (non_builtin(shell) == -1)
-			return ;
 		ft_execve(shell);
-	}
 }
 
 void	run_redir(t_minishell *shell, t_redir *cmd)
@@ -82,37 +78,35 @@ void	run_pipe(t_minishell *shell, t_pipe *cmd, int pipe_fd[2], int fd)
 	init_signals(SIGCHILD);
 	check_dup(dup2(pipe_fd[fd], fd));
 	close_fd(pipe_fd);
-	if (fd == 1)
+	if (fd == STDOUT_FILENO)
 		executer_cmd(shell, cmd->left);
 	else
 		executer_cmd(shell, cmd->right);
-	free_child(shell, cmd);
+	free_child(shell, shell->ast_head);
 	exit(g_exit_status);
 }
 
 void	run_pipeline(t_minishell *shell, t_pipe *cmd)
 {
-	int	pipe_fd[2];
-	int	pipe_pid_right;
-	int	pipe_pid_left;
-	int	status;
+	t_pipeline	pipeline;
+	int			status;
 
 	status = 0;
-	if (check_fd(pipe(pipe_fd), "pipe") == -1)
+	if (check_fd(pipe(pipeline.pipe_fd), "pipe") == -1)
 		return ;
-	pipe_pid_left = fork();
-	if (check_fork(pipe_pid_left) < 0)
+	pipeline.pipe_pid_left = fork();
+	if (check_fork(pipeline.pipe_pid_left) < 0)
 		return ;
-	if (pipe_pid_left == 0)
-		run_pipe(shell, cmd, pipe_fd, STDOUT_FILENO);
-	pipe_pid_right = fork();
-	if (check_fork(pipe_pid_right) < 0)
+	if (pipeline.pipe_pid_left == 0)
+		run_pipe(shell,	cmd, pipeline.pipe_fd, STDOUT_FILENO);
+	pipeline.pipe_pid_right = fork();
+	if (check_fork(pipeline.pipe_pid_right) < 0)
 		return ;
-	if (pipe_pid_right == 0)
-		run_pipe(shell, cmd, pipe_fd, STDIN_FILENO);
-	close_fd(pipe_fd);
+	if (pipeline.pipe_pid_right == 0)
+		run_pipe(shell, cmd, pipeline.pipe_fd, STDIN_FILENO);
+	close_fd(pipeline.pipe_fd);
 	init_signals(SIGIGNORE);
-	check_wait(waitpid(pipe_pid_left, &status, 0));
-	check_wait(waitpid(pipe_pid_right, &status, 0));
+	check_wait(waitpid(pipeline.pipe_pid_left, &status, 0));
+	check_wait(waitpid(pipeline.pipe_pid_right, &status, 0));
 	g_exit_status = WEXITSTATUS(status);
 }

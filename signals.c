@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 15:09:39 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 16:43:21 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/22 10:07:42 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ void	main_signal_handler(int signum)
 	}
 }
 
+void	sigpipe_handler(int signum)
+{
+	close(STDIN_FILENO);
+	(void)signum;
+}
+
 void	init_signals(t_id handler_type)
 {
 	if (handler_type == SIGMAIN)
@@ -35,7 +41,7 @@ void	init_signals(t_id handler_type)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
-		signal(SIGPIPE, SIG_IGN);
+		signal(SIGPIPE, sigpipe_handler);
 	}
 	else if (handler_type == SIGHERE)
 	{

@@ -6,13 +6,13 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 14:50:57 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/21 13:59:24 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	execve_error(t_env *env, char *path)
+void	execve_error(t_minishell *shell, char *path)
 {
 	int	file_check;
 	int	exe_check;
@@ -26,11 +26,13 @@ void	execve_error(t_env *env, char *path)
 		ft_putstr_fd(": Permission denied\n", STDERR_FILENO);
 	else if (!file_check && !exe_check && path[0] != '.')
 		ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
-	else if (ft_strchr(path, '/') || !get_env(env, "PATH"))
+	else if (ft_strchr(path, '/') || !get_env(shell->env, "PATH"))
 		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
 	else
 		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 	g_exit_status = 127 - ((!file_check && exe_check) || !write_check);
+	free(path);
+	ft_free_dp((void **)shell->env_array);
 	exit(g_exit_status);
 }
 

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/03/20 16:11:58 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:03:06 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,13 @@ typedef struct s_pipe
 	t_gen	*right;
 }				t_pipe;
 
+typedef struct	s_pipeline
+{
+	int	pipe_fd[2];
+	int	pipe_pid_left;
+	int	pipe_pid_right;
+}				t_pipeline;
+
 typedef struct s_lst_tokens
 {
 	char				*token;
@@ -96,17 +103,17 @@ typedef struct s_minishell
 	char	*path;
 	t_id	in_pipe;
 	t_env	*env;
+	t_gen	*ast_head;
 }				t_minishell;
 
 extern int	g_exit_status;
 
 //Builtin and Execve
 void			builtin_cmd(t_minishell *shell, t_exec *cmd);
-int				non_builtin(t_minishell *shell);
 void			ft_execve(t_minishell *shell);
 void			change_shlvl(char **env_array, t_env *env);
 char			*exec_path(t_minishell *shell);
-void			execve_error(t_env *env, char *path);
+void			execve_error(t_minishell *shell, char *path);
 char			*get_var_name(char *arg);
 
 //Handle quotes
@@ -157,7 +164,7 @@ t_id			get_token_type(t_lst_tokens *arg);
 //Free
 void			free_env(t_env *env);
 void			free_tokens(t_lst_tokens **tokens);
-void			free_child(t_minishell *shell, t_pipe *cmd);
+void			free_child(t_minishell *shell, t_gen *cmd);
 void			free_tree(t_gen *cmd);
 void			free_heredoc(t_lst_tokens *head, t_env *env, t_gen *cmd);
 void			*print_syntax_error(t_lst_tokens *arg, t_gen *cmd);
@@ -179,7 +186,7 @@ int				space_input(char *str);
 int				check_option(char *cmd);
 void			swap_node(t_env *sorted_env, t_env *tmp);
 
-//Sys_calls
+//Sys_calls check
 int				check_fd(int fd, char *message);
 int				check_fork(int pid);
 int				check_close(int value);
