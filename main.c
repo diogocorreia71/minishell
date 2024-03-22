@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/22 13:04:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/22 18:14:47 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	check_input(char *input, t_env *env)
 	return (0);
 }
 
+//Erro no HEREDOC : cat <<HERE <<DOC
 int	main(int ac, char **av, char **envp)
 {
 	t_minishell		shell;
