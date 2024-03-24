@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct_constructors.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:34:11 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 15:50:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/24 22:54:16 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,17 @@ t_gen	*exec_constructor(void)
 	return ((t_gen *)exec_cmd);
 }
 
+t_gen	*more_than_one_heredoc(t_gen *cmd)
+{
+	t_heredoc	*tmp;
+	
+	tmp = (t_heredoc *)cmd;
+	free(tmp->delimiter);
+	tmp->delimiter = ft_strdup("hereDoc");
+	tmp->expansion = NO;
+	return (cmd);
+}
+
 t_gen	*redir_constructor(t_gen *cmd, int fd, int flags, char *file)
 {
 	t_redir	*redir_cmd;
@@ -34,20 +45,21 @@ t_gen	*redir_constructor(t_gen *cmd, int fd, int flags, char *file)
 	redir_cmd->open_flags = flags;
 	redir_cmd->filename = ft_strdup(file);
 	if (cmd->type == EXEC)
-		redir_cmd->last_pointer = cmd;
-	else
 	{
-		tmp = cmd;
-		while (tmp->type != EXEC)
-		{
-			last_redir = tmp;
-			tmp = ((t_redir *)tmp)->last_pointer;
-		}
-		((t_redir *)last_redir)->last_pointer = (t_gen *)redir_cmd;
-		redir_cmd->last_pointer = tmp;
-		return (cmd);
+		redir_cmd->last_pointer = cmd;
+		return ((t_gen *)redir_cmd);
 	}
-	return ((t_gen *)redir_cmd);
+	else if (cmd->type == HERE_DOC)
+		cmd = more_than_one_heredoc(cmd);
+	tmp = cmd;
+	while (tmp->type != EXEC)
+	{
+		last_redir = tmp;
+		tmp = ((t_redir *)tmp)->last_pointer;
+	}
+	((t_redir *)last_redir)->last_pointer = (t_gen *)redir_cmd;
+	redir_cmd->last_pointer = tmp;
+	return (cmd);
 }
 
 t_gen	*pipe_constructor(t_gen *left, t_gen *right)

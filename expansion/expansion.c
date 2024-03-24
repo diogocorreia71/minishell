@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/22 15:30:54 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/24 23:05:55 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	*get_env_val(t_env *env, char *str)
 
 int	expand_stop(char c)
 {
-	if (ft_isalnum(c) == 0)
+	if (ft_isalnum(c) == 0 && c != '_')
 		return (YES);
 	return (NO);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/22 18:09:45 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/24 22:54:33 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,16 +72,13 @@ void	run_redir(t_minishell *shell, t_redir *cmd)
 	check_close(close(orig_fd));
 }
 
-void	run_pipe(t_minishell *shell, t_pipe *cmd, int pipe_fd[2], int fd)
+void	run_pipe(t_minishell *shell, t_gen *cmd, int pipe_fd[2], int fd)
 {
 	shell->in_pipe = YES;
 	init_signals(SIGCHILD);
 	check_dup(dup2(pipe_fd[fd], fd));
 	close_fd(pipe_fd);
-	if (fd == STDOUT_FILENO)
-		executer_cmd(shell, cmd->left);
-	else
-		executer_cmd(shell, cmd->right);
+	executer_cmd(shell, cmd);
 	free_child(shell, shell->ast_head);
 	exit(g_exit_status);
 }
@@ -98,12 +95,12 @@ void	run_pipeline(t_minishell *shell, t_pipe *cmd)
 	if (check_fork(pipeline.pipe_pid_left) < 0)
 		return ;
 	if (pipeline.pipe_pid_left == 0)
-		run_pipe(shell,	cmd, pipeline.pipe_fd, STDOUT_FILENO);
+		run_pipe(shell,	cmd->left, pipeline.pipe_fd, STDOUT_FILENO);
 	pipeline.pipe_pid_right = fork();
 	if (check_fork(pipeline.pipe_pid_right) < 0)
 		return ;
 	if (pipeline.pipe_pid_right == 0)
-		run_pipe(shell, cmd, pipeline.pipe_fd, STDIN_FILENO);
+		run_pipe(shell, cmd->right, pipeline.pipe_fd, STDIN_FILENO);
 	close_fd(pipeline.pipe_fd);
 	init_signals(SIGIGNORE);
 	check_wait(waitpid(pipeline.pipe_pid_left, &status, 0));
