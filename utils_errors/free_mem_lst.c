@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_mem_lst.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 17:48:40 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 17:48:50 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 23:05:41 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,13 @@ void	free_tokens(t_lst_tokens **args)
 		free(tmp->token);
 		free(tmp);
 	}
+}
+
+void	free_first(t_lst_tokens **tokens)
+{
+	t_lst_tokens	*tmp;
+
+	tmp = *tokens;
+	*tokens = (*tokens)->next;
+	free(tmp);
 }

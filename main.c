@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 19:01:21 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 23:05:48 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,19 +55,20 @@ void	executer_cmd(t_minishell *shell, t_gen *cmd)
 	}
 }
 
-int	check_input(char *input, t_env *env)
+void	wait_pipes(int pipe_pid)
 {
-	if (input == NULL)
+	int	status;
+
+	status = 0;
+	if (check_wait(waitpid(pipe_pid, &status, 0)) == -1)
 	{
-		free_env(env);
-		printf("exit\n");
-		exit(EXIT_SUCCESS);
+		if (WIFEXITED(status))
+			g_exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			g_exit_status = WTERMSIG(status) + 128;
 	}
-	else if (ft_strlen(input) == 0 || space_input(input))
-		return (1);
-	else if (unclosed_quotes(input) == YES)
-		return (1);
-	return (0);
+	while (wait(0) != -1)
+		;
 }
 
 int	main(int ac, char **av, char **envp)
@@ -85,14 +86,14 @@ int	main(int ac, char **av, char **envp)
 	{
 		init_signals(SIGMAIN);
 		shell.rl_str = readline("minishell$ ");
-		add_history(shell.rl_str);
 		if (check_input(shell.rl_str, shell.env) == 1)
 			continue ;
+		add_history(shell.rl_str);
 		cmd = lexer_parser(&shell, &args);
 		if (cmd != NULL)
 		{
 			shell.ast_head = cmd;
-			init_signals(SIGPIPE);
+			init_signals(PIPE);
 			executer_cmd(&shell, cmd);
 			free_tree(shell.ast_head);
 		}

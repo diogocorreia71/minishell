@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 15:09:39 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 19:01:07 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 22:58:06 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,11 @@ void	main_signal_handler(int signum)
 	if (signum == SIGINT)
 	{
 		rl_replace_line("", 0);
-		write(STDOUT_FILENO, "\n", 1);
+		write(STDERR_FILENO, "\n", 1);
 		rl_on_new_line();
 		rl_redisplay();
 		g_exit_status = 130;
 	}
-}
-
-void	child_signal_handler(int signum)
-{
-	if (signum == SIGINT)
-		write(STDOUT_FILENO, "\n", 1);
 }
 
 void	sigpipe_handler(int signum)
@@ -36,12 +30,12 @@ void	sigpipe_handler(int signum)
 	(void)signum;
 }
 
-void	sig_int(int signum)
+void	sig_pipe(int signum)
 {
 	if (signum == SIGINT)
 	{
-		write(STDOUT_FILENO, "\n", 1);
-		signal(SIGINT, SIG_IGN);
+		g_exit_status = 130;
+		write(STDERR_FILENO, "\n", 1);
 	}
 }
 
@@ -54,8 +48,8 @@ void	init_signals(t_id handler_type)
 	}
 	else if (handler_type == SIGCHILD)
 	{
-		signal(SIGINT, child_signal_handler);
-		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		signal(SIGPIPE, sigpipe_handler);
 	}
 	else if (handler_type == SIGHERE)
@@ -68,9 +62,9 @@ void	init_signals(t_id handler_type)
 		signal(SIGINT, SIG_IGN);
 		signal(SIGQUIT, SIG_IGN);
 	}
-	else if (handler_type == SIGPIPE)
+	else if (handler_type == PIPE)
 	{
-		signal(SIGINT, sig_int);
+		signal(SIGINT, sig_pipe);
 		signal(SIGQUIT, SIG_IGN);
 	}
 }

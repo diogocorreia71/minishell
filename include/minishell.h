@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/03/25 16:39:02 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 23:07:13 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,7 @@ typedef struct s_pipe
 typedef struct s_pipeline
 {
 	int	pipe_fd[2];
-	int	pipe_pid_left;
-	int	pipe_pid_right;
+	int	pipe_pid;
 }				t_pipeline;
 
 typedef struct s_lst_tokens
@@ -129,6 +128,7 @@ t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens);
 //Parser
 int				count_quotes(char *rl_str);
 t_gen			*parser_pipe(t_env *env, t_lst_tokens **args);
+
 //Constructors
 t_gen			*exec_constructor(void);
 t_gen			*redir_constructor(t_gen *cmd, int fd, int flags, char *file);
@@ -142,6 +142,7 @@ char			*expand_token(t_env *env, char *token,
 char			*handle_ds(t_env *env, char *token);
 char			*handle_heredoc_ds(t_env *env, char *token);
 int				expand(char **token, int i, t_env *env);
+int				expand_stop(char c);
 
 //Executer
 t_id			is_builtin(char *command);
@@ -149,6 +150,7 @@ void			executer_cmd(t_minishell *shell, t_gen *cmd);
 void			run_exec(t_minishell *shell, t_exec *cmd);
 void			run_redir(t_minishell *shell, t_redir *cmd);
 void			run_pipeline(t_minishell *shell, t_pipe *cmd);
+void			wait_pipes(int pipe_pid);
 
 //HereDoc
 void			init_heredoc(t_heredoc *here_doc, t_env *env,
@@ -174,18 +176,15 @@ void			init_signals(t_id handler_type);
 void			main_signal_handler(int signum);
 
 //Utils
-char			**expand_argv(char *argv);
 int				is_space(char c);
 void			free_first(t_lst_tokens **tokens);
-int				check_unex_token(t_lst_tokens *args);
 void			close_fd(int pipe_fd[2]);
-int				count_tokens(t_lst_tokens *args);
 int				prepare_token(t_lst_tokens **args, t_env *env);
 char			**fill_argv(t_lst_tokens *args, int nbr_args);
 int				space_input(char *str);
 int				check_option(char *cmd);
 void			swap_node(t_env *sorted_env, t_env *tmp);
-int				expand_stop(char c);
+int				check_input(char *input, t_env *env);
 
 //Sys_calls check
 int				check_fd(int fd, char *message);
