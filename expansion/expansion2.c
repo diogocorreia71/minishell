@@ -6,11 +6,18 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 12:58:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 11:45:29 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:39:21 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	expand_stop(char c)
+{
+	if (ft_isalnum(c) == 0 && c != '_')
+		return (YES);
+	return (NO);
+}
 
 char	*handle_heredoc_ds(t_env *env, char *token)
 {

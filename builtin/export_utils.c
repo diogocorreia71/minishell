@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:59:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 16:09:28 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:37:25 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	swap_node(t_env *sorted_env, t_env *tmp)
 void	declare_env(t_env *env)
 {
 	t_env	*srt_env;
-	
+
 	srt_env = NULL;
 	srt_env = dup_env(env);
 	sort_env(srt_env);

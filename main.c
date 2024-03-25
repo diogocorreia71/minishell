@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/24 23:23:26 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 19:01:21 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	executer_cmd(t_minishell *shell, t_gen *cmd)
 		run_pipeline(shell, (t_pipe *)cmd);
 	else if (cmd->type == HERE_DOC)
 	{
-		printf("%d\n", ((t_heredoc *)cmd)->heredoc_redir->type);
 		if (((t_heredoc *)cmd)->heredoc_redir != NULL)
 			executer_cmd(shell, ((t_heredoc *)cmd)->heredoc_redir);
 		unlink("hereDoc");
@@ -71,32 +70,6 @@ int	check_input(char *input, t_env *env)
 	return (0);
 }
 
-/* void	print_tree(t_gen *cmd)
-{
-	if (cmd == NULL)
-		return ;
-	if (cmd->type == EXEC)
-		printf("EXEC\n");
-	else if (cmd->type == REDIR)
-	{
-		printf("REDIR\n");
-		print_tree(((t_redir *)cmd)->last_pointer);
-	}
-	else if (cmd->type == HERE_DOC)
-	{
-		printf("HEREDOC\n");
-		printf("%d\n", ((t_heredoc *)cmd)->heredoc_redir->type);
-		print_tree(((t_heredoc *)cmd)->heredoc_redir);
-	}
-	else if (cmd->type == PIPE)
-	{
-		printf("PIPE\n");
-		print_tree(((t_pipe *)cmd)->left);
-		print_tree(((t_pipe *)cmd)->right);
-	}
-} */
-
-//Erro: cat << $USER $USER > $USER
 int	main(int ac, char **av, char **envp)
 {
 	t_minishell		shell;
@@ -107,7 +80,6 @@ int	main(int ac, char **av, char **envp)
 		return (0);
 	cmd = NULL;
 	ft_memset((void *)&shell, 0, sizeof(t_minishell));
-	shell.in_pipe = NO;
 	shell.env = lst_env(envp);
 	while (1)
 	{
@@ -117,14 +89,13 @@ int	main(int ac, char **av, char **envp)
 		if (check_input(shell.rl_str, shell.env) == 1)
 			continue ;
 		cmd = lexer_parser(&shell, &args);
-		/* print_tree(cmd); */
 		if (cmd != NULL)
 		{
 			shell.ast_head = cmd;
+			init_signals(SIGPIPE);
 			executer_cmd(&shell, cmd);
 			free_tree(shell.ast_head);
 		}
 	}
 	return (0);
 }
-

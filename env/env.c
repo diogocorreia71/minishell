@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 12:09:59 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:13:22 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ void	env_print(t_env *env, char **cmd_split)
 {
 	if (cmd_split[1])
 	{
+		if (check_option(cmd_split[1]))
+			return ;
 		ft_fprintf(STDERR_FILENO, "%s: '%s': No such file or directory\n",
 			cmd_split[0], cmd_split[1]);
 		g_exit_status = 1;

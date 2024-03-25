@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/22 18:13:07 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 16:39:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	execve_error(t_minishell *shell, char *path)
 	g_exit_status = 127 - ((!file_check && exe_check) || !write_check);
 	free(path);
 	ft_free_dp((void **)shell->env_array);
-	free_child(shell, shell->ast_head);
+	free_child(shell->ast_head, shell->env);
 	exit(g_exit_status);
 }
 

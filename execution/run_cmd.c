@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/24 22:54:33 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 19:01:33 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,11 @@ void	run_redir(t_minishell *shell, t_redir *cmd)
 void	run_pipe(t_minishell *shell, t_gen *cmd, int pipe_fd[2], int fd)
 {
 	shell->in_pipe = YES;
-	init_signals(SIGCHILD);
+	init_signals(SIGIGNORE);
 	check_dup(dup2(pipe_fd[fd], fd));
 	close_fd(pipe_fd);
 	executer_cmd(shell, cmd);
-	free_child(shell, shell->ast_head);
+	free_child(shell->ast_head, shell->env);
 	exit(g_exit_status);
 }
 
@@ -95,14 +95,13 @@ void	run_pipeline(t_minishell *shell, t_pipe *cmd)
 	if (check_fork(pipeline.pipe_pid_left) < 0)
 		return ;
 	if (pipeline.pipe_pid_left == 0)
-		run_pipe(shell,	cmd->left, pipeline.pipe_fd, STDOUT_FILENO);
+		run_pipe(shell, cmd->left, pipeline.pipe_fd, STDOUT_FILENO);
 	pipeline.pipe_pid_right = fork();
 	if (check_fork(pipeline.pipe_pid_right) < 0)
 		return ;
 	if (pipeline.pipe_pid_right == 0)
 		run_pipe(shell, cmd->right, pipeline.pipe_fd, STDIN_FILENO);
 	close_fd(pipeline.pipe_fd);
-	init_signals(SIGIGNORE);
 	check_wait(waitpid(pipeline.pipe_pid_left, &status, 0));
 	check_wait(waitpid(pipeline.pipe_pid_right, &status, 0));
 	g_exit_status = WEXITSTATUS(status);

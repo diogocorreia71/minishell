@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/03/24 04:57:36 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 16:39:02 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typedef struct s_pipe
 	t_gen	*right;
 }				t_pipe;
 
-typedef struct	s_pipeline
+typedef struct s_pipeline
 {
 	int	pipe_fd[2];
 	int	pipe_pid_left;
@@ -164,7 +164,7 @@ t_id			get_token_type(t_lst_tokens *arg);
 //Free
 void			free_env(t_env *env);
 void			free_tokens(t_lst_tokens **tokens);
-void			free_child(t_minishell *shell, t_gen *cmd);
+void			free_child(t_gen *ast_head, t_env *env);
 void			free_tree(t_gen *cmd);
 void			free_heredoc(t_lst_tokens *head, t_env *env, t_gen *cmd);
 void			*print_syntax_error(t_lst_tokens *arg, t_gen *cmd);
@@ -185,6 +185,7 @@ char			**fill_argv(t_lst_tokens *args, int nbr_args);
 int				space_input(char *str);
 int				check_option(char *cmd);
 void			swap_node(t_env *sorted_env, t_env *tmp);
+int				expand_stop(char c);
 
 //Sys_calls check
 int				check_fd(int fd, char *message);

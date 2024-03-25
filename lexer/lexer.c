@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:13:02 by rui               #+#    #+#             */
-/*   Updated: 2024/03/20 15:39:13 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:40:51 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ t_lst_tokens	*make_tokens(t_minishell *shell, t_lst_tokens *tokens)
 		k = 0;
 		if (is_space(shell->rl_str[i]) == YES)
 			continue ;
-		if (shell->rl_str[i] == '|' || shell->rl_str[i] == '>' || shell->rl_str[i] == '<')
+		if (shell->rl_str[i] == '|' || shell->rl_str[i] == '>'
+			|| shell->rl_str[i] == '<')
 			tokens->next = create_operator_token(shell->rl_str, i);
 		else
 			tokens->next = create_cmd_token(shell->rl_str + i, WORD);

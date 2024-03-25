@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct_constructors.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:34:11 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/24 22:54:16 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:35:08 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_gen	*exec_constructor(void)
 t_gen	*more_than_one_heredoc(t_gen *cmd)
 {
 	t_heredoc	*tmp;
-	
+
 	tmp = (t_heredoc *)cmd;
 	free(tmp->delimiter);
 	tmp->delimiter = ft_strdup("hereDoc");

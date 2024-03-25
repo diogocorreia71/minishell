@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:28:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/01/23 12:34:24 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/25 15:21:41 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,43 +22,47 @@ int	is_n(char c)
 
 int	echo_syntax(char **cmd_split)
 {
+	int	k;
 	int	i;
-	int	check;
 
-	if (!cmd_split[1])
-		return (printf("\n"), -1);
 	i = 1;
-	check = 0;
-	if (cmd_split[1][0] == '-')
+	k = 0;
+	while (cmd_split[i])
 	{
-		while (cmd_split[1][i])
+		if (cmd_split[i][0] != '-' || cmd_split[i][1] != 'n')
+			break ;
+		else if (cmd_split[i][0] == '-' && cmd_split[i][1] == 'n')
 		{
-			check = is_n(cmd_split[1][i]);
-			if (check == 0)
-				return (0);
-			i++;
+			k = 2;
+			while (cmd_split[i][k])
+			{
+				if (cmd_split[i][k] != 'n')
+					return (i - 1);
+				k++;
+			}
 		}
-		return (1);
+		i++;
 	}
-	return (0);
+	return (i - 1);
 }
 
 void	echo(t_minishell *shell)
 {
 	int	i;
-	int	flag;
 
-	i = 1;
-	flag = echo_syntax(shell->cmd_split);
-	if (flag == 1)
-		i = 2;
-	while (shell->cmd_split[i])
+	i = 0;
+	if (!shell->cmd_split[1])
+	{
+		printf("\n");
+		return ;
+	}
+	i = echo_syntax(shell->cmd_split);
+	while (shell->cmd_split[++i])
 	{
 		printf("%s", shell->cmd_split[i]);
 		if (shell->cmd_split[i + 1] != NULL)
 			printf(" ");
-		i++;
 	}
-	if (flag == 0)
+	if (!echo_syntax(shell->cmd_split))
 		printf("\n");
 }
