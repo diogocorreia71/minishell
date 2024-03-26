@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 23:05:48 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/26 18:07:24 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,38 +39,15 @@ t_gen	*lexer_parser(t_minishell *shell, t_lst_tokens **args)
 	return (cmd);
 }
 
-void	executer_cmd(t_minishell *shell, t_gen *cmd)
+void	run_command(t_minishell *shell, t_gen *cmd)
 {
-	if (cmd->type == EXEC)
-		run_exec(shell, (t_exec *)cmd);
-	else if (cmd->type == REDIR)
-		run_redir(shell, (t_redir *)cmd);
-	else if (cmd->type == PIPE)
-		run_pipeline(shell, (t_pipe *)cmd);
-	else if (cmd->type == HERE_DOC)
-	{
-		if (((t_heredoc *)cmd)->heredoc_redir != NULL)
-			executer_cmd(shell, ((t_heredoc *)cmd)->heredoc_redir);
-		unlink("hereDoc");
-	}
+	shell->ast_head = cmd;
+	init_signals(PIPE);
+	executer_cmd(shell, cmd);
+	free_tree(shell->ast_head);
 }
 
-void	wait_pipes(int pipe_pid)
-{
-	int	status;
-
-	status = 0;
-	if (check_wait(waitpid(pipe_pid, &status, 0)) == -1)
-	{
-		if (WIFEXITED(status))
-			g_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			g_exit_status = WTERMSIG(status) + 128;
-	}
-	while (wait(0) != -1)
-		;
-}
-
+//Erro heredoc invalid read size
 int	main(int ac, char **av, char **envp)
 {
 	t_minishell		shell;
@@ -91,12 +68,7 @@ int	main(int ac, char **av, char **envp)
 		add_history(shell.rl_str);
 		cmd = lexer_parser(&shell, &args);
 		if (cmd != NULL)
-		{
-			shell.ast_head = cmd;
-			init_signals(PIPE);
-			executer_cmd(&shell, cmd);
-			free_tree(shell.ast_head);
-		}
+			run_command(&shell, cmd);
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 #    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2024/03/22 13:51:51 by rumachad         ###   ########.fr        #
+#    Updated: 2024/03/26 10:16:14 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,7 @@ SRC = main.c \
 	quotes.c \
 	quotes_utils.c \
 	heredoc.c \
+	execution.c \
 	run_cmd.c \
 	check_sys.c \
 	syntax_error.c \

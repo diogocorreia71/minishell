@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 14:12:07 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 16:38:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/26 18:00:28 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,16 @@ void	free_exec(t_exec *cmd)
 {
 	if (cmd->argv != NULL)
 		ft_free_dp((void **)cmd->argv);
-	free(cmd);
+	if (cmd != NULL)
+		free(cmd);
 }
 
 void	free_redir(t_redir *cmd)
 {
-	free(cmd->filename);
-	free(cmd);
+	if (cmd->filename != NULL)
+		free(cmd->filename);
+	if (cmd != NULL)
+		free(cmd);
 }
 
 void	free_tree(t_gen *cmd)
@@ -46,14 +49,17 @@ void	free_tree(t_gen *cmd)
 	else if (cmd->type == HERE_DOC)
 	{
 		free_tree(((t_heredoc *)cmd)->heredoc_redir);
-		free(((t_heredoc *)cmd)->delimiter);
-		free(((t_heredoc *)cmd));
+		if (((t_heredoc *)cmd)->delimiter != NULL)
+			free(((t_heredoc *)cmd)->delimiter);
+		if (((t_heredoc *)cmd) != NULL)
+			free(((t_heredoc *)cmd));
 	}
 	else if (cmd->type == PIPE)
 	{
 		free_tree(((t_pipe *)cmd)->left);
 		free_tree(((t_pipe *)cmd)->right);
-		free(cmd);
+		if (cmd != NULL)
+			free(cmd);
 	}
 }
 

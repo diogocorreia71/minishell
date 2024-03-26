@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 15:09:39 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 22:58:06 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/26 10:46:35 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ void	sig_pipe(int signum)
 	}
 }
 
+void	init_sig_pipe(void)
+{
+	signal(SIGINT, sig_pipe);
+	signal(SIGQUIT, SIG_IGN);
+}
+
 void	init_signals(t_id handler_type)
 {
 	if (handler_type == SIGMAIN)
@@ -63,8 +69,5 @@ void	init_signals(t_id handler_type)
 		signal(SIGQUIT, SIG_IGN);
 	}
 	else if (handler_type == PIPE)
-	{
-		signal(SIGINT, sig_pipe);
-		signal(SIGQUIT, SIG_IGN);
-	}
+		init_sig_pipe();
 }

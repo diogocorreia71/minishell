@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 23:02:13 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/26 10:44:57 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	run_redir(t_minishell *shell, t_redir *cmd)
 void	run_pipe(t_minishell *shell, t_gen *cmd, int pipe_fd[2], int fd)
 {
 	shell->in_pipe = YES;
-	init_signals(SIGCHILD);
+	init_signals(SIGIGNORE);
 	check_dup(dup2(pipe_fd[fd], fd));
 	close_fd(pipe_fd);
 	executer_cmd(shell, cmd);
@@ -100,5 +100,5 @@ void	run_pipeline(t_minishell *shell, t_pipe *cmd)
 	if (pipeline.pipe_pid == 0)
 		run_pipe(shell, cmd->right, pipeline.pipe_fd, STDIN_FILENO);
 	close_fd(pipeline.pipe_fd);
-	wait_pipes(pipeline.pipe_pid);
+	wait_proccess(pipeline.pipe_pid);
 }

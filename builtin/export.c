@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:30:05 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 16:09:12 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/26 18:03:52 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void	create_vis_var(t_env *env, char *var_name, char *val)
 	{
 		free(tmp->var_value);
 		tmp->var_value = ft_strdup(ft_strchr(val, '=') + 1);
+		tmp->visible = 1;
 		return ;
 	}
 	env = env_last(env);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/03/25 23:07:13 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/26 10:19:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void			executer_cmd(t_minishell *shell, t_gen *cmd);
 void			run_exec(t_minishell *shell, t_exec *cmd);
 void			run_redir(t_minishell *shell, t_redir *cmd);
 void			run_pipeline(t_minishell *shell, t_pipe *cmd);
-void			wait_pipes(int pipe_pid);
+void			wait_proccess(int pipe_pid);
 
 //HereDoc
 void			init_heredoc(t_heredoc *here_doc, t_env *env,
