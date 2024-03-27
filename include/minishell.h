@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/03/26 10:19:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/27 10:37:17 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ void			run_pipeline(t_minishell *shell, t_pipe *cmd);
 void			wait_proccess(int pipe_pid);
 
 //HereDoc
-void			init_heredoc(t_heredoc *here_doc, t_env *env,
+int				init_heredoc(t_heredoc *here_doc, t_env *env,
 					t_lst_tokens *head);
 void			init_heredoc_handler(void);
 int				check_heredoc_input(char *input, char *delimiter);
@@ -169,6 +169,7 @@ void			free_tokens(t_lst_tokens **tokens);
 void			free_child(t_gen *ast_head, t_env *env);
 void			free_tree(t_gen *cmd);
 void			free_heredoc(t_lst_tokens *head, t_env *env, t_gen *cmd);
+void			free_redir(t_redir *cmd);
 void			*print_syntax_error(t_lst_tokens *arg, t_gen *cmd);
 
 //Signal

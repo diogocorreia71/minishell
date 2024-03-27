@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:32:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/24 05:31:35 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/27 10:34:25 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@ t_gen	*create_heredoc_ptr(t_gen *cmd_ptr, t_env *env,
 	cmd_ptr = redir_constructor(cmd_ptr, 0, O_RDONLY, "hereDoc");
 	cmd_ptr = heredoc_constructor(cmd_ptr, ft_strdup(delimiter),
 			O_WRONLY | O_CREAT | O_TRUNC);
-	init_heredoc((t_heredoc *)cmd_ptr, env, head);
+	if (init_heredoc((t_heredoc *)cmd_ptr, env, head))
+	{
+		unlink("hereDoc");
+		return (NULL);
+	}
 	return (cmd_ptr);
 }
 
@@ -86,7 +90,8 @@ t_gen	*parser_exec(t_env *env, t_lst_tokens **args)
 			nbr_args++;
 		(*args) = (*args)->next;
 	}
-	exec_cast->argv = fill_argv(head, nbr_args);
+	if (exec_cast)
+		exec_cast->argv = fill_argv(head, nbr_args);
 	return (cmd_ptr);
 }
 

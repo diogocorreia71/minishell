@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 15:39:25 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/26 18:04:41 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/27 10:27:44 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	eof_heredoc(char *del)
 	ft_fprintf(STDERR_FILENO, "delimited by end-of-file (wanted `%s')\n", del);
 }
 
-void	heredoc_exit_status(/* t_heredoc *here_doc, */ int status)
+int	heredoc_exit_status(t_gen *here_doc, int status)
 {
 	int	exit_status;
 
@@ -33,11 +33,12 @@ void	heredoc_exit_status(/* t_heredoc *here_doc, */ int status)
 		exit_status = WTERMSIG(status);
 		printf("\n");
 		g_exit_status = 128 + exit_status;
-		/* free_tree(here_doc->heredoc_redir); */
+		free_tree(here_doc);
 	}
+	return (g_exit_status);
 }
 
-void	init_heredoc(t_heredoc *here_doc, t_env *env, t_lst_tokens *head)
+int	init_heredoc(t_heredoc *here_doc, t_env *env, t_lst_tokens *head)
 {
 	int		heredoc_fd;
 	pid_t	heredoc_pid;
@@ -59,6 +60,6 @@ void	init_heredoc(t_heredoc *here_doc, t_env *env, t_lst_tokens *head)
 	}
 	init_signals(SIGIGNORE);
 	check_wait(waitpid(heredoc_pid, &status, 0));
-	heredoc_exit_status(/* here_doc, */ status);
 	init_signals(SIGMAIN);
+	return (heredoc_exit_status((t_gen *)here_doc, status));
 }

@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/26 18:07:24 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/03/27 10:37:09 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ void	run_command(t_minishell *shell, t_gen *cmd)
 	shell->ast_head = cmd;
 	init_signals(PIPE);
 	executer_cmd(shell, cmd);
-	free_tree(shell->ast_head);
+	if (shell->ast_head)
+		free_tree(shell->ast_head);
 }
 
-//Erro heredoc invalid read size
 int	main(int ac, char **av, char **envp)
 {
 	t_minishell		shell;
