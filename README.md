@@ -1,4 +1,4 @@
-# Project [42 Project]
+# Minishell [42 Project]
 This 42 project challenges us to recreate a command-line interpreter for Linux
 
 ## Table of Contents
