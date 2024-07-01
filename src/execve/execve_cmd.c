@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 11:02:26 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 22:57:57 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/01 00:15:36 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,6 @@ void	ft_execve(t_minishell *shell)
 	else if (pid == 0)
 	{
 		init_signals(SIGCHILD);
-		if (ft_strncmp(shell->cmd_split[0], "./minishell", 12) == 0)
-			change_shlvl(shell->env_array, shell->env);
 		execve(shell->path, shell->cmd_split, shell->env_array);
 		execve_error(shell, shell->path);
 	}

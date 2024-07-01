@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/03/27 10:37:17 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/01 01:42:14 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ extern int	g_exit_status;
 //Builtin and Execve
 void			builtin_cmd(t_minishell *shell, t_exec *cmd);
 void			ft_execve(t_minishell *shell);
-void			change_shlvl(char **env_array, t_env *env);
+void			change_shlvl(t_env **env);
 char			*exec_path(t_minishell *shell);
 void			execve_error(t_minishell *shell, char *path);
 char			*get_var_name(char *arg);

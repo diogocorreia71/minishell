@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:35:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 16:39:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/01 01:42:12 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,25 +37,23 @@ void	execve_error(t_minishell *shell, char *path)
 	exit(g_exit_status);
 }
 
-void	change_shlvl(char **env_array, t_env *env)
+void	change_shlvl(t_env **env)
 {
-	char	*shlvl_char;
-	int		shlvl;
-	int		i;
-	int		k;
+	t_env	*shlvl_node;
+	int		curr_shlvl_int;
+	char	*next_shlvl;
 
-	i = 0;
-	while (ft_strncmp(env->var, "SHLVL", 6) != 0)
+	shlvl_node = get_env_node(*env, "SHLVL");
+	if (shlvl_node == NULL)
 	{
-		env = env->next;
-		i++;
+		*env = create_node_env("SHLVL", "=1", 1);
+		return ;
 	}
-	k = 0;
-	while (env_array[i][k + 1])
-		k++;
-	shlvl = ft_atoi(&env_array[i][k]);
-	shlvl++;
-	shlvl_char = ft_itoa(shlvl);
-	free(env_array[i]);
-	env_array[i] = ft_strjoin("SHLVL=", shlvl_char);
+	curr_shlvl_int = ft_atoi(shlvl_node->var_value);
+	curr_shlvl_int++;
+	next_shlvl = ft_itoa(curr_shlvl_int);
+	if (next_shlvl == NULL)
+		return ;
+	free(shlvl_node->var_value);
+	shlvl_node->var_value = next_shlvl;
 }

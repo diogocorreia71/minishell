@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/25 12:13:22 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/01 01:39:39 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,15 @@
 t_env	*create_node_env(char *tmp, char *tmp2, int flag)
 {
 	t_env	*node;
-	char	*a;
+	char	*equal_ptr;
 
 	node = malloc(sizeof(t_env));
 	if (node == NULL)
 		return (NULL);
 	node->var = ft_strdup(tmp);
-	a = ft_strchr(tmp2, '=');
-	if (a)
-		node->var_value = ft_strdup(ft_strchr(tmp2, '=') + 1);
+	equal_ptr = ft_strchr(tmp2, '=');
+	if (equal_ptr)
+		node->var_value = ft_strdup(equal_ptr + 1);
 	else
 		node->var_value = ft_strdup(tmp2);
 	node->visible = flag;
@@ -40,6 +40,8 @@ t_env	*lst_env(char **envp)
 
 	i = 0;
 	head = NULL;
+	if (envp[0] == NULL)
+		return (NULL);
 	tmp = ft_split(envp[i], '=');
 	env = create_node_env(tmp[0], envp[i], 1);
 	ft_free_dp((void **)tmp);

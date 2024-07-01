@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:31:42 by rumachad          #+#    #+#             */
-/*   Updated: 2024/02/03 19:17:11 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/01 01:43:06 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,11 @@ void	cd_env_update(t_env *env)
 	t_env	*oldpwd;
 
 	pwd = get_env_node(env, "PWD");
+	if (pwd == NULL)
+		return ;
 	oldpwd = get_env_node(env, "OLDPWD");
+	if (oldpwd == NULL)
+		return ;
 	free(oldpwd->var_value);
 	oldpwd->var_value = ft_strdup(pwd->var_value);
 	free(pwd->var_value);

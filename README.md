@@ -1,5 +1,5 @@
 # Project [42 Project]
-This 42 project challenges us to
+This 42 project challenges us to recreate a command-line interpreter for Linux
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -10,29 +10,31 @@ This 42 project challenges us to
 6. [Contributing](#contributing)
 
 ## Overview
-Libft is a C library designed to enhance your proficiency in the C language, serving as the first project in the 42 Common Core curriculum. It provides a collection of useful functions, including recreations of standard library functions and some innovative additions.
+Minishell is a command-line interface that parses and executes prompts
 
 ## Project Structure
-- `libft/`: Main directory containing the source code, header files, and Makefile.
+- `minishell/`: Main directory containing the source code, header files, and Makefile.
+    - `src/`: Contains all the source code
+    - `include/`: Contains header files
+    - `libft/` : Contains libft library
+    - `Makefile`: Build automation file
 
 ## Dependencies
-- List any dependencies or requirements.
+- Libft (aleready included)
 
 ## How to Use
 1. Clone the repository.
-2. Navigate to the `libft` directory: `cd libft`.
-3. Compile the library: `make`.
-4. Include the header in your source files: `#include "libft.h"`.
-5. Link the library to your program: `gcc example.c -L[path_to_libft_dir] -lft`.
+2. Navigate to the `minishell` directory: `cd minishell`.
+3. Compile the program: `make`.
+4. Run the `minishell` binary: `./minishell`
+5. Now you can use `minishell` as your command-line interpreter
 
 ## Code Examples
-```c
-#include "libft.h"
-
-int main() {
-    ft_putstr("Hello, Libft!\n");
-    return 0;
-}
+```bash
+./minishell
+minishell$ echo Hello Minishell
+Hello Minishell
+minishell$
 ```
 
 ## Contributing

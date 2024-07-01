@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:47:06 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/27 10:37:09 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/01 01:42:16 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ int	main(int ac, char **av, char **envp)
 	cmd = NULL;
 	ft_memset((void *)&shell, 0, sizeof(t_minishell));
 	shell.env = lst_env(envp);
+	change_shlvl(&shell.env);
 	while (1)
 	{
 		init_signals(SIGMAIN);

@@ -3,16 +3,21 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+         #
+#    By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/21 12:39:52 by diodos-s          #+#    #+#              #
-#    Updated: 2024/03/26 10:16:14 by rumachad         ###   ########.fr        #
+#    Updated: 2024/07/01 00:14:38 by rumachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
-VPATH = builtin env execution execve expansion lexer parser utils_errors
+SRC_PATH = src/
+VPATH = $(SRC_PATH) $(SRC_PATH)builtin \
+		$(SRC_PATH)env $(SRC_PATH)execution \
+		$(SRC_PATH)execve $(SRC_PATH)expansion \
+		$(SRC_PATH)lexer $(SRC_PATH)parser \
+		$(SRC_PATH)utils_errors
 SRC = main.c \
 	parser.c \
 	execve_utils.c \
