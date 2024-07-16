@@ -121,7 +121,18 @@ Now, with the parser done we can go for the next step
 ### Expander
 The expander is responsible for expanding the values of the enviroment variables.
 
+Now it's time to expand all the variables our input has. Every word starting with a `$` is a variable that needs to be expanded.
 
+It's also the moment where we delete all the quotes `'`, `"` from our input.
+
+Our expander was done inside the parser in the moment we build a `<COMMAND>`
+
+Now we can go to the final step.
+
+### Execution
+The execution it's the part where the input is gonna be executted.
+
+With our ast built it's now a matter of transversing the tree and executing the commands
 
 ## Dependencies
 - Libft (aleready included)
