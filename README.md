@@ -72,62 +72,28 @@ format: (string, type of token)
 
 After the tokenizer we can advance to the second step
 
-### Parser
+### Parser and Expander
 The parser is responsible for checking the syntax errors the input might have and creating an ast (abstract syntax tree)
 
 To make all of this, we first need to set up some priorities and rules. These is set up by the grammar of the language we working on.
 Since we are making a shell, we can take the [bash grammar](https://cmdse.github.io/pages/appendix/bash-grammar.html) as a reference.
 
-By reading the grammar we already can see some rules
-
-Here's the most important ones(adapted to the project):
+Here's the most important rules(adapted to the project):
 - `<SIMPLE-COMMAND-ELEMENT> ::= <WORD>
                               |  <REDIRECTION>`
+- `<COMMAND> ::=  <SIMPLE-COMMAND>`
 - `<REDIRECTION> ::= '<' <WORD>
                     | '>' <WORD>
                     | '<<' <WORD>
                     | '>>' <WORD>`
-- `<COMMAND> ::=  <SIMPLE-COMMAND>`
 - `<PIPELINE> ::= <PIPELINE>
               '|' <PIPELINE>
               |  <COMMAND>`
 
-These rules must be strictly followed. Any misconfiguration will result in a `syntax error`
+We first build a `<SIMPLE-COMMAND-ELEMENT>`, then we check if the command has any tokens of type redir. If it has a redir type token then we build a `<REDIRECTION>`.
+Also any enviroment variable is expanded in this moment.
 
-By looking at these 4 rules we can already see some rules depends on others to be correct.
-
-Analizing it more carafully we can denote this behaviour
-
-The `<PIPELINE>` is recursive until the last `<COMMAND>`
-
-The `<COMMAND>` only requires a `<WORD>` but can have more things, like a `<REDIRECTION>`
-
-The `<REDIRECTION>` only requires a `redir char` and a `<WORD>`
-
-This already sets up a prioritie on how to construct our tree
-
-This 2 rules, `<PIPELINE>` and `<REDIRECTION>` require a `<COMMAND>` to be syntactically correct, so the first thing our tree builds is the `<COMMAND>` rule.
-
-The `<COMMAND>` rule will also check if it as to build a `<REDIRECTION>` rule or if it is only `<WORD>`
-
-Done building the `<COMMAND>`, now we will need to check the input to see if it as build a `pipe`. If the response is yes, then we need to build a `<PIPELINE>`
-
-To build a `<PIPELINE>` we will follow the grammar. We will put the built `<COMMAND>` to the left side of the `pipe` and call again the tree builder to build `<COMMAND>` until it's the last one
-
-A thing to understand from here is the last rule will have the most priority and the first will have the least priority in the execution.
-
-Now, with the parser done we can go for the next step
-
-### Expander
-The expander is responsible for expanding the values of the enviroment variables.
-
-Now it's time to expand all the variables our input has. Every word starting with a `$` is a variable that needs to be expanded.
-
-It's also the moment where we delete all the quotes `'`, `"` from our input.
-
-Our expander was done inside the parser in the moment we build a `<COMMAND>`
-
-Now we can go to the final step.
+After the `<SIMPLE-COMMAND-ELEMENT>` we check for a pipe type token. If it has a pipe token we call again our parser with the `<SIMPLE-COMMAND-ELEMENT>` built going to the rigth and the next `<SIMPLE-COMMAND-ELEMENT>` going to the left.
 
 ### Execution
 The execution it's the part where the input is gonna be executted.
