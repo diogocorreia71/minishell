@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 19:31:44 by rui               #+#    #+#             */
-/*   Updated: 2024/03/25 23:05:52 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/29 18:10:09 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	check_input(char *input, t_env *env)
 	{
 		free_env(env);
 		printf("exit\n");
-		exit(EXIT_SUCCESS);
+		exit(g_exit_status);
 	}
 	else if (ft_strlen(input) == 0 || space_input(input))
 		return (1);
