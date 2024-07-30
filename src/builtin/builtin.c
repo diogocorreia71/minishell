@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/07/30 11:41:42 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/30 13:28:11 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,5 @@ void	builtin_cmd(t_minishell *shell, t_exec *cmd)
 		export(shell->env, shell->cmd_split);
 	else if (!ft_strncmp(shell->cmd_split[0], "exit", 5))
 		ft_exit(shell, cmd);
+	g_exit_status = 0;
 }
