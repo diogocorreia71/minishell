@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:29:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/20 16:19:14 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/30 11:49:26 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,17 +39,31 @@ int	unset_syntax(char *cmd)
 	return (0);
 }
 
-void	del_var(t_env *env, t_env *tmp)
+void	del_var(t_env **head, t_env *elim)
 {
-	while (env->next->var != tmp->var)
-		env = env->next;
-	env->next = env->next->next;
-	free(tmp->var);
-	free(tmp->var_value);
-	free(tmp);
+	t_env	*tmp;
+
+	tmp = *head;
+	if (tmp == elim)
+	{
+		*head = elim->next;
+		free(elim->var);
+		free(elim->var_value);
+		free(elim);
+		return ;
+	}
+	while (tmp->next && tmp->next != tmp)
+		tmp = tmp->next;
+	if (tmp->next == NULL)
+		return ;
+	tmp->next = elim->next;
+	free(elim->var);
+	free(elim->var_value);
+	free(elim);
+	elim = NULL;
 }
 
-void	unset(t_env *env, char **cmd_split)
+void	unset(t_minishell *shell, char **cmd_split)
 {
 	t_env	*tmp;
 	int		i;
@@ -61,9 +75,9 @@ void	unset(t_env *env, char **cmd_split)
 	{
 		if (unset_syntax(cmd_split[i]) == 1)
 			continue ;
-		tmp = get_env_node(env, cmd_split[i]);
+		tmp = get_env_node(shell->env, cmd_split[i]);
 		if (tmp == NULL)
 			continue ;
-		del_var(env, tmp);
+		del_var(&shell->env, tmp);
 	}
 }

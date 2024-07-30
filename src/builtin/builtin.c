@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:04:33 by rumachad          #+#    #+#             */
-/*   Updated: 2024/03/21 13:57:47 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/07/30 11:41:42 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	pwd(char **cmd_split);
 void	cd(t_minishell *shell);
 void	echo(t_minishell *shell);
 void	export(t_env *env, char **cmd_split);
-void	unset(t_env *env, char **cmd_split);
+void	unset(t_minishell *shell, char **cmd_split);
 void	env_print(t_env *env, char **cmd_split, int flag);
 void	ft_exit(t_minishell *shell, t_exec *cmd);
 
@@ -50,7 +50,7 @@ void	builtin_cmd(t_minishell *shell, t_exec *cmd)
 	else if (!ft_strncmp(shell->cmd_split[0], "env", 4))
 		env_print(shell->env, shell->cmd_split, 0);
 	else if (!ft_strncmp(shell->cmd_split[0], "unset", 6))
-		unset(shell->env, shell->cmd_split);
+		unset(shell, shell->cmd_split);
 	else if (!ft_strncmp(shell->cmd_split[0], "export", 7))
 		export(shell->env, shell->cmd_split);
 	else if (!ft_strncmp(shell->cmd_split[0], "exit", 5))
