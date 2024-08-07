@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 11:52:09 by rumachad          #+#    #+#             */
-/*   Updated: 2024/07/30 13:27:03 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:52:05 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ void	run_exec(t_minishell *shell, t_exec *cmd)
 	shell->cmd_split = cmd->argv;
 	if (is_builtin(shell->cmd_split[0]) == YES)
 		builtin_cmd(shell, cmd);
-	else	
-		ft_execve(shell);	
+	else
+		ft_execve(shell);
 }
 
 void	run_redir(t_minishell *shell, t_redir *cmd)

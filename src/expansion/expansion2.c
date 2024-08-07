@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 12:58:53 by rumachad          #+#    #+#             */
-/*   Updated: 2024/07/30 12:08:51 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:48:17 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,13 @@ char	*tilde_value(t_env *env, char *token)
 	else if (!ft_strncmp(token, "~", 2) || !ft_strncmp(token, "~/", 2))
 		value = get_env_val(env, "HOME");
 	return (value);
+}
+
+bool	expandable(char c)
+{
+	if (c == '?' || c == '\'')
+		return (true);
+	return (false);
 }
 
 char	*expand_tilde(t_env *env, char *token)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:44:59 by diodos-s          #+#    #+#             */
-/*   Updated: 2024/07/01 01:42:14 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:48:42 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ int				space_input(char *str);
 int				check_option(char *cmd);
 void			swap_node(t_env *sorted_env, t_env *tmp);
 int				check_input(char *input, t_env *env);
+bool			expandable(char c);
 
 //Sys_calls check
 int				check_fd(int fd, char *message);

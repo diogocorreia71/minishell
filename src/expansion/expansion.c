@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 14:46:49 by rumachad          #+#    #+#             */
-/*   Updated: 2024/07/30 13:17:12 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:52:19 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,8 @@ char	*handle_ds(t_env *env, char *token)
 		else if (token[i] == '"' && !squotes)
 			dquotes = !dquotes;
 		else if (token[i] == '$' && token[i + 1]
-			&& (ft_isalnum(token[i + 1]) != 0 || token[i + 1] == '?')
-			&& !squotes)
+			&& !squotes && (ft_isalnum(token[i + 1]) != 0
+				|| expandable(token[i + 1])))
 		{
 			i = i + expand(&token, i, env);
 			continue ;
