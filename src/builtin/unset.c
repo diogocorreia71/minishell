@@ -6,7 +6,7 @@
 /*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:29:35 by rumachad          #+#    #+#             */
-/*   Updated: 2024/07/30 11:49:26 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:53:02 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	del_var(t_env **head, t_env *elim)
 		free(elim);
 		return ;
 	}
-	while (tmp->next && tmp->next != tmp)
+	while (tmp->next && tmp->next != elim)
 		tmp = tmp->next;
 	if (tmp->next == NULL)
 		return ;
