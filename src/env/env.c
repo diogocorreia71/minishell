@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rumachad <rumachad@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: rumachad <rumachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 15:02:31 by rumachad          #+#    #+#             */
-/*   Updated: 2024/07/01 01:39:39 by rumachad         ###   ########.fr       */
+/*   Updated: 2024/08/12 17:12:14 by rumachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,14 @@ char	**array_env(t_env *env)
 	i = 0;
 	while (env != NULL)
 	{
-		tmp = ft_strjoin(env->var, "=");
-		env_array[i] = ft_strjoin(tmp, env->var_value);
-		free(tmp);
+		if (env->visible)
+		{
+			tmp = ft_strjoin(env->var, "=");
+			env_array[i] = ft_strjoin(tmp, env->var_value);
+			free(tmp);
+			i++;
+		}
 		env = env->next;
-		i++;
 	}
 	env_array[i] = 0;
 	return (env_array);
